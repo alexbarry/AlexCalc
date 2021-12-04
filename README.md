@@ -37,7 +37,7 @@ Once the page is downloaded, there are no server side dependencies. Everything s
 
 Please let me know if this is valuable to you (and what features are useful, and what are not useful or are buggy), or if a better alternative exists. This is something that I wanted for myself many years ago when I was in school, specifically to input polar complex numbers with degrees, either on my phone or PC.
 
-The best I had at the time was an annoyingly expensive graphics calculator that I'd often forget to bring with me to class, or a PC running some programming language. Both of these had variables, neither had unit support. I remember it being particularly painful to enter polar complex numbers with the angle specified in degrees, I vaguely remember doing something like `e^(angle_in_degrees/1 radian)`.
+The best I had at the time was an annoyingly expensive graphing calculator that I'd often forget to bring with me to class, or a PC running some programming language. Both of these had variables, neither had unit support. I remember it being particularly painful to enter polar complex numbers with the angle specified in degrees, I vaguely remember doing something like `e^(angle_in_degrees/1 radian)`.
 
 The equation display also seems like a nice feature, since I'd often end up having to count seemingly endless brackets when entering even relatively simple formulas.
 
