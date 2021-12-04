@@ -1,0 +1,41 @@
+h1,h2,h3,h4,h5,h6, p, li, span, label, td, th, a {
+	font-family: sans-serif;
+}
+
+
+h1{
+	text-align:center;
+}
+
+.title_nopad {
+	padding: 0;
+	margin: 0;
+}
+
+.author_subtitle {
+	width: 100%;
+	text-align:center;
+	font-weight:bold;
+	padding: 0;
+	margin: 0;
+}
+
+.title_div_pad {
+	margin: 1em;
+}
+
+body {
+	background-color: #aaa;
+}
+
+div.main{
+	background-color:#e9e9ff;
+	max-width:700px;
+	padding:5pt;
+	border-radius: 10px;
+	border: 1px solid black;
+}
+
+.unimportant{
+	color:gray;
+}

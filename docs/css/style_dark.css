@@ -1,0 +1,16 @@
+h1, h2, h3, h4, h5, h6, p, div, span, sup, sub, label {
+	color: #666;
+}
+
+body {
+	background-color: #000;
+}
+
+div.main{
+	background-color:#111;
+	border: 1px solid grey;
+}
+
+.unimportant{
+	color:gray;
+}

@@ -1,0 +1,117 @@
+button.btn_important		{ background-color:#300; }
+button.btn_important:hover	{ background-color:#622; }
+button.meta				{ background-color:#210; }
+button.meta:hover		{ background-color:#420; }
+button.func             { background-color:#181818; }
+button.var              { background-color:#182218; }
+button.func:hover, button.var:hover	{ background-color:#333; }
+button.op				{ background-color:#001; }
+button.op:hover			{ background-color:#003; }
+button.specop			{ background-color:#001; }
+button.specop:hover		{ background-color:#003; }
+button.num				{ background-color:#282828; }
+button.num:hover		{ background-color:#333; }
+
+select {
+	background-color:#111;
+	color:#888;
+	/* border:1px solid black; */
+}
+
+a:visited {
+	color:#636;
+}
+
+a, a.no_visited:visited {
+	color:#558;
+}
+
+
+button.btn {
+	color:#888;
+	border:1px solid black;
+}
+
+.var_btn_ctrl_style {
+    color:#888;
+	border:1px solid black;
+}
+
+textarea {
+	border:1px solid darkgrey;
+	background-color:black;
+	color:grey;
+}
+
+button.unused { visibility:hidden; }
+
+.output_txt_cls {
+	background-color:#000;
+	border:1px solid grey;
+}
+
+.output_txt_cls > * > p {
+	border-bottom:1px dashed #111;
+}
+
+.popup_cls {
+	background-color: #111111dd;
+}
+
+.var_tbl_div > * > thead {
+	background-color: black;
+}
+
+.var_tbl_div > table {
+	background-color: black;
+}
+
+tr.var_table_row:hover {
+	background-color:#00002288;
+	border: 1px solid darkgrey;
+	cursor: pointer;
+}
+
+tr.selected {
+	border: 1px solid darkgrey;
+}
+
+.selected {
+	background-color:#00004488 !important;
+}
+
+.var_btn_style {
+    border:1px solid #222;
+	color:#666;
+	background-color:black;
+}
+
+.var_display_btn {
+    color:#666;
+    background-color:black;
+}
+
+#custom_var_name_input {
+    border:1px solid black;
+    color:darkgrey;
+    background-color:black;
+}
+
+.popup_btn_ctrl_style {
+	color: #666;
+}
+
+.unit_sel_item {
+	color: #555599;
+}
+
+.unit_sel_item:visited {
+	color: #555599;
+}
+
+.license {
+	border: 1px solid darkgrey;
+	background-color:black;
+	color:#666;
+	overflow:auto;
+}
