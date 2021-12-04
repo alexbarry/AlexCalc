@@ -4,14 +4,14 @@ Try the web version here: https://alexbarry.github.io/AlexCalc/
 
 Available on:
 * **Web (desktop or mobile)**: https://alexbarry.github.io/AlexCalc/
-* **Android*: [Google Play](https://play.google.com/store/apps/details?id=net.alexbarry.calc_android)
-* **iOS**: No native app yet, but for now here's [how to add a shortcut to the browser version on iOS](https://alexbarry.github.io/AlexCalc/add_to_ios_home.html).
+* **Android**: [Google Play](https://play.google.com/store/apps/details?id=net.alexbarry.calc_android)
+* **iOS**: No native app yet, but for now here's [how to add a home screen shortcut to the browser version on iOS](https://alexbarry.github.io/AlexCalc/add_to_ios_home.html).
 
 ## How to use
 
 * **Complex numbers**: enter rectangular form (`3 + 4i`) or polar (`5 angle 30`)
 * **Variables**: store variables by typing an expression, then pressing the "store" button in the bottom left (or typing the `->` operator), and then entering a variable name (e.g. `1.23e5 -> x`). Then simply reference this variable name in other expressions (e.g. `x^2 - 4*x -> y`)
-* **Units**: select or type a desired unit, e.g. `1 kg` or `3 m s^-2`. The default output is in SI units, but arbitrary unit conversion can be accomplished with the ` to ` operator (e.g. `1 kg to lb`) which can be typed directly or by pressing the *alt* then *to units* button (which appears in place of the "units" button when *alt* is pressed)
+* **Units**: select or type a desired unit, e.g. `1 kg` or `3 m s^-2`. The default output is in SI units, but arbitrary unit conversion can be accomplished with the ` to ` operator (e.g. `1 kg to lb`) which can be typed directly or by pressing the **alt** then **to units** button (which appears in place of the **units** button when **alt** is pressed)
 * **Negative numbers**: the "subtraction" button can also serve as a negative sign.
 
 ## Discussion
@@ -25,7 +25,7 @@ Please submit comments, feedback, feature requests, or discussions to:
 
 ## How it works
 
-* I wrote C++ to parse plaintext input (intended to be written with a keyboard or generated via button presses), like `3 + 4`, `sqrt(1 acre) to miles` or `5*cos(45) + 3i -> x` into a set of nodes.
+* I wrote C++ to parse plaintext input (intended to be written with a keyboard or generated via button presses), like `3 + 4`, `sqrt(1 acre) to m` or `5*cos(45) + 3i -> x` into a set of nodes.
 * I also wrote C++ to evaluate those nodes or convert them to plaintext LaTeX.
 * I use [Emscripten](https://emscripten.org/) to compile the C++ to WebAssembly (WASM) for web, and [NDK](https://developer.android.com/ndk/guides) to compile to Android native code on Android.
 * I use [MathJax](https://www.mathjax.org/) to render the LaTeX into the equation display in HTML. 
