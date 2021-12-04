@@ -1578,9 +1578,11 @@ function filter_expr_match_unit(unit_info, filter_expr) {
 	// If user types "k" then should only show units starting with "k" like "Kelvin"
 
 
-	for (let unit_name of unit_info.unit_names) {
-		if (unit_name.toLowerCase().startsWith(filter_expr)) {
-			return true;
+	for (let unit_names of unit_info.unit_names) {
+		for (let unit_elem of unit_names) {
+			if (unit_elem.name.toLowerCase().startsWith(filter_expr)) {
+				return true;
+			}
 		}
 	}
 
