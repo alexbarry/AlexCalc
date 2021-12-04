@@ -11,7 +11,7 @@ Available on:
 
 * **Complex numbers**: enter rectangular form (`3 + 4i`) or polar (`5 angle 30`). The **angle** button replaces the **i** button when **alt** is pressed. If typing, `j` can be used in place of `i` ([more info](https://en.wikipedia.org/wiki/Imaginary_unit)).
 * **Variables**: store variables by typing an expression, then pressing the "store" button in the bottom left (or typing the `->` operator), and then entering a variable name (e.g. `1.23e5 -> x`). Then simply reference this variable name in other expressions (e.g. `x^2 - 4*x -> y`)
-* **Units**: select or type a desired unit, e.g. `1 kg` or `3 m s^-2`. The default output is in SI units, but arbitrary unit conversion can be accomplished with the ` to ` operator (e.g. `1 kg to lb`) which can be typed directly or by pressing the **alt** then **to units** button (which appears in place of the **units** button when **alt** is pressed)
+* **Units**: select or type a desired unit, e.g. `1 kg` or `3 m s^-2`. The default output is in SI units, but arbitrary unit conversion can be accomplished with the ` to ` operator (e.g. `1 kg to lb`) which can be typed directly or by pressing the **alt** then "**to units**" button (which appears in place of the **units** button when **alt** is pressed)
 * **Negative numbers**: the "subtraction" button can also serve as a negative sign.
 
 ## Discussion
