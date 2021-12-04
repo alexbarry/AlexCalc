@@ -31,7 +31,7 @@ Please submit comments, feedback, feature requests, or discussions to:
 * I use [MathJax](https://www.mathjax.org/) to render the LaTeX into the equation display in HTML. 
 * I threw together a UI in HTML and Android. There turned out to be a lot more UI specific code than I anticipated. In hindsight I should have tried to do more of it in C++.
 
-Once the page is downloaded, there are no server side dependencies. Everything should be running locally in your browser.
+Once the page is downloaded, there are no server side dependencies. Everything should be running locally in your browser. (However, note that if you try to save this page for offline use and then open it, it won't work. I think it's because browsers block running WASM loaded from the local filesystem, presumably for security. When I test locally I host a simple webserver, e.g. (`python3 -m http.server 1234`) and then navigate my browser to `http://localhost:1234`. If there is demand for an offline version, or something I can do to help browsers save the page for offline use, please let me know!)
 
 ## Feedback, alternatives?
 
