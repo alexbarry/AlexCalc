@@ -1522,7 +1522,7 @@ function handle_recently_used_unit_btn_pressed(ui_unit_sel, row) {
 // for any args "abc", "def", "test", "blah" or any of their
 // first 1 to n letters, but not "bc" or any of their substrings
 function any_word_startswith(str, filter_expr) {
-	str = str.replaceAll(/[()\/]/g, " ");
+	str = str.replace(/[()\/]/g, " ");
 	str = str.split(" ");
 	for (let word of str) {
 		if (word.trim().length == 0) { continue; }
