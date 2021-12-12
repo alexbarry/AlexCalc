@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<meta name="description" content="Scientific calculator with LaTeX equation display, variables, units, complex numbers.">
+	<meta name="keywords" content="calculator, scientific calculator, LaTeX, equation display, variables, units, complex numbers, imaginary numbers">
+	<meta name="author" content="Alex Barry">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+	<link rel="icon" type="image/png" href="graphics/favicon.png">
+	<link rel="apple-touch-icon" href="graphics/favicon.png">
+
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/calc_style.css">
+	<!--
+	<link rel="stylesheet" type="text/css" href="css/style_dark.css">
+	<link rel="stylesheet" type="text/css" href="css/calc_style_dark.css">
+	-->
+
+	<title>AlexCalc: How to use</title>
+
+	<style>
+	div.main {
+		margin: 5px auto;
+	}
+	</style>
+
+</head>
+
+
+<body>
+
+<div class="main">
+<a href="index.html">Back to calculator</a>
+<h2 style="text-align:center">AlexCalc: How to use</h2>
+
+<h3>Complex numbers</h3>
+
+<p>Enter rectangular form (<code>3 + 4i</code>) or polar (<code>5 angle 30</code>). The <strong>angle</strong> button replaces the <strong>i</strong> button when <strong>alt</strong> is pressed. If typing, <code>j</code> can be used in place of <code>i</code> (<a href="https://en.wikipedia.org/wiki/Imaginary_unit">more info</a>).</p>
+
+<h3>Variables</h3>
+<p>Store variables by typing an expression, then pressing the "store" button in the bottom left (or typing the <code>-&gt;</code> operator), and then entering a variable name (e.g. <code>1.23e5 -&gt; x</code>). Then simply reference this variable name in other expressions (e.g. <code>x^2 - 4*x -&gt; y</code>)</p>
+
+<h3>Units</h3>
+<p>Select or type a desired unit, e.g. <code>1 kg</code> or <code>3 m s^-2</code>.</p>
+
+<p>The default output is in SI units, but arbitrary unit conversion can be accomplished with the <code> to </code> operator (e.g. <code>1 kg to lb</code>) which can be typed directly or by pressing the <strong>alt</strong> then "<strong>to units</strong>" button (which appears in place of the <strong>units</strong> button when <strong>alt</strong> is pressed).</p>
+
+<p>Note that the division slash (<code>/</code>) <strong>can not be used</strong> within units, e.g. "1 metre per second" can only be defined as <code>1 m s^-1</code>, and <strong>not</strong> <code>1 m/s</code> because that means "1 metre divided by variable s". This is unfortunate, but I'm not sure if there is any way to resolve the ambiguity. (Of course you are free to do <code>1 m / 1 s</code>)</p>
+
+<h3>Negative numbers</h3>
+<p>The "subtraction" button can also serve as a negative sign.</p>
+
+</div>
+</body>
+</html>
