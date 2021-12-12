@@ -746,6 +746,11 @@
 			},
 		};
 
+		/**
+		 * Includes both input and output line.
+		 */ 
+		const MAX_OUTPUT_LINES = 20;
+
 		const ui = {
 
 			wasm_loaded: false,
@@ -870,7 +875,16 @@
 				}
 			},
 
+			/**
+			 * contains references to elements added to `output_display`, and
+			 * their corresponding stylesheets.
+			 * Should be a list of objects with fields:
+			 *   - "elem": a reference to an HTML element for this output line, and
+			 *   - "stylesheets": a list of corresponding stylesheets.
+			 *
+			 */
 			output_display_refs: [],
+
 			// returns an object that will be passed to it again for clean up
 			// if this line of the output display is removed.
 			// (currently, the returned object is not used, but would be
@@ -919,7 +933,7 @@
 
 				ui.output_text.appendChild(output_element);
 				ui.output_display_refs.push(ui_refs);
-
+				ui.remove_output_display_entries(MAX_OUTPUT_LINES);
 
 
 				return ui_refs;
@@ -955,7 +969,11 @@
 			},
 
 			clear_output_display: function() {
-				while(ui.output_display_refs.length > 0) {
+				ui.remove_output_display_entries(0);
+			},
+
+			remove_output_display_entries: function(keep_count) {
+				while(ui.output_display_refs.length > keep_count) {
 					let refs = ui.output_display_refs.shift();
 					ui.output_text.removeChild(refs.elem);
 					for (let stylesheet of refs.stylesheets) {
