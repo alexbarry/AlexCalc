@@ -354,6 +354,7 @@
 
 		<h1>AlexCalc</h1>
 		<p id="wasm_loading_msg">Calc binary is loading, please wait...</p>
+		<p id="calc_terms_notice_small">By using this application you agree with its terms of use, available in the <a href="#" id="about_popup_link_terms_notice">about section</a>.</p>
 		<!--
 		<p>\[ e^{j\theta} + 1 = 0 \]</p>
 		<p>\[ Z_o = \sqrt{\frac{R + j \omega L}{G + j \omega C}} \]</p>
@@ -630,6 +631,8 @@
 			<li><strong>Matrix</strong>: <a href="https://matrix.to/#/#alexcalc:matrix.org" style="font-family:monospace">#alexcalc:matrix.org</a></li>
 		</ul>
 		</p>
+		<p><strong>Terms of use</strong>: <span style="font-family:monospace">THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<span><p>
+
 		<p><a class="licenses" href="licenses.html">Licenses</a></p>
 		<p><a id="close_about_popup_link" href="#">Close the "About" popup</a></p>
 	</div>
@@ -751,6 +754,7 @@
 
 			show_about_popup_btns: [
 				document.getElementById("open_about_popup_link"),
+				document.getElementById("about_popup_link_terms_notice"),
 			],
 			close_about_popup_btns: [
 				document.getElementById("close_about_popup_link"),
