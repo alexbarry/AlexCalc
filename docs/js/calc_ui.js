@@ -1,4 +1,5 @@
 const ANGLE_OP_SYMBOL = "angle"
+const ENABLE_HYPERBOLIC_TRIG = false;
 
 function init_ui_state() {
 	return {
@@ -83,7 +84,7 @@ function get_trig_token(trig_base) {
 	return function(ui) {
 		let hyp_suffix = "";
 		let inv_prefix = "";
-		if (ui.state.alt_state) {
+		if (ENABLE_HYPERBOLIC_TRIG && ui.state.alt_state) {
 			hyp_suffix = "h";
 		}
 		if (ui.state.inv_state) {
@@ -210,7 +211,7 @@ function update_arrow_btns(ui) {
 
 function update_trig_btns(ui) {
 	let is_hyp_suffix;
-	if (ui.state.alt_state) {
+	if (ENABLE_HYPERBOLIC_TRIG && ui.state.alt_state) {
 		is_hyp_suffix = "h";
 	} else {
 		is_hyp_suffix = "";
