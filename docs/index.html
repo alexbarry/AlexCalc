@@ -8,15 +8,16 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="color-scheme" content="light dark">
 	<link rel="icon" type="image/png" href="graphics/favicon.png">
 	<link rel="apple-touch-icon" href="graphics/favicon.png">
 
-	<link rel="stylesheet" type="text/css" href="css/style.css">
-	<link rel="stylesheet" type="text/css" href="css/calc_style.css">
-	<!--
+	<link rel="stylesheet" type="text/css" href="css/style_very_dark.css">
+	<link rel="stylesheet" type="text/css" href="css/calc_style_very_dark.css">
 	<link rel="stylesheet" type="text/css" href="css/style_dark.css">
 	<link rel="stylesheet" type="text/css" href="css/calc_style_dark.css">
-	-->
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/calc_style.css">
 	<script type="text/javascript" src="js/dropdown_and_inc_widget.js"></script>
 	<!-- TODO figure out how to include this file from within calc_ui.js -->
 	<script type="text/javascript" src="js/calc_ui_unit_sel.js"></script>
@@ -343,7 +344,13 @@
 
 	<div class="output_text_window_container">
 		<div class="output_btn_container">
-		<div class="output_btns">
+		<div class="output_btns" style="text-align:right">
+			<select id="dark_mode_select">
+				<option value="light">Light mode</option>
+				<option value="dark">Dark mode</option>
+				<option value="very_dark">Very dark mode</option>
+			</select>
+			<br/>
 			<label for="checkbox_show_raw">Show raw</label>
 			<input type="checkbox" id="checkbox_show_raw">
 		</div>
@@ -647,6 +654,19 @@
 			<li><a class="licenses" href="licenses.html">Licenses</a></li>
 		</ul>
 	</div>
+
+	<!--
+	   Detecting whether "forced dark mode" is enabled on chrome, since for some reason it doesn't
+	   cause the {typical test for whether or not the user wants darkmode} to return true, which is:
+	  
+	       window.matchMedia("(prefers-color-scheme: dark)")
+	  
+	   So this is an unfortunate hack.
+	   The alternative would be to let chrome invert my light theme willy-nilly, but that doesn't seem to work
+	   very well with my (perhaps poor) choice of light mode colours.
+	   See https://developer.chrome.com/blog/auto-dark-theme/#detecting-auto-dark-theme
+	-->
+	<div id="auto_dark_mode_detection" style="display: none; background-color: canvas; color-scheme: light;"></div>
 
 
 	<script>
@@ -1063,6 +1083,8 @@
 			output_text_window: document.getElementById("output_text_window"),
 
 			checkbox_show_raw: document.getElementById("checkbox_show_raw"),
+			selected_theme: "light",
+			dark_mode_select: document.getElementById("dark_mode_select"),
 
 			custom_var_name_input: document.getElementById("custom_var_name_input"),
 			var_selector_display: document.getElementById("var_selector"),

@@ -1,3 +1,15 @@
+h1, h2, h3, h4, h5, h6, p, div, span, sup, sub, label {
+	color: #000;
+}
+
+a:visited {
+	color:#40a;
+}
+
+a, a.no_visited:visited {
+	color:#00a;
+}
+
 h1 { margin: 5px; }
 
 .raw_calc_io {
@@ -27,9 +39,17 @@ button.num				{ background-color:lightgrey; }
 button.num				{ background-color:#DDD; }
 button.num:hover		{ background-color:#BBB; }
 
-.btn {
+.btn, button {
 	/* the default is fine on firefox, but too dark on chrome */
 	border-color: #ababab7a;
+
+	background-color:#aaa;
+	color:#000;
+}
+
+textarea, input {
+	color:#000;
+	background-color:#fff;
 }
 
 button:disabled, button:disabled:hover {
@@ -44,7 +64,7 @@ button.btn:hover:disabled {
 	font-weight:normal;
 }
 
-button.unused { visibility:hidden; }
+.btn.unused { visibility:hidden; }
 
 div.main {
 }
