@@ -874,7 +874,11 @@ function init_ui_throws(ui) {
 	ui.checkbox_show_raw.checked = ui.state.show_raw_calc_io
 	ui.checkbox_show_raw.addEventListener('click', function (e) { toggle_show_raw(ui) });
 
-	let darkMatch = window.matchMedia("(prefers-color-scheme: dark)");
+	let darkMatch;
+	if (window.matchMedia) {
+		darkMatch = window.matchMedia("(prefers-color-scheme: dark)");
+	}
+
 	if (darkMatch && darkMatch.matches) {
 		ui.selected_theme = "dark";
 	} else if (check_forced_dark_mode()) {
