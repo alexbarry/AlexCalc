@@ -815,6 +815,44 @@ function handle_degree_toggle(ui) {
 	update_latex_display(ui);
 }
 
+const SUPPORTED_THEMES = [
+	"light",
+	"dark",
+	"very_dark",
+];
+
+function set_theme(ui, theme) {
+	console.debug("Setting theme to ", theme);
+	if (!SUPPORTED_THEMES.includes(theme)) {
+		console.error("unsupported theme", theme);
+		return;
+	}
+	document.body.classList.add(theme);
+	for (let old_theme of SUPPORTED_THEMES) {
+		if (old_theme != theme) {
+			document.body.classList.remove(old_theme);
+		}
+	}
+}
+
+function set_dark_mode_select(ui, theme) {
+	for (let i=0; i<ui.dark_mode_select.options.length; i++) {
+		let option = ui.dark_mode_select.options[i];
+		if (option.value == theme) {
+			ui.dark_mode_select.selectedIndex = i;
+			return;
+		}
+	}
+	console.error("theme ", theme, "not found in select");
+	
+}
+
+// See https://developer.chrome.com/blog/auto-dark-theme/#detecting-auto-dark-theme
+function check_forced_dark_mode() {
+	let elem = document.querySelector('#auto_dark_mode_detection');
+	return getComputedStyle(elem).backgroundColor != 'rgb(255, 255, 255)';
+}
+
 function init_ui_throws(ui) {
 	console.debug("Initializing Calc UI");
 	ui.state = init_ui_state();
@@ -835,6 +873,24 @@ function init_ui_throws(ui) {
 
 	ui.checkbox_show_raw.checked = ui.state.show_raw_calc_io
 	ui.checkbox_show_raw.addEventListener('click', function (e) { toggle_show_raw(ui) });
+
+	let darkMatch;
+	if (window.matchMedia) {
+		darkMatch = window.matchMedia("(prefers-color-scheme: dark)");
+	}
+
+	if (darkMatch && darkMatch.matches) {
+		ui.selected_theme = "dark";
+	} else if (check_forced_dark_mode()) {
+		console.log("User has #force-dark-mode enabled, but not ('prefers-color-scheme: dark)!!!");
+		ui.selected_theme = "dark";
+	}
+
+	
+	console.debug("OS default for dark mode is: ", ui.selected_theme);
+	set_dark_mode_select(ui, ui.selected_theme);
+	set_theme(ui, ui.selected_theme);
+	ui.dark_mode_select.addEventListener('change', function (e) { set_theme(ui, e.target.value); });
 
 	for (let info of ui_btn_handlers) {
 		info.btn.addEventListener('click', info.handler);

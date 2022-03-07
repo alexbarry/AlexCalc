@@ -1,0 +1,120 @@
+body.very_dark button.btn_important		{ background-color:#300; }
+body.very_dark button.btn_important:hover	{ background-color:#622; }
+body.very_dark button.meta				{ background-color:#210; }
+body.very_dark button.meta:hover		{ background-color:#420; }
+body.very_dark button.func             { background-color:#181818; }
+body.very_dark button.var              { background-color:#182218; }
+body.very_dark button.func:hover, button.var:hover	{ background-color:#333; }
+body.very_dark button.op				{ background-color:#001; }
+body.very_dark button.op:hover			{ background-color:#003; }
+body.very_dark button.specop			{ background-color:#001; }
+body.very_dark button.specop:hover		{ background-color:#003; }
+body.very_dark button.num				{ background-color:#282828; }
+body.very_dark button.num:hover		{ background-color:#333; }
+
+body.very_dark select {
+	background-color:#111;
+	color:#888;
+	/* border:1px solid black; */
+}
+
+body.very_dark .error_msg { color: red; }
+
+body.very_dark a:visited {
+	color:#636;
+}
+
+body.very_dark a, body.very_dark a.no_visited:visited {
+	color:#558;
+}
+
+
+body.very_dark .btn {
+	color:#888;
+	border:1px solid black;
+	background-color:#222;
+}
+
+body.very_dark .var_btn_ctrl_style {
+    color:#888;
+	border:1px solid black;
+}
+
+body.very_dark textarea, body.very_dark input {
+	border:1px solid darkgrey;
+	background-color:black;
+	color:grey;
+}
+
+body.very_dark .btn.unused { visibility:hidden; }
+
+body.very_dark .output_txt_cls {
+	background-color:#000;
+	border:1px solid grey;
+}
+
+body.very_dark .output_txt_cls > * > p {
+	border-bottom:1px dashed #111;
+}
+
+body.very_dark .popup_cls {
+	background-color: #111111dd;
+}
+
+body.very_dark .var_tbl_div > * > thead {
+	background-color: black;
+}
+
+body.very_dark .var_tbl_div > table {
+	background-color: black;
+}
+
+body.very_dark tr.var_table_row:hover {
+	background-color:#00002288;
+	border: 1px solid darkgrey;
+	cursor: pointer;
+}
+
+body.very_dark tr.selected {
+	border: 1px solid darkgrey;
+}
+
+body.very_dark .selected {
+	background-color:#00004488 !important;
+}
+
+body.very_dark .var_btn_style {
+    border:1px solid #222;
+	color:#666;
+	background-color:black;
+}
+
+body.very_dark .var_display_btn {
+    color:#666;
+    background-color:black;
+}
+
+body.very_dark #custom_var_name_input {
+    border:1px solid black;
+    color:darkgrey;
+    background-color:black;
+}
+
+body.very_dark .popup_btn_ctrl_style {
+	color: #666;
+}
+
+body.very_dark .unit_sel_item {
+	color: #555599;
+}
+
+body.very_dark .unit_sel_item:visited {
+	color: #555599;
+}
+
+body.very_dark .license {
+	border: 1px solid darkgrey;
+	background-color:black;
+	color:#666;
+	overflow:auto;
+}
