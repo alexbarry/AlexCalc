@@ -11,6 +11,7 @@
 //#include<complex>
 
 #include "calc_core.h"
+#include "calc_parse.h"
 #include "calc_units.h"
 #include "calc_core_exceptions.h"
 
@@ -901,7 +902,7 @@ val_t NodeValueRect::get_val(const CalcData *calcData, angle_mode_t angle_mode) 
 	(void)angle_mode;
 	val_t val;
 	unit_t unit = eval_units(calcData, this->input_units);
-	calc_float_t mag = std::atof(this->val_str.c_str());
+	calc_float_t mag = parse_float_w_optional_deg_str(this->val_str);
 	mag *= unit.mag;
 	if (!this->is_imag) {
 		val.re = mag;
