@@ -19,8 +19,12 @@ int sci_not_pow_brackets_hack = 1;
 bool debug_latex = false;
 
 //static const std::string cursor_latex = "\\vert";
-static const std::string cursor_latex = "\\text{[]}";
-static const std::string latex_degree = "^\\circ";
+static const std::string cursor_latex  = "\\text{[]}";
+static const std::string latex_degree  = "^\\circ";
+// Not sure if people would want to see this. The degree icon is subtle,
+// but a letter "g" could be confused with variables.
+// Unfortunately I don't think I've ever used gradians. 
+static const std::string latex_gradian = "^\\circ\\text{grad}";
 
 std::string raw_node_to_latex(Node *n, const InputInfo *info);
 std::string insert_cursor(std::string str, int cursor_pos);
@@ -171,7 +175,7 @@ std::string surround_in_bracks_if_needed(NodeOp *parent, Node *n,
 	if (parent->get_node_type() == NODE_OP &&
 	    parent->promote_to_op()->get_op() == OP_POW &&
 	    n_value != nullptr) {
-		val_t val = n_value->get_val(info->calcData, info->degree());
+		val_t val = n_value->get_val(info->calcData, info->angle_mode());
 		// TODO if displayed as rect, also need for multiplication operators to
 		// force brackets
 		if (val.re != 0 && val.im != 0) {
@@ -225,6 +229,14 @@ std::string surround_in_braces_if_len_gt1(Node *n, const InputInfo *info) {
 }
 
 
+static std::string get_angle_indicator(angle_mode_t angle_mode) {
+	switch (angle_mode) {
+		case ANGLE_MODE_RADIAN:  return "";
+		case ANGLE_MODE_DEGREE:  return latex_degree;
+		case ANGLE_MODE_GRADIAN: return latex_gradian;
+	}
+}
+
 std::string op_node_to_latex(NodeOp *n, const struct calc_fmt_params &params, const InputInfo *info) {
 	std::string op_prefix = "";
 	std::string op_suffix = "";
@@ -252,9 +264,7 @@ std::string op_node_to_latex(NodeOp *n, const struct calc_fmt_params &params, co
 			output = raw_node_to_latex(n->children.at(0), info);
 			output += op_prefix + std::string(" \\measuredangle ") + op_suffix;
 			output += surround_in_bracks_if_needed(n, n->children.at(1), params, info);
-			if (info->degree()) {
-				output += latex_degree;
-			}
+			output += get_angle_indicator(info->angle_mode());
 			return output;
 			break;
 		}
@@ -421,18 +431,14 @@ std::string val_to_latex_rect(const val_t *val_arg, const struct calc_fmt_params
 // TODO show units?
 std::string val_to_latex_polar(const val_t *val_arg,
                                const struct calc_fmt_params &params,
-                               bool degrees) {
+                               angle_mode_t angle_mode) {
 	calc_float_t mag, angle;
 	rect_to_polar(*val_arg, &mag, &angle);
-	if (degrees) {
-		angle *= 180/M_PI;
-	}
+	angle = convert_angle_val_inv(angle, angle_mode);
 	std::string mag_str   = flt_to_latex(mag,   params);
 	std::string angle_str = flt_to_latex(angle, params, true);
 
-	if (degrees) {
-		angle_str += latex_degree;
-	}
+	angle_str += get_angle_indicator(angle_mode);
 
 	if (angle == 0) {
 		return mag_str;
@@ -570,7 +576,7 @@ std::string val_to_latex(const val_t *val_arg,
 	if (!calcData->polar) {
 		output = val_to_latex_rect(&val, params, unit_str_latex.size() > 0);
 	} else {
-		output = val_to_latex_polar(&val, params, calcData->degree);
+		output = val_to_latex_polar(&val, params, calcData->angle_mode);
 	}
 	if (unit_str_latex.size() > 0) {
 		output += "\\," + unit_str_latex;
@@ -730,13 +736,10 @@ std::string val_node_rect_to_latex(const CalcData *calcData,
 std::string val_node_polar_to_latex(const CalcData *calcData,
                                     const NodeValuePolar *node_polar_rect,
                                     const struct calc_fmt_params &params) {
-	bool is_degrees = calcData->degree;
 	// TODO format strings with params
 	std::string mag_str   = "\\text{" + node_polar_rect->mag_str + "}";
 	std::string angle_str = node_polar_rect->angle_str;
-	if (is_degrees) {
-		angle_str += "^\\circ";
-	}
+	angle_str += get_angle_indicator(calcData->angle_mode);
 	std::string output = mag_str + " \\measuredangle " + angle_str;
 	std::string unit_str = input_units_to_latex(calcData, &node_polar_rect->input_units);
 	if (unit_str.size() == 0) {

@@ -17,6 +17,13 @@
 
 extern const char VAR_NAME_ANS[];
 
+enum angle_mode_e {
+	ANGLE_MODE_RADIAN,
+	ANGLE_MODE_DEGREE,
+	ANGLE_MODE_GRADIAN,
+};
+typedef enum angle_mode_e angle_mode_t;
+
 class NodeOp;
 class CalcData;
 class UnitInfoInput;
@@ -87,7 +94,7 @@ class NodeValue : public Node {
 		//val_t        eval(const CalcData *data);
 		// special function for NodeValue only, since they can return their value without a full calcData,
 		// unlike most nodes
-		virtual val_t        get_val(const CalcData *calcData, bool degrees) const = 0;
+		virtual val_t        get_val(const CalcData *calcData, angle_mode_t angle_mode) const = 0;
 		node_type    get_node_type(void);
 		NodeOp*      promote_to_op(void);
 
@@ -102,7 +109,7 @@ class NodeValueRect : public NodeValue {
 		NodeValueRect(std::string val_str, bool is_imag);
 		virtual ~NodeValueRect(void) {};
 		virtual std::string to_string(void) const;
-		virtual val_t        get_val(const CalcData *calcData, bool degrees) const;
+		val_t        get_val(const CalcData *calcData, angle_mode_t angle_mode) const;
 
 
 	//private:
@@ -116,7 +123,7 @@ class NodeValuePolar : public NodeValue {
 		NodeValuePolar(std::string mag_str, std::string angle_str);
 		virtual ~NodeValuePolar(void) {};
 		virtual std::string to_string(void) const;
-		val_t get_val(const CalcData *calcData, bool degrees) const;
+		val_t        get_val(const CalcData *calcData, angle_mode_t angle_mode) const;
 	//private:
 		std::string mag_str;
 		std::string angle_str;
@@ -239,7 +246,7 @@ class CalcData {
 		std::unordered_map<std::string, val_t>  vars;
 		std::unordered_map<std::string, UnitInfoParsed> units;
 		bool polar  = false;
-		bool degree = false;
+		angle_mode_t angle_mode = ANGLE_MODE_RADIAN;
 };
 
 class InputInfo {
@@ -264,7 +271,8 @@ class InputInfo {
 
 
 	bool polar(void) const;
-	bool degree(void) const;
+	//bool degree(void) const;
+	angle_mode_t angle_mode(void) const;
 };
 
 class OutputInfo {
@@ -370,5 +378,9 @@ std::string get_mag_no_exp_str(std::string val_str);
  *  to the right of it, converted to an integer)
  */
 int get_pow_exp_str(std::string val_str);
+
+
+calc_float_t convert_angle_val_inv(calc_float_t arg, angle_mode_t angle_mode);
+std::string angle_mode_to_str(angle_mode_t angle_mode);
 
 #endif

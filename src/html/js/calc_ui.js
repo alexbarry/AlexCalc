@@ -1,6 +1,19 @@
 const ANGLE_OP_SYMBOL = "angle"
 const ENABLE_HYPERBOLIC_TRIG = false;
 
+const ANGLE_MODE_RAD  = "radian";
+const ANGLE_MODE_DEG  = "degree";
+const ANGLE_MODE_GRAD = "gradian";
+
+function next_angle_setting(angle_setting) {
+	switch (angle_setting) {
+		case ANGLE_MODE_RAD:  return ANGLE_MODE_DEG;
+		case ANGLE_MODE_DEG:  return ANGLE_MODE_GRAD;
+		case ANGLE_MODE_GRAD: return ANGLE_MODE_RAD;
+	}
+	console.error(`Unhandled angle setting ${angle_setting}`);
+}
+
 function init_ui_state() {
 	return {
 		/** "inverse" button, switches buttons e.g sine to arcsine */
@@ -9,7 +22,8 @@ function init_ui_state() {
 		alt_state: false,
 
 		polar_state: false,
-		degree_state: false,
+		//degree_state: false,
+		angle_mode: ANGLE_MODE_RAD,
 
 		show_raw_calc_io_state: false,
 
@@ -71,7 +85,7 @@ function InputToken(token_str, is_unit) {
 
 function get_calcstate(ui_state) {
 	return { polar: ui_state.polar_state,
-	         degree: ui_state.degree_state};
+	         angle_mode: ui_state.angle_mode};
 }
 
 const BTN_ID_TO_GET_TOKEN_FUNC = new Map();
@@ -155,7 +169,8 @@ BTN_ID_TO_GET_TOKEN_FUNC.set("btn_6",      ret_token_factory("6"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sub",    ret_token_factory("-"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_ans",    ret_token_factory("ans"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_pi",     ret_token_factory_w_alt("pi", "z"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_degree", ret_token_factory("o"));
+// ?? I don't think I use this anymore?
+//BTN_ID_TO_GET_TOKEN_FUNC.set("btn_degree", ret_token_factory("o"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_1",      ret_token_factory("1"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_2",      ret_token_factory("2"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_3",      ret_token_factory("3"));
@@ -253,10 +268,11 @@ function update_other_btns(ui) {
 		ui.btn_polar_toggle.innerHTML = "rect";
 	}
 
-	if (!ui.state.degree_state) {
-		ui.btn_degree_toggle.innerHTML = "degree";
-	} else {
-		ui.btn_degree_toggle.innerHTML = "radian";
+	switch (ui.state.angle_mode) {
+		case ANGLE_MODE_RAD:  ui.btn_angle_mode.innerHTML = "radian";  break;
+		case ANGLE_MODE_DEG:  ui.btn_angle_mode.innerHTML = "degree";  break;
+		case ANGLE_MODE_GRAD: ui.btn_angle_mode.innerHTML = "gradian"; break;
+		console.error(`Unhnalded angle mode ${ui.state.angle_mode}`);
 	}
 }
 
@@ -807,9 +823,9 @@ function handle_polar_toggle(ui) {
 	// TODO maybe update the past couple of outputs too?
 }
 
-function handle_degree_toggle(ui) {
-	ui.state.degree_state = !ui.state.degree_state;
-	debug_log("ui", "Toggling degree state to: " + ui.state.degree_state);
+function handle_angle_mode(ui) {
+	ui.state.angle_mode = next_angle_setting(ui.state.angle_mode);
+	debug_log("ui", "Switching to next angle mode: " + ui.state.angle_mode);
 	ui.update_calcstate(get_calcstate(ui.state));
 	update_btns(ui);
 	update_latex_display(ui);
@@ -868,7 +884,7 @@ function init_ui_throws(ui) {
 		{ btn: ui.btn_down,    handler: function (e) { handle_btn_history(ui, 1); } },
 		{ btn: ui.btn_enter,   handler: function (e) { handle_user_enter(ui); } },
 		{ btn: ui.btn_polar_toggle,  handler: function (e) { handle_polar_toggle(ui); } },
-		{ btn: ui.btn_degree_toggle, handler: function (e) { handle_degree_toggle(ui); } },
+		{ btn: ui.btn_angle_mode, handler: function (e) { handle_angle_mode(ui); } },
 	];
 
 	ui.checkbox_show_raw.checked = ui.state.show_raw_calc_io

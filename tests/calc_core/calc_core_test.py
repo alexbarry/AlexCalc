@@ -132,6 +132,13 @@ tests = [
 		( 'getangle(sqrt((3+4j)*(3+4j)))',        math.atan2(4,3)),
 		( 'getangle(-sqrt((3+4j)*-(3+4j)))',      math.atan2(4,3)),
 		( 'getangle(sqrt((3+4j)*(3+4j)))',        math.atan2(4,3)),
+
+		( 'cos(200)', -1, 'gradian'),
+		( 'cos(400)',  1, 'gradian'),
+		( 'sin(100)',  1, 'gradian'),
+		( 'sin(-100)', -1, 'gradian'),
+		( 'asin(1)', 100, 'gradian'),
+		( 'acos(-1)', 200, 'gradian'),
 ]
 
 cursor = '\\text{[]}'
@@ -332,12 +339,16 @@ def run_test(test, cmds):
 	output_err = output_err.decode('utf-8')
 	output = output.decode( 'utf-8' )
 	output = output.split( '\n' )
-	cmd_degree_expected_output = 'Trig input and calc output will now be in degrees'
+	cmd_degree_expected_output  = 'Trig input and calc output will now be in degrees'
+	cmd_gradian_expected_output = 'Trig input and calc output will now be in gradians'
 	for cmd in cmds:
 		output_line = output.pop(0)
 		if cmd == 'degree':
 			if output_line != cmd_degree_expected_output:
 				raise Exception('output_str from :degree did not match expected: %r' % output_line )
+		elif cmd == 'gradian':
+			if output_line != cmd_gradian_expected_output:
+				raise Exception('output_str from :gradian did not match expected: %r' % output_line )
 		else:
 			print('Unsure how to validate cmd %r' % cmd)
 	if len(output) < 2:

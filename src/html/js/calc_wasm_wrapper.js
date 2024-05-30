@@ -107,8 +107,8 @@ function alexcalc_data_state_set(calcdata_ptr, state) {
 	try {
 		let rc = Module.ccall('alexcalc_data_state_set',
 		                      'number',
-		                      ['number', 'number', 'number'],
-		                      [calcdata_ptr, state.polar, state.degree]);
+		                      ['number', 'number', 'string'],
+		                      [calcdata_ptr, state.polar, state.angle_mode]);
 		if (rc == 0) {
 		} else {
 			throw "alexcalc_data_state_set returned " + rc;
