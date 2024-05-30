@@ -14,6 +14,10 @@
 #include "calc_units.h"
 #include "calc_core_exceptions.h"
 
+// If sin/cos/tan return values less in magnitude than this,
+// then round them to zero.
+const calc_float_t TRIG_NEGLIGIBLE_VAL = 1e-15;
+
 typedef val_t (*calc_func_t)(val_t, angle_mode_t angleModeType);
 
 // TODO split into separate file, "unit_input"?
@@ -273,6 +277,14 @@ static val_t convert_angle_inv(val_t arg, angle_mode_t angle_mode) {
 	return convert_angle(arg, angle_mode, true);
 }
 
+static calc_float_t round_to_zero_if_small(calc_float_t arg) {
+	if (abs(arg) < TRIG_NEGLIGIBLE_VAL) {
+		return 0.0;
+	} else {
+		return arg;
+	}
+}
+
 static val_t round_to_zero_if_small(val_t arg) {
 	arg.re = round_to_zero_if_small(arg.re);
 	arg.im = round_to_zero_if_small(arg.im);
@@ -282,17 +294,20 @@ static val_t round_to_zero_if_small(val_t arg) {
 val_t builtin_sin(val_t arg, angle_mode_t angle_mode) {
 	arg = convert_angle(arg, angle_mode);
 	val_t val = re_func(std::sin, arg, "sin(x)");
+	val = round_to_zero_if_small(val);
 	return val;
 }
 
 val_t builtin_cos(val_t arg, angle_mode_t angle_mode) {
 	arg = convert_angle(arg, angle_mode);
 	val_t val = re_func(std::cos, arg, "cos(x)");
+	val = round_to_zero_if_small(val);
 	return val;
 }
 val_t builtin_tan(val_t arg, angle_mode_t angle_mode) {
 	arg = convert_angle(arg, angle_mode);
 	val_t val = re_func(std::tan, arg, "tan(x)");
+	val = round_to_zero_if_small(val);
 	return val;
 }
 
