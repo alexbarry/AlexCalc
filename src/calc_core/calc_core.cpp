@@ -11,6 +11,7 @@
 //#include<complex>
 
 #include "calc_core.h"
+#include "calc_parse.h"
 #include "calc_units.h"
 #include "calc_core_exceptions.h"
 
@@ -278,7 +279,7 @@ static val_t convert_angle_inv(val_t arg, angle_mode_t angle_mode) {
 }
 
 static calc_float_t round_to_zero_if_small(calc_float_t arg) {
-	if (abs(arg) < TRIG_NEGLIGIBLE_VAL) {
+	if (std::abs(arg) < TRIG_NEGLIGIBLE_VAL) {
 		return 0.0;
 	} else {
 		return arg;
@@ -879,7 +880,7 @@ val_t NodeValueRect::get_val(const CalcData *calcData, angle_mode_t angle_mode) 
 	(void)angle_mode;
 	val_t val;
 	unit_t unit = eval_units(calcData, this->input_units);
-	calc_float_t mag = std::atof(this->val_str.c_str());
+	calc_float_t mag = parse_float_w_optional_deg_str(this->val_str);
 	mag *= unit.mag;
 	if (!this->is_imag) {
 		val.re = mag;

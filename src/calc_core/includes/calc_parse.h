@@ -32,6 +32,12 @@ typedef struct {
 	bool parse_wip;
 } parse_params_s;
 
+typedef struct {
+	std::string deg;
+	std::string min;
+	std::string sec;
+} deg_min_sec_s;
+
 
 extern bool debug_collapse;
 
@@ -42,6 +48,9 @@ bool cmd_parse(std::string str_input, std::string *cmd_out, std::string *args);
 
 // Should only be used for adding units to the "recently used units" section.
 bool parse_unit(std::string *str_input, int *input_pos, std::vector<UnitInfoInput> *unit_out);
+
+
+calc_float_t parse_float_w_optional_deg_str(std::string str);
 
 int parse_test_cases(void);
 

@@ -23,6 +23,9 @@ class bcolors:
 	FAIL    = '\033[91m'
 	ENDC    = '\033[0m'
 
+def cos_grad(x):
+	return math.cos(x/200*math.pi)
+
 tests = [
 		( '3.14159',                     3.14159    ),
 		( '1+2*3',                       7          ),
@@ -139,6 +142,21 @@ tests = [
 		( 'sin(-100)', -1, 'gradian'),
 		( 'asin(1)', 100, 'gradian'),
 		( 'acos(-1)', 200, 'gradian'),
+
+		( "200deg",        200.0,             'gradian'),
+		( "200deg0'",      200.0,             'gradian'),
+		( "200deg30'",     200.5,             'gradian'),
+		( "200deg60'",     201.0,             'gradian'),
+		( "200deg30'30''", 200.5 + 0.5/60/60, 'gradian'),
+		( '200deg30\'30"', 200.5 + 0.5/60/60, 'gradian'),
+		( '200deg30\'20"', 200.5 + 20/60/60/60, 'gradian'),
+		( '200deg30\'1"', 200.5 + 1/60/60/60, 'gradian'),
+
+		( 'cos(200)',         cos_grad(200), 'gradian'),
+		( 'cos(200deg)',      cos_grad(200), 'gradian'),
+		( 'cos(200deg0\')',   cos_grad(200), 'gradian'),
+		( "cos(200deg0'0'')", cos_grad(200), 'gradian'),
+		( 'cos(200deg0\'0")', cos_grad(200), 'gradian'),
 ]
 
 cursor = '\\text{[]}'

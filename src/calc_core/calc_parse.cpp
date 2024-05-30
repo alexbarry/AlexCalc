@@ -19,6 +19,8 @@
 // more or less
 #define LITERAL_ANGLES_ENABLED 0
 
+#define VALS_DEG_MIN_SECS_ENABLED 1
+
 // static const char ANGLE_OP_SYMBOL[] = "angle";
 #define ANGLE_OP_SYMBOL "angle"
 
@@ -56,6 +58,18 @@ class ValInfo {
 	ValInfo(void){};
 };
 
+#define FLOAT_PATTERN \
+	/* "-?" */ /* there's unary negative, separate from this */ \
+	"(?:" \
+	"[0-9]+" \
+	"(?:\\.[0-9]+)?"   /* optional decimal */ \
+	"(?:[eE]-?[0-9]+)?" /* optional exponent */ \
+	")"
+
+
+#define DEGREE_PATTERN "deg"
+#define MINUTE_PATTERN "'"
+#define SECOND_PATTERN "(?:(?:'')|(?:\"))"
 
 bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, std::unique_ptr<ValInfo> *val_info_out, const parse_params_s *params)
 {
@@ -63,10 +77,21 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 	                                       "\\s*"
                                           "([ij])?" // optional imaginary unit at the beginning
 	                                       "("
-	                                           // "-?" // there's unary negative, separate from this
-	                                          "[0-9]+"
-	                                          "(\\.[0-9]+)?"   // optional decimal
-	                                          "([eE]-?[0-9]+)?"  // optional exponent
+	                                         "(?:"
+// This one needs to be first, otherwise "deg" is interpreted as a unit
+#if VALS_DEG_MIN_SECS_ENABLED
+	                                             "(?:"
+	                                                 "(?:" FLOAT_PATTERN ")" DEGREE_PATTERN
+	                                                 "\\s*"
+	                                                 // perhaps it shouldn't be possible to omit minutes and include seconds
+	                                                 "(?:" "" FLOAT_PATTERN "" MINUTE_PATTERN ")?"
+	                                                 "\\s*"
+	                                                 "(?:" "" FLOAT_PATTERN "" SECOND_PATTERN ")?"
+	                                             ")"
+	                                             "|"
+#endif
+	                                             "(?:" FLOAT_PATTERN ")"
+	                                         ")"
 	                                       ")"
 	                                       "([ij])?" // optional imaginary unit at the end
 #if LITERAL_ANGLES_ENABLED
@@ -92,16 +117,23 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 		return false;
 	}
 
-	int         match_len   = result.str(0).size();
+	int match_len = result.str(0).size();
 
-	std::string img_unit_prefix = result.str(1);
-	std::string raw_val_str     = result.str(2);
-	// decimal
-	// exponent
-	std::string img_unit_suffix = result.str(5);
+	int group_idx = 1;
+	std::string img_unit_prefix = result.str(group_idx++);
+
+	std::string raw_val_str = result.str(group_idx++);
+	//std::string raw_val_str     = result.str(group_idx++);
+	std::string img_unit_suffix = result.str(group_idx++);
 #if LITERAL_ANGLES_ENABLED
-	std::string angle_suffix    = result.str(6);
+	std::string angle_suffix    = result.str(group_idx++);
 #endif
+
+	if (group_idx != result.size()) {
+		//std::cerr << "regex had " << result.size() << " matched groups, group_idx is " << group_idx << std::endl;
+		std::cerr << "regex had " << result.size() << " matched groups, group_idx is " << group_idx << std::endl;
+		throw new InvalidInputException("internal error: match groups and result size do not match", 0);
+	}
 
 	// if this is true, then the value does not have an angle
 	bool is_rect;
@@ -157,6 +189,72 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 	//std::cout << "Converted val \"" << raw_val_str << "\" to re: " << val->re << ", im: " << val->im << std::endl;
 	return true;
 
+}
+
+static const std::regex val_deg_min_sec_regex(
+	                                             "(?:"
+	                                                 "(" FLOAT_PATTERN ")" DEGREE_PATTERN
+	                                                 "\\s*"
+	                                                 // perhaps it shouldn't be possible to omit minutes and include seconds
+	                                                 "(?:" "(" FLOAT_PATTERN ")" MINUTE_PATTERN ")?"
+	                                                 "\\s*"
+	                                                 "(?:" "(" FLOAT_PATTERN ")" SECOND_PATTERN ")?"
+	                                             ")"
+);
+
+
+static bool is_whitespace_only(const char *s) {
+	while (*s == ' ' || *s == 1) {
+		s++;
+	}
+	//printf("s = %02x; *s == 0: %d\n", *s, *s == 0);
+	return *s == 0;
+}
+
+bool separate_deg_min_sec(std::string str, deg_min_sec_s *output) {
+
+	std::smatch result;
+	bool found = std::regex_search(str, result, val_deg_min_sec_regex);
+	if (!found) {
+		return false;
+	}
+
+	std::string deg_str = result.str(1);
+	std::string min_str = result.str(2);
+	std::string sec_str = result.str(3);
+
+	output->deg = deg_str;
+	output->min = min_str;
+	output->sec = sec_str;
+
+	return true;
+}
+
+calc_float_t parse_float_str(std::string str) {
+	char *ending;
+	calc_float_t val = std::strtod(str.c_str(), &ending);
+	if (is_whitespace_only(ending)) {
+		// good
+		// though it may be cleaner to have the parser remove trailing whitespace
+	} else {
+		//std::cerr << "ending is " << ending << ", expected NULL" << std::endl;
+		throw new InvalidInputException(std::string("Could not convert string to float: \"") + str + "\"", 0);
+	}
+	return val;
+}
+
+calc_float_t parse_float_w_optional_deg_str(std::string str) {
+	//std::cerr << __func__ << " called w str=" << str << std::endl;
+	deg_min_sec_s deg_min_sec;
+	if (separate_deg_min_sec(str, &deg_min_sec)) {
+		//std::cerr << "found deg/min/sec with deg=" << deg_min_sec.deg << ", min=" << deg_min_sec.min << ", sec=" << deg_min_sec.sec << std::endl;
+		calc_float_t val = parse_float_str(deg_min_sec.deg);
+		val += parse_float_str(deg_min_sec.min)/60;
+		val += parse_float_str(deg_min_sec.sec)/60/60;
+		return val;
+	} else {
+		return parse_float_str(str);
+	}
 }
 
 bool parse_unit(std::string *str_input, int *input_pos, std::vector<UnitInfoInput> *unit_out) {
