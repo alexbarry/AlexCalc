@@ -98,11 +98,14 @@ int main(void) {
 					std::cout << "Cursor is now disabled" << std::endl;
 				}
 			} else if (cmd == "degree" || cmd == "deg") {
-				calcData.degree = true;
+				calcData.angle_mode = ANGLE_MODE_DEGREE;
 				std::cout << "Trig input and calc output will now be in degrees" << std::endl;
 			} else if (cmd == "rad" || cmd == "radian") {
-				calcData.degree = false;
+				calcData.angle_mode = ANGLE_MODE_RADIAN;
 				std::cout << "Trig input and calc output will now be in radians" << std::endl;
+			} else if (cmd == "grad" || cmd == "gradian") {
+				calcData.angle_mode = ANGLE_MODE_GRADIAN;
+				std::cout << "Trig input and calc output will now be in gradians" << std::endl;
 			} else if (cmd == "polar") {
 				calcData.polar = true;
 				std::cout << "Calc output will now use polar notation for complex numbers" << std::endl;

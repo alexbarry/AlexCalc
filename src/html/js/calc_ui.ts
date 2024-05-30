@@ -1,5 +1,5 @@
 //import {CalcUi, ui, set_on_tex_ready, calc_ui_unit_sel_set_visible, init_unit_sel, alexcalc_unit_referenced} from './calc_types.js';
-import {CalcUi, CalcUnitSel, CalcParams, InputTokenT, CalcData, CalcState, CalcOutput} from './calc_types.js';
+import {CalcUi, CalcUnitSel, CalcParams, InputTokenT, CalcData, CalcState, CalcOutput, AngleMode} from './calc_types.js';
 import { set_colour_adjuster_pane_visible } from './colour_sel_ui.js';
 
 declare const ui: CalcUi;
@@ -20,17 +20,23 @@ interface Token {
 const ANGLE_OP_SYMBOL = "angle"
 const ENABLE_HYPERBOLIC_TRIG = false;
 
-function init_ui_state() {
+function next_angle_setting(angle_setting: AngleMode): AngleMode {
+	switch (angle_setting) {
+		case AngleMode.RAD:  return AngleMode.DEG;
+		case AngleMode.DEG:  return AngleMode.GRAD;
+		case AngleMode.GRAD: return AngleMode.RAD;
+	}
+	console.error(`Unhandled angle setting ${angle_setting}`);
+}
+
+function init_ui_state(): CalcState {
 	return {
 		/** "inverse" button, switches buttons e.g sine to arcsine */
 		inv_state: false,
 		/** "alternate" button, switches sin to sinh, i (img rect) to angle (img polar) */
 		alt_state: false,
 
-		polar_state: false,
-		degree_state: false,
-
-		show_raw_calc_io_state: false,
+		angle_mode: AngleMode.RAD,
 
 		show_var_display:  false,
 		show_unit_display: false,
@@ -94,7 +100,7 @@ function InputToken(token_str: string, is_unit?: boolean): InputTokenT {
 
 function get_calcstate(ui_state: CalcState): CalcParams {
 	return { polar: ui_state.polar_state,
-	         degree: ui_state.degree_state};
+	         angle_mode: ui_state.angle_mode };
 }
 
 const BTN_ID_TO_GET_TOKEN_FUNC: Map<string, (ui: CalcUi) => Token> = new Map();
@@ -263,7 +269,8 @@ BTN_ID_TO_GET_TOKEN_FUNC.set("btn_6",      ret_token_factory(TOKEN_6));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sub",    ret_token_factory(TOKEN_SUB));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_ans",    ret_token_factory(TOKEN_ANS));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_pi",     ret_token_factory_w_alt(TOKEN_PI, TOKEN_Z));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_degree", ret_token_factory(TOKEN_DEGREE));
+// ?? I don't think I use this anymore?
+//BTN_ID_TO_GET_TOKEN_FUNC.set("btn_degree", ret_token_factory(TOKEN_DEGREE));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_1",      ret_token_factory(TOKEN_1));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_2",      ret_token_factory(TOKEN_2));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_3",      ret_token_factory(TOKEN_3));
@@ -368,16 +375,11 @@ function update_other_btns(ui: CalcUi) {
 		ui.btn_ln.innerHTML   = "e<sup>x</sup>";
 	}
 
-	if (!ui.state.polar_state) {
-		ui.btn_polar_toggle.innerHTML = "polar";
-	} else {
-		ui.btn_polar_toggle.innerHTML = "rect";
-	}
-
-	if (!ui.state.degree_state) {
-		ui.btn_degree_toggle.innerHTML = "degree";
-	} else {
-		ui.btn_degree_toggle.innerHTML = "radian";
+	switch (ui.state.angle_mode) {
+		case AngleMode.RAD:  ui.btn_angle_mode.innerHTML = "radian";  break;
+		case AngleMode.DEG:  ui.btn_angle_mode.innerHTML = "degree";  break;
+		case AngleMode.GRAD: ui.btn_angle_mode.innerHTML = "gradian"; break;
+		console.error(`Unhnalded angle mode ${ui.state.angle_mode}`);
 	}
 }
 
@@ -955,9 +957,9 @@ function handle_polar_toggle(ui: CalcUi) {
 	// TODO maybe update the past couple of outputs too?
 }
 
-function handle_degree_toggle(ui: CalcUi) {
-	ui.state.degree_state = !ui.state.degree_state;
-	debug_log("ui", "Toggling degree state to: " + ui.state.degree_state);
+function handle_angle_mode(ui: CalcUi) {
+	ui.state.angle_mode = next_angle_setting(ui.state.angle_mode);
+	debug_log("ui", "Switching to next angle mode: " + ui.state.angle_mode);
 	ui.update_calcstate(get_calcstate(ui.state));
 	update_btns(ui);
 	update_latex_display(ui);
@@ -1063,7 +1065,7 @@ function init_ui_throws(ui: CalcUi) {
 		{ btn: ui.btn_down,    handler: function (e: Event) { handle_btn_history(ui, 1); } },
 		{ btn: ui.btn_enter,   handler: function (e: Event) { handle_user_enter(ui); } },
 		{ btn: ui.btn_polar_toggle,  handler: function (e: Event) { handle_polar_toggle(ui); } },
-		{ btn: ui.btn_degree_toggle, handler: function (e: Event) { handle_degree_toggle(ui); } },
+		{ btn: ui.btn_angle_mode, handler: function (e: Event) { handle_angle_mode(ui); } },
 	];
 
 	ui.checkbox_show_raw.checked = ui.state.show_raw_calc_io

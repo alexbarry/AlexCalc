@@ -128,11 +128,18 @@ onmessage = function(e) {
 		};
 	} else if (data.msg_type == "calc_state_update") {
 		console.debug("updating calcdata with states: ", data.states);
-		alexcalc_data_state_set(calcdata_ptr, data.states);
-		output_data = {
-			msg_type: data.msg_type,
-			rc: 0,
-		};
+		try {
+			alexcalc_data_state_set(calcdata_ptr, data.states);
+			output_data = {
+				msg_type: data.msg_type,
+				rc: 0,
+			};
+		} catch (e) {
+			output_data = {
+				msg_type: data.msg_type,
+				rc: -1,
+			};
+		}
 	} else if (data.msg_type == "unit_referenced") {
 		let unit_str = data.unit_str;
 		alexcalc_add_recently_used_unit(calcdata_ptr, unit_str);

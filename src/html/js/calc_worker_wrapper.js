@@ -104,7 +104,10 @@ update_display_worker.onmessage = function(e) {
 		//	_calc_worker_state.on_calc_output_ready(data.raw_input, data.latex, data.calc_output);
 		//}
 	} else if (data.msg_type == "calc_state_update") {
-		// do nothing
+		if (data.rc != 0) {
+			// raise error
+			ui.generate_output_msg("Error setting calc state", true);
+		}
 	} else if (data.msg_type == "recently_used_units_update") {
 		console.debug("Updating recently used units: ", data.units);
 		update_recently_used_units(ui.unit_sel, data.units);

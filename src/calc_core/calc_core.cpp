@@ -19,7 +19,7 @@
 // then round them to zero.
 const calc_float_t TRIG_NEGLIGIBLE_VAL = 1e-15;
 
-typedef val_t (*calc_func_t)(val_t, bool degree);
+typedef val_t (*calc_func_t)(val_t, angle_mode_t angleModeType);
 
 // TODO split into separate file, "unit_input"?
 unit_t eval_units(const CalcData *calcData, std::vector<UnitInfoInput> input_units);
@@ -50,20 +50,20 @@ calc_func_t builtin_atan;
 #endif
 
 #if 1
-val_t builtin_log10(val_t, bool);
-val_t builtin_ln(val_t, bool);
-val_t builtin_sqrt(val_t, bool);
-val_t builtin_cbrt(val_t, bool);
-val_t builtin_sin(val_t, bool);
-val_t builtin_cos(val_t, bool);
-val_t builtin_tan(val_t, bool);
-val_t builtin_asin(val_t, bool);
-val_t builtin_acos(val_t, bool);
-val_t builtin_atan(val_t, bool);
-val_t builtin_get_real(val_t, bool);
-val_t builtin_get_imag(val_t, bool);
-val_t builtin_get_abs(val_t, bool);
-val_t builtin_get_angle(val_t, bool);
+val_t builtin_log10(val_t, angle_mode_t);
+val_t builtin_ln(val_t, angle_mode_t);
+val_t builtin_sqrt(val_t, angle_mode_t);
+val_t builtin_cbrt(val_t, angle_mode_t);
+val_t builtin_sin(val_t, angle_mode_t);
+val_t builtin_cos(val_t, angle_mode_t);
+val_t builtin_tan(val_t, angle_mode_t);
+val_t builtin_asin(val_t, angle_mode_t);
+val_t builtin_acos(val_t, angle_mode_t);
+val_t builtin_atan(val_t, angle_mode_t);
+val_t builtin_get_real(val_t, angle_mode_t);
+val_t builtin_get_imag(val_t, angle_mode_t);
+val_t builtin_get_abs(val_t, angle_mode_t);
+val_t builtin_get_angle(val_t, angle_mode_t);
 #endif
 
 static const std::unordered_map<std::string, val_t> CONSTANTS = std::unordered_map<std::string, val_t> {
@@ -145,6 +145,14 @@ int Node::nodes_allocated = 0;
 std::unordered_map<Node*, bool> Node::nodes;
 
 
+std::string angle_mode_to_str(angle_mode_t angle_mode) {
+	switch (angle_mode) {
+		case ANGLE_MODE_RADIAN:  return "radians";
+		case ANGLE_MODE_DEGREE:  return "degrees";
+		case ANGLE_MODE_GRADIAN: return "gradians";
+	}
+}
+
 // The "degree" arugment should only be used for trig functions, I think
 // it's not meant to convert all angles from imaginary numbers to degrees
 // Imaginary numbers' angles will be converted to degrees at the last step
@@ -168,13 +176,13 @@ static calc_float_t round_to_zero_if_small(calc_float_t arg) {
 	}
 }
 
-val_t builtin_log10(val_t arg, bool degree) {
+val_t builtin_log10(val_t arg, angle_mode_t angle_mode) {
 	static const std::string name = "log(x)";
 	if (units_non_zero(arg.unit_dim)) {
 		throw InvalidInputException(std::string("func " + name + " called with units in argument"), 0);
 	}
 
-	(void)degree;
+	(void)angle_mode;
 	calc_float_t mag, angle;
 	rect_to_polar(arg, &mag, &angle);
 	/* TODO allow for a setting to enable this behavior or not
@@ -187,13 +195,13 @@ val_t builtin_log10(val_t arg, bool degree) {
 	return { .re = std::log10(mag), .im = angle, .unit_dim = init_unit_dim() };
 }
 
-val_t builtin_ln(val_t arg, bool degree) {
+val_t builtin_ln(val_t arg, angle_mode_t angle_mode) {
 	static const std::string name = "ln(x)";
 	if (units_non_zero(arg.unit_dim)) {
 		throw InvalidInputException(std::string("func " + name + " called with units in argument"), 0);
 	}
 
-	(void)degree;
+	(void)angle_mode;
 	calc_float_t mag, angle;
 	rect_to_polar(arg, &mag, &angle);
 	/* TODO allow for a setting to enable this behavior or not
@@ -237,13 +245,13 @@ val_t builtin_nth_root(val_t arg, int n) {
 	return result;
 }
 
-val_t builtin_sqrt(val_t arg, bool degree) {
-	(void)degree;
+val_t builtin_sqrt(val_t arg, angle_mode_t angle_mode) {
+	(void)angle_mode;
 	return builtin_nth_root(arg, 2);
 }
 
-val_t builtin_cbrt(val_t arg, bool degree) {
-	(void)degree;
+val_t builtin_cbrt(val_t arg, angle_mode_t angle_mode) {
+	(void)angle_mode;
 	return builtin_nth_root(arg, 3);
 }
 
@@ -259,54 +267,87 @@ val_t re_func(calc_float_t (*func)(calc_float_t), val_t arg, std::string name) {
 	return { .re = func(arg.re), .im = 0, .unit_dim = init_unit_dim() };
 }
 
-val_t builtin_sin(val_t arg, bool degree) {
-	if (degree) {
-		arg.re *= M_PI/180;
+static calc_float_t convert_angle_val(calc_float_t arg, angle_mode_t angle_mode, bool inverse) {
+	if (angle_mode == ANGLE_MODE_RADIAN) {
+	} else if (angle_mode == ANGLE_MODE_DEGREE) {
+		if (!inverse) {
+			arg *= M_PI/180;
+		} else {
+			arg *= 180/M_PI;
+		}
+	} else if (angle_mode == ANGLE_MODE_GRADIAN) {
+		if (!inverse) {
+			arg *= M_PI/200;
+		} else {
+			arg *= 200/M_PI;
+		}
+	} else if (angle_mode == ANGLE_MODE_RADIAN) {
+		// do nothing
+	} else {
+		throw BaseCalcException("unhandled angle_mode");
 	}
+
+	return arg;
+}
+
+static calc_float_t convert_angle_val(calc_float_t arg, angle_mode_t angle_mode) {
+	return convert_angle_val(arg, angle_mode, false);
+}
+
+calc_float_t convert_angle_val_inv(calc_float_t arg, angle_mode_t angle_mode) {
+	return convert_angle_val(arg, angle_mode, true);
+}
+
+
+static val_t convert_angle(val_t arg, angle_mode_t angle_mode, bool inverse) {
+	arg.re = convert_angle_val(arg.re, angle_mode, inverse);
+	arg.im = convert_angle_val(arg.im, angle_mode, inverse);
+	return arg;
+}
+
+static val_t convert_angle(val_t arg, angle_mode_t angle_mode) {
+	return convert_angle(arg, angle_mode, false);
+}
+
+static val_t convert_angle_inv(val_t arg, angle_mode_t angle_mode) {
+	return convert_angle(arg, angle_mode, true);
+}
+
+val_t builtin_sin(val_t arg, angle_mode_t angle_mode) {
+	arg = convert_angle(arg, angle_mode);
 	val_t val = re_func(std::sin, arg, "sin(x)");
 	val.re = round_to_zero_if_small(val.re);
 	return val;
 }
 
-val_t builtin_cos(val_t arg, bool degree) {
-	if (degree) {
-		arg.re *= M_PI/180;
-	}
+val_t builtin_cos(val_t arg, angle_mode_t angle_mode) {
+	arg = convert_angle(arg, angle_mode);
 	val_t val = re_func(std::cos, arg, "cos(x)");
 	val.re = round_to_zero_if_small(val.re);
 	return val;
 }
-val_t builtin_tan(val_t arg, bool degree) {
-	if (degree) {
-		arg.re *= M_PI/180;
-	}
+val_t builtin_tan(val_t arg, angle_mode_t angle_mode) {
+	arg = convert_angle(arg, angle_mode);
 	val_t val = re_func(std::tan, arg, "tan(x)");
 	val.re = round_to_zero_if_small(val.re);
 	return val;
-	
 }
 
-val_t builtin_asin(val_t arg, bool degree) {
+val_t builtin_asin(val_t arg, angle_mode_t angle_mode) {
 	val_t output = re_func(std::asin, arg, "asin(x)");
-	if (degree) {
-		output.re *= 180/M_PI;
-	}
+	output = convert_angle_inv(output, angle_mode);
 	return output;
 }
 
-val_t builtin_acos(val_t arg, bool degree) {
+val_t builtin_acos(val_t arg, angle_mode_t angle_mode) {
 	val_t output = re_func(std::acos, arg, "acos(x)");
-	if (degree) {
-		output.re *= 180/M_PI;
-	}
+	output = convert_angle_inv(output, angle_mode);
 	return output;
 }
 
-val_t builtin_atan(val_t arg, bool degree) {
+val_t builtin_atan(val_t arg, angle_mode_t angle_mode) {
 	val_t output = re_func(std::atan, arg, "atan(x)");
-	if (degree) {
-		output.re *= 180/M_PI;
-	}
+	output = convert_angle_inv(output, angle_mode);
 	return output;
 }
 
@@ -512,7 +553,7 @@ val_t pow_vals( std::vector<val_t> vals ) {
 	return result;
 }
 
-val_t angle_op_func_deg_arg(std::vector<val_t> vals, bool degrees) {
+val_t angle_op_func_deg_arg(std::vector<val_t> vals, angle_mode_t angle_mode) {
 
 	if (vals.size() != 2) {
 		throw InvalidArgCountException( OP_ANGLE, vals.size() );
@@ -534,9 +575,7 @@ val_t angle_op_func_deg_arg(std::vector<val_t> vals, bool degrees) {
 	calc_float_t mag   = base_cmplx.re;
 	calc_float_t angle = angle_cmplx.re;
 
-	if (degrees) {
-		angle *= M_PI/180;
-	}
+	angle = convert_angle_val(angle, angle_mode);
 
 	val_t result;
 	result.re = mag * std::cos(angle);
@@ -546,8 +585,26 @@ val_t angle_op_func_deg_arg(std::vector<val_t> vals, bool degrees) {
 	return result;
 }
 
-val_t angle_op_func_rad(std::vector<val_t> vals)    { return angle_op_func_deg_arg(vals, false); }
-val_t angle_op_func_degree(std::vector<val_t> vals) { return angle_op_func_deg_arg(vals, true);  }
+//val_t angle_op_func_rad(std::vector<val_t> vals)    { return angle_op_func_deg_arg(vals, false); }
+//val_t angle_op_func_degree(std::vector<val_t> vals) { return angle_op_func_deg_arg(vals, true);  }
+
+static val_t angle_op_func_rad(std::vector<val_t> vals)    { return angle_op_func_deg_arg(vals, ANGLE_MODE_RADIAN); }
+static val_t angle_op_func_degree(std::vector<val_t> vals) { return angle_op_func_deg_arg(vals, ANGLE_MODE_DEGREE);  }
+static val_t angle_op_func_grad(std::vector<val_t> vals)   { return angle_op_func_deg_arg(vals, ANGLE_MODE_GRADIAN);  }
+
+typedef val_t (*angle_op_func_t)(std::vector<val_t> vals);
+
+static angle_op_func_t get_angle_op_func(angle_mode_t angle_mode) {
+	switch (angle_mode) {
+		case ANGLE_MODE_RADIAN:  return angle_op_func_rad; 
+		case ANGLE_MODE_DEGREE:  return angle_op_func_degree; 
+		case ANGLE_MODE_GRADIAN: return angle_op_func_grad; 
+	}
+	// TODO define a new internal error exception
+	// TODO fix the way exceptions' memory is allocated, this is a relic from
+	// when I was learning C++ and thought it was like Java
+	throw new InvalidInputException("internal error: unhandled angle mode type", 0);
+}
 
 val_t neg_vals( std::vector<val_t> vals ) {
 
@@ -582,31 +639,29 @@ val_t neg_vals( std::vector<val_t> vals ) {
 }
 
 
-val_t builtin_get_real(val_t arg, bool degrees) {
-	(void)degrees;
+val_t builtin_get_real(val_t arg, angle_mode_t angle_mode) {
+	(void)angle_mode;
 	return { .re = arg.re, .im = 0, .unit_dim = arg.unit_dim };
 }
 
-val_t builtin_get_imag(val_t arg, bool degrees) {
-	(void)degrees;
+val_t builtin_get_imag(val_t arg, angle_mode_t angle_mode) {
+	(void)angle_mode;
 	return { .re = arg.im, .im = 0, .unit_dim = arg.unit_dim };
 }
 
-val_t builtin_get_abs(val_t arg, bool degrees)  {
-	(void)degrees;
+val_t builtin_get_abs(val_t arg, angle_mode_t angle_mode)  {
+	(void)angle_mode;
 	calc_float_t result_mag = 0;
 	calc_float_t result_angle = 0;
 	rect_to_polar(arg, &result_mag, &result_angle);
 	return { .re = result_mag, .im = 0, .unit_dim = arg.unit_dim };
 }
 
-val_t builtin_get_angle(val_t arg, bool degrees) {
+val_t builtin_get_angle(val_t arg, angle_mode_t angle_mode) {
 	calc_float_t result_mag = 0;
 	calc_float_t result_angle = 0;
 	rect_to_polar(arg, &result_mag, &result_angle);
-	if (degrees) {
-		result_angle *= 180/M_PI;
-	}
+	result_angle = convert_angle_val_inv(result_angle, angle_mode);
 	return { .re = result_angle, .im = 0, .unit_dim = init_unit_dim() };
 }
 
@@ -831,7 +886,7 @@ std::string NodeValuePolar::to_string(void) const
 
 
 val_t NodeValue::eval(const CalcData *data) {
-	val_t val = this->get_val(data, data->degree);
+	val_t val = this->get_val(data, data->angle_mode);
 	//unit_t new_unit = eval_units(data, this->input_units);
 	//val.unit_dim = new_unit.dim;
 	//val.re *= new_unit.mag;
@@ -842,8 +897,8 @@ val_t NodeValue::eval(const CalcData *data) {
 #warning TODO why was anyone else calling this besides NodeValue::eval???
 // I think that my original intention was for this to return a unitless
 // value... but I was calling it in node_to_latex for some reason.
-val_t NodeValueRect::get_val(const CalcData *calcData, bool degrees) const {
-	(void)degrees;
+val_t NodeValueRect::get_val(const CalcData *calcData, angle_mode_t angle_mode) const {
+	(void)angle_mode;
 	val_t val;
 	unit_t unit = eval_units(calcData, this->input_units);
 	calc_float_t mag = std::atof(this->val_str.c_str());
@@ -859,14 +914,12 @@ val_t NodeValueRect::get_val(const CalcData *calcData, bool degrees) const {
 	return val;
 }
 
-val_t NodeValuePolar::get_val(const CalcData *calcData, bool degrees) const {
+val_t NodeValuePolar::get_val(const CalcData *calcData, angle_mode_t angle_mode) const {
 	val_t val;
 	unit_t unit = eval_units(calcData, this->input_units);
 	calc_float_t mag   = std::atof(this->mag_str.c_str());
 	calc_float_t angle = std::atof(this->angle_str.c_str());
-	if (degrees) {
-		angle *= M_PI/180;
-	}
+	angle = convert_angle_val(angle, angle_mode);
 	mag *= unit.mag;
 	val.re = mag * std::cos(angle);
 	val.im = mag * std::sin(angle);
@@ -909,7 +962,7 @@ val_t NodeOp::eval(const CalcData *data)
 		case OP_DIV:  func = div_vals;  break;
 		case OP_NEG:  func = neg_vals;  break;
 		case OP_POW:  func = pow_vals;  break;
-		case OP_ANGLE:func = data->degree ? angle_op_func_degree : angle_op_func_rad; break;
+		case OP_ANGLE:func = get_angle_op_func(data->angle_mode); break;
 	
 		default: throw OpNotFoundException( this->op );
 	}
@@ -1086,7 +1139,7 @@ std::string NodeFunc::to_string(void) const {
 val_t NodeFunc::eval(const CalcData *data) {
 	if (CONSTANT_FUNCS.find(this->func_name) != CONSTANT_FUNCS.end()) {
 		calc_func_t func = CONSTANT_FUNCS.at(this->func_name);
-		return func(this->args.at(0)->eval(data), data->degree);
+		return func(this->args.at(0)->eval(data), data->angle_mode);
 	}
 	throw FunctionNotDefinedException(this->func_name);
 }
@@ -1327,6 +1380,7 @@ std::string calc_float_to_str(calc_float_t flt, const struct calc_fmt_params &pa
 }
 
 calc_float_t round_to_zero_if_negligible(calc_float_t compared_to, calc_float_t val) {
+	#warning "combine this function with 'round_to_zero_if_small'?"
 	if (val == 0.0) { return 0.0; }
 	if (compared_to == 0.0) { return val; } 
 	
@@ -1519,8 +1573,8 @@ bool InputInfo::polar(void) const {
 	return this->calcData->polar;
 }
 
-bool InputInfo::degree(void) const {
-	return this->calcData->degree;
+angle_mode_t InputInfo::angle_mode(void) const {
+	return this->calcData->angle_mode;
 }
 
 std::string OutputInfo::to_string(void) const {

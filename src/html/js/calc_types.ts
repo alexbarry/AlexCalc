@@ -1,8 +1,14 @@
+export enum AngleMode {
+	// Note: these strings must match the ones defined in calc_core.h
+	RAD = "radian",
+	DEG = "degree",
+	GRAD = "gradian",
+}
 
 // Passed to the WASM AlexCalc binary
 export interface CalcParams {
 	polar: boolean;
-	degree: boolean;
+	angle_mode: AngleMode;
 }
 
 export interface InputTokenT {
@@ -20,8 +26,8 @@ export interface CalcState {
 	new_var_btns_map: Map<HTMLElement, string>;
 	alt_state: boolean;
 	inv_state: boolean;
+	angle_mode: AngleMode;
 	polar_state: boolean;
-	degree_state: boolean;
 	input_tokens: InputTokenT[];
 	cursor_idx: number;
 
@@ -95,8 +101,8 @@ export interface CalcUi {
 	btn_log: HTMLElement;
 	btn_ln: HTMLElement;
 	btn_sqrt: HTMLElement;
-	btn_degree_toggle: HTMLElement;
 	btn_polar_toggle: HTMLElement;
+	btn_angle_mode: HTMLElement;
 	btn_var1: HTMLElement;
 	btn_pi: HTMLElement;
 	btn_e: HTMLElement;
