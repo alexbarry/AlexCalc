@@ -1,5 +1,5 @@
 //import {CalcUi, ui, set_on_tex_ready, calc_ui_unit_sel_set_visible, init_unit_sel, alexcalc_unit_referenced} from './calc_types.js';
-import {CalcUi, CalcUnitSel, CalcParams, InputTokenT, CalcData, CalcState, CalcOutput, AngleMode} from './calc_types.js';
+import {CalcUi, CalcUnitSel, CalcParams, InputTokenT, CalcData, CalcState, CalcOutput, AngleMode, AngleDegMinSec, DEG_MIN_SEC_TOKENS} from './calc_types.js';
 import { set_colour_adjuster_pane_visible } from './colour_sel_ui.js';
 
 declare const ui: CalcUi;
@@ -20,6 +20,8 @@ interface Token {
 const ANGLE_OP_SYMBOL = "angle"
 const ENABLE_HYPERBOLIC_TRIG = false;
 
+const INIT_DEG_MIN_SEC_SYMBOL = AngleDegMinSec.DEG;
+
 function next_angle_setting(angle_setting: AngleMode): AngleMode {
 	switch (angle_setting) {
 		case AngleMode.RAD:  return AngleMode.DEG;
@@ -27,6 +29,30 @@ function next_angle_setting(angle_setting: AngleMode): AngleMode {
 		case AngleMode.GRAD: return AngleMode.RAD;
 	}
 	console.error(`Unhandled angle setting ${angle_setting}`);
+}
+
+function next_deg_min_sec(degree_min_sec: AngleDegMinSec, cycle: boolean): AngleDegMinSec {
+	switch(degree_min_sec) {
+		case AngleDegMinSec.DEG: return AngleDegMinSec.MIN;
+		case AngleDegMinSec.MIN: return AngleDegMinSec.SEC;
+
+		case AngleDegMinSec.SEC:
+			if (!cycle) {
+				return AngleDegMinSec.SEC;
+			} else {
+				return AngleDegMinSec.DEG;
+			}
+	}
+	throw new Error(`Unhandled deg_min_sec setting ${degree_min_sec}`);
+}
+
+function degree_min_sec_to_token(val: AngleDegMinSec): Token {
+	switch (val) {
+		case AngleDegMinSec.DEG: return TOKEN_DEG;
+		case AngleDegMinSec.MIN: return TOKEN_MIN;
+		case AngleDegMinSec.SEC: return TOKEN_SEC;
+	}
+	throw new Error(`Unhandled degree_min_sec setting ${val}`);
 }
 
 function init_ui_state(): CalcState {
@@ -37,6 +63,9 @@ function init_ui_state(): CalcState {
 		alt_state: false,
 
 		angle_mode: AngleMode.RAD,
+		polar_state: false,
+
+		degree_min_sec: INIT_DEG_MIN_SEC_SYMBOL,
 
 		show_var_display:  false,
 		show_unit_display: false,
@@ -103,7 +132,7 @@ function get_calcstate(ui_state: CalcState): CalcParams {
 	         angle_mode: ui_state.angle_mode };
 }
 
-const BTN_ID_TO_GET_TOKEN_FUNC: Map<string, (ui: CalcUi) => Token> = new Map();
+const BTN_ID_TO_GET_TOKEN_FUNC: Map<string, (ui: CalcUi) => Token|null> = new Map();
 
 function ret_token_factory(token: Token): (ui: CalcUi) => Token {
 	return function(ui) { return token; }
@@ -245,6 +274,11 @@ const TOKEN_ASINH    = { str : "asinh(",        type : TokenType.FUNC_CALL };
 const TOKEN_ACOSH    = { str : "acosh(",        type : TokenType.FUNC_CALL };
 const TOKEN_ATANH    = { str : "atanh(",        type : TokenType.FUNC_CALL };
 
+// TODO should these be digits?
+const TOKEN_DEG      = { str : "deg",           type : TokenType.DIGIT };
+const TOKEN_MIN      = { str : "'",             type : TokenType.DIGIT };
+const TOKEN_SEC      = { str : "''",            type : TokenType.DIGIT };
+
 
 
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_log",    ret_token_factory_w_inv(TOKEN_LOG10, TOKEN_10_POW));
@@ -262,6 +296,7 @@ BTN_ID_TO_GET_TOKEN_FUNC.set("btn_8",      ret_token_factory(TOKEN_8));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_9",      ret_token_factory(TOKEN_9));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_mult",   ret_token_factory(TOKEN_MULT));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_var1",   ret_token_factory_w_alt(TOKEN_VAR_X, TOKEN_VAR_Y));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_deg_min_sec", btn_deg_min_sec_handler);
 //BTN_ID_TO_GET_TOKEN_FUNC.set("btn_var2",   var_token_factory(2));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_4",      ret_token_factory(TOKEN_4));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_5",      ret_token_factory(TOKEN_5));
@@ -284,6 +319,34 @@ BTN_ID_TO_GET_TOKEN_FUNC.set("btn_exp",    ret_token_factory(TOKEN_EXP));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sin",    get_trig_token("sin"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_cos",    get_trig_token("cos"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_tan",    get_trig_token("tan"));
+
+function is_degree_min_sec_token(token: InputTokenT|null): boolean {
+	return token != null && DEG_MIN_SEC_TOKENS.has(token.str);
+}
+
+function btn_deg_min_sec_handler(ui: CalcUi): Token | null {
+	const prev_token = get_prev_input_token(ui);
+	console.log("btn_deg_min_sec_handler, prev_token=", prev_token);
+	if (ui.state.angle_mode != AngleMode.GRAD && 
+	    ui.state.angle_mode != AngleMode.DEG) {
+		ui.generate_output_msg("To insert degree/minute/second indicators, calculator must be in gradians or degrees mode. Press the button that says 'radian' until it says 'degree' or 'gradian'", true);
+		return null;
+	} else if (is_degree_min_sec_token(prev_token)) {
+		console.debug("Replacing prev degree/min/sec input token since button was pressed repeatedly");
+		//let new_deg_min_sec_token = InputToken(ui.state.degree_min_sec, false);
+		//replace_prev_input_token(ui, new_deg_min_sec_token);
+		//return "";
+
+		remove_prev_input_token(ui);
+		const deg_min_sec = ui.state.degree_min_sec;
+		ui.state.degree_min_sec = next_deg_min_sec(ui.state.degree_min_sec, true);
+		return degree_min_sec_to_token(deg_min_sec);
+	} else {
+		const deg_min_sec = ui.state.degree_min_sec;
+		ui.state.degree_min_sec = next_deg_min_sec(ui.state.degree_min_sec, false);
+		return degree_min_sec_to_token(deg_min_sec);
+	}
+}
 
 
 function debug_log(type: string, msg: string) {
@@ -343,6 +406,11 @@ function update_trig_btns(ui: CalcUi) {
 	
 }
 
+function deg_min_sec_to_btn_text(deg_min_sec_symbol: AngleDegMinSec): string {
+	if (deg_min_sec_symbol == AngleDegMinSec.DEG) { return "&deg;" }
+	else { return deg_min_sec_symbol; }
+}
+
 function update_other_btns(ui: CalcUi) {
 	if (!ui.state.alt_state) {
 		ui.btn_img_unit.innerHTML = "i";
@@ -381,6 +449,8 @@ function update_other_btns(ui: CalcUi) {
 		case AngleMode.GRAD: ui.btn_angle_mode.innerHTML = "gradian"; break;
 		console.error(`Unhnalded angle mode ${ui.state.angle_mode}`);
 	}
+
+	ui.btn_deg_min_sec.innerHTML = deg_min_sec_to_btn_text(ui.state.degree_min_sec);
 }
 
 function update_var_btns(ui: CalcUi) {
@@ -496,7 +566,9 @@ function handle_normal_btn(ui: CalcUi, e: MouseEvent) {
 		throw new Error(`token func undefined for ${id}`);
 	}
 	let token = token_func(ui);
-	btn_token_pressed(ui, token);
+	if (token != null) {
+		btn_token_pressed(ui, token);
+	}
 }
 
 function btn_token_pressed(ui: CalcUi, token: Token, needs_mult?: boolean) {
@@ -505,6 +577,11 @@ function btn_token_pressed(ui: CalcUi, token: Token, needs_mult?: boolean) {
 	update_input_textarea(ui);
 	ui.state.alt_state = false;
 	ui.state.inv_state = false;
+
+	if (!token_is_num(token.str)) {
+		ui.state.degree_min_sec = INIT_DEG_MIN_SEC_SYMBOL;
+	}
+
 	update_btns(ui);
 }
 
@@ -535,8 +612,9 @@ function handle_btn_clear(ui: CalcUi) {
 		ui.clear_output_display();
 		ui.state.alt_state = false;
 		ui.state.inv_state = false;
-		update_btns(ui);
 	}
+	ui.state.degree_min_sec = INIT_DEG_MIN_SEC_SYMBOL;
+	update_btns(ui);
 }
 
 function handle_btn_bksp(ui: CalcUi) {
@@ -554,6 +632,8 @@ function handle_btn_bksp(ui: CalcUi) {
 function handle_user_enter(ui: CalcUi) {
 	history_entry_add(ui, ui.state.input_tokens.slice());
 	let raw_input = ui.input_text.value;
+	ui.state.degree_min_sec = INIT_DEG_MIN_SEC_SYMBOL;
+	update_btns(ui);
 	//set_on_calc_output_ready(function (raw_input, latex, calc_output) {
 	let callback = function (raw_input: string, latex: string, calc_output: CalcOutput, calcdata: CalcData) {
 		calc_output_ready(ui, raw_input, latex, calc_output, calcdata);
@@ -783,16 +863,31 @@ function handle_new_var_btn_pressed(ui: CalcUi, btn: HTMLElement) {
 	update_insert_var_btn_enabled_state(ui);
 }
 
-function insert_new_input_token(ui: CalcUi, token: Token, needs_mult?: boolean, token_is_unit?: boolean) {
-	let token_str = token.str;
-	console.debug("insert_new_input_token ", token, "needs_mult = ", needs_mult, "token_is_unit =", token_is_unit);
-	let prev_token = null;
+function get_prev_input_token(ui: CalcUi): InputTokenT | null {
 	if (ui.state.input_tokens.length > 0) { 
 		let i = ui.state.cursor_idx - 1;
 		if (i >= 0) {
-			prev_token = ui.state.input_tokens[i];
+			return ui.state.input_tokens[i];
 		};
 	}
+
+	return null;
+}
+
+function remove_prev_input_token(ui: CalcUi) {
+	if (ui.state.input_tokens.length > 0) { 
+		let i = ui.state.cursor_idx - 1;
+		if (i >= 0) {
+			ui.state.input_tokens.splice(i, 1);
+			ui.state.cursor_idx -= 1;
+		};
+	}
+}
+
+function insert_new_input_token(ui: CalcUi, token: Token, needs_mult?: boolean, token_is_unit?: boolean) {
+	let token_str = token.str;
+	console.debug("insert_new_input_token ", token, "needs_mult = ", needs_mult, "token_is_unit =", token_is_unit);
+	let prev_token = get_prev_input_token(ui);
 	if (prev_token != null && needs_mult == undefined) {
 		// TODO this is bad if you move the cursor and delete the thing before one of these.
 		// should probably make them separate tokens. At least add a setting for this
@@ -877,6 +972,7 @@ function ans_token() {
 
 function token_is_num(token: null|string) {
 	if (token == null || token.length == 0) { return false; }
+	if (DEG_MIN_SEC_TOKENS.has(token)) { return true; }
 	return /^(\*)?[0-9E]$/.test(token);
 }
 
@@ -957,9 +1053,20 @@ function handle_polar_toggle(ui: CalcUi) {
 	// TODO maybe update the past couple of outputs too?
 }
 
+function get_angle_mode_msg(angle_mode: AngleMode): string {
+	let output = `Angle mode is now \"${angle_mode}\": `;
+	switch (angle_mode) {
+		case AngleMode.RAD: output  += "cos(2*pi) = 1"; break;
+		case AngleMode.DEG: output  += "cos(360) = 1";  break;
+		case AngleMode.GRAD: output += "cos(400) = 1"; break;
+	}
+	return output;
+}
+
 function handle_angle_mode(ui: CalcUi) {
 	ui.state.angle_mode = next_angle_setting(ui.state.angle_mode);
 	debug_log("ui", "Switching to next angle mode: " + ui.state.angle_mode);
+	ui.generate_output_msg(get_angle_mode_msg(ui.state.angle_mode), false);
 	ui.update_calcstate(get_calcstate(ui.state));
 	update_btns(ui);
 	update_latex_display(ui);

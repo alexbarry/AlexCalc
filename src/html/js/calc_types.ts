@@ -5,10 +5,24 @@ export enum AngleMode {
 	GRAD = "gradian",
 }
 
+export enum AngleDegMinSec {
+	DEG = "deg",
+	MIN = "'",
+	SEC = "''",
+}
+
+// TODO replace with keyof or something
+export const DEG_MIN_SEC_TOKENS: Set<String> = new Set([
+	AngleDegMinSec.DEG,
+	AngleDegMinSec.MIN,
+	AngleDegMinSec.SEC,
+]);
+
 // Passed to the WASM AlexCalc binary
 export interface CalcParams {
 	polar: boolean;
 	angle_mode: AngleMode;
+	polar: boolean;
 }
 
 export interface InputTokenT {
@@ -26,6 +40,8 @@ export interface CalcState {
 	new_var_btns_map: Map<HTMLElement, string>;
 	alt_state: boolean;
 	inv_state: boolean;
+	polar_state: boolean;
+	degree_min_sec: AngleDegMinSec;
 	angle_mode: AngleMode;
 	polar_state: boolean;
 	input_tokens: InputTokenT[];
@@ -103,6 +119,7 @@ export interface CalcUi {
 	btn_sqrt: HTMLElement;
 	btn_polar_toggle: HTMLElement;
 	btn_angle_mode: HTMLElement;
+	btn_deg_min_sec: HTMLElement;
 	btn_var1: HTMLElement;
 	btn_pi: HTMLElement;
 	btn_e: HTMLElement;
