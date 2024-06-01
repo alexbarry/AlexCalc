@@ -805,6 +805,9 @@ std::vector<Node*> NodeOp::get_children(void) const {
 	return this->children;
 }
 
+int Node::get_cursor_adjustment(int cursor_pos) const {
+	return 0;
+}
 
 
 std::string Node::to_string(void) const
@@ -1143,6 +1146,28 @@ std::string NodeWipToken::to_string(void) const {
 	       "units: " + input_units_to_string(this->wip_units) +
 	       std::string("\")");
 }
+
+int NodeWipToken::get_cursor_adjustment(int cursor_pos) const {
+	if (orig_str_pieces.size() != new_str_pieces.size()) {
+		std::cerr << __func__ << " orig_str_pieces size != new_str_pieces size! " << orig_str_pieces.size() << ", " << new_str_pieces.size() << std::endl;
+		return 0;
+	}
+
+	// TODO I'm not sure how this should work. I think you'll need to call this for all previous
+	// nodes, not just if the cursor is in it.
+	int prev_start = 0;
+	int prev_new_start = 0;
+	for (int i=0; i<orig_str_pieces.size(); i++) {
+		std::cout << "[debug] " << __func__ << "orig=" << orig_str_pieces[i] << ", new=" << new_str_pieces[i] << std::endl;
+		prev_start     += orig_str_pieces[i].size();
+		prev_new_start += new_str_pieces[i].size();
+		if (cursor_pos <= prev_start) {
+			return prev_new_start - prev_start;
+		}
+	}
+	return prev_new_start - prev_start;
+}
+
 
 val_t NodeWipToken::eval(const CalcData *data) {
 	throw new BaseCalcException("tried to evaluate wip token");

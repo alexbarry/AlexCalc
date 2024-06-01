@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <cmath>
 
+#include "calc_parse.h"
 #include "node_to_latex.h"
 
 // I find the regular math "-" to be way too wide for negativity,
@@ -27,7 +28,7 @@ static const std::string latex_degree  = "^\\circ";
 static const std::string latex_gradian = "^\\circ\\text{grad}";
 
 std::string raw_node_to_latex(Node *n, const InputInfo *info);
-std::string insert_cursor(std::string str, int cursor_pos);
+std::string insert_cursor(std::string str, int cursor_pos, bool wrap_in_text=true);
 std::string input_units_to_latex(const CalcData *calcData,
                                  const std::vector<UnitInfoInput> *input_units);
 
@@ -428,6 +429,10 @@ std::string val_to_latex_rect(const val_t *val_arg, const struct calc_fmt_params
 	}
 }
 
+std::string wrap_text(std::string arg) {
+	return "\\text{" + arg + "}";
+}
+
 // TODO show units?
 std::string val_to_latex_polar(const val_t *val_arg,
                                const struct calc_fmt_params &params,
@@ -484,18 +489,18 @@ std::string unit_info_to_latex(const UnitInfoParsed &unit_info,
 		    cursor_pos <= unit_pos_info->base_unit_end_pos + 1) {
 			output = insert_cursor(prefix + base, cursor_pos - unit_pos_info->base_unit_start_pos);
 		} else {
-			output = "\\text{" + prefix + base + "}";
+			output = wrap_text(prefix + base);
 		}
 	} else {
 #warning "TODO handle cursor in units with special prefixes/base units"
 		if (prefix_is_text) {
-			output += "\\text{" + prefix + "}";
+			output += wrap_text(prefix);
 		} else {
 			output += prefix;
 		}
 
 		if (base_is_text) {
-			output += "\\text{" + base + "}";
+			output += wrap_text(base);
 		} else {
 			output += base;
 		}
@@ -512,7 +517,7 @@ std::string raw_unit_piece_to_latex(const std::string base, int pow) {
 	if (pow == 0) {
 		return "";
 	} else if (pow == 1) {
-		return "\\text{" + base + "}";
+		return wrap_text(base);
 	} else {
 		std::string pow_str;
 		if (pow < 0) {
@@ -520,7 +525,7 @@ std::string raw_unit_piece_to_latex(const std::string base, int pow) {
 		} else {
 			pow_str = std::to_string(pow);
 		}
-		return "\\text{" + base + "}" + "^" + surround_str_in_braces_if_len_gt1(pow_str);
+		return wrap_text(base) + "^" + surround_str_in_braces_if_len_gt1(pow_str);
 	}
 }
 
@@ -602,7 +607,7 @@ std::string input_unit_base_to_latex(const CalcData *calcData,
 		    cursor_pos <= unit_pos_info->base_unit_end_pos+1) {
 			return insert_cursor(unit_str, cursor_pos - unit_pos_info->base_unit_start_pos);
 		} else {
-			return "\\text{" + unit_str + "}";
+			return wrap_text(unit_str);
 		}
 	}
 }
@@ -645,7 +650,7 @@ std::string input_units_to_latex(const CalcData *calcData,
 					int cursor_offset = cursor_pos - unit_cursor_info->pow_val_start_pos;
 					pow_str = "{" + insert_cursor(input_unit.pow_wip_str, cursor_offset) + "}";
 				} else {
-					pow_str = "\\text{" + input_unit.pow_wip_str + "}";
+					pow_str = wrap_text(input_unit.pow_wip_str);
 				}
 			} else {
 				pow_str = "\\square";
@@ -697,6 +702,7 @@ static std::string int_to_latex_str(int val) {
 // the reverse
 static std::string format_inputted_val_latex(std::string val_str, bool is_imag, bool *needs_bracks_out) {
 	*needs_bracks_out = false;
+	//std::cout << __func__ << ": val_str = \"" << val_str << "\"" << std::endl;
 
 	std::string mag_str = get_mag_no_exp_str(val_str);
 	int pow             = get_pow_exp_str(val_str);
@@ -715,6 +721,34 @@ static std::string format_inputted_val_latex(std::string val_str, bool is_imag, 
 	}
 }
 
+static std::string format_inputted_val_latex_opt_deg_min_sec(std::string val_str, bool is_imag, bool *needs_bracks_out) {
+	deg_min_sec_s deg_min_sec_info;
+	const std::string latex_minute = "'";
+	const std::string latex_second = "''";
+	
+	//const std::string latex_minute = "^\\prime";
+	//const std::string latex_second = "^\\prime^\\prime";
+
+	if (separate_deg_min_sec(val_str, &deg_min_sec_info)) {
+		bool needs_bracks_any = false;
+		std::string output = format_inputted_val_latex(deg_min_sec_info.deg, is_imag, &needs_bracks_any) + "^\\circ";
+		if (deg_min_sec_info.min.size() > 0) {
+			bool needs_bracks_min;
+			output += " " + format_inputted_val_latex(deg_min_sec_info.min, is_imag, &needs_bracks_min) + latex_minute;
+			needs_bracks_any |= needs_bracks_min;
+		}
+		if (deg_min_sec_info.sec.size() > 0) {
+			bool needs_bracks_sec;
+			output += " " + format_inputted_val_latex(deg_min_sec_info.sec, is_imag, &needs_bracks_sec) + latex_second;
+			needs_bracks_any |= needs_bracks_sec;
+		}
+		*needs_bracks_out = needs_bracks_any;
+		return output;
+	} else {
+		return format_inputted_val_latex(val_str, is_imag, needs_bracks_out);
+	}
+}
+
 std::string val_node_rect_to_latex(const CalcData *calcData,
                                    const NodeValueRect *node_val_rect,
                                    const struct calc_fmt_params &params) {
@@ -722,7 +756,7 @@ std::string val_node_rect_to_latex(const CalcData *calcData,
 	std::string unit_str = input_units_to_latex(calcData, &node_val_rect->input_units);
 	//std::string output   = val_to_latex_rect(&val, params, unit_str.size() > 0);
 	bool needs_bracks = false;
-	std::string output = format_inputted_val_latex(node_val_rect->val_str, node_val_rect->is_imag, &needs_bracks);
+	std::string output = format_inputted_val_latex_opt_deg_min_sec(node_val_rect->val_str, node_val_rect->is_imag, &needs_bracks);
 	if (unit_str.size() > 0) {
 		output += "\\," + unit_str;
 	}
@@ -737,7 +771,7 @@ std::string val_node_polar_to_latex(const CalcData *calcData,
                                     const NodeValuePolar *node_polar_rect,
                                     const struct calc_fmt_params &params) {
 	// TODO format strings with params
-	std::string mag_str   = "\\text{" + node_polar_rect->mag_str + "}";
+	std::string mag_str   = wrap_text(node_polar_rect->mag_str);
 	std::string angle_str = node_polar_rect->angle_str;
 	angle_str += get_angle_indicator(calcData->angle_mode);
 	std::string output = mag_str + " \\measuredangle " + angle_str;
@@ -802,7 +836,16 @@ std::string func_call_to_latex(NodeFunc *func_node, const InputInfo *info, bool 
 	}
 }
 
-std::string insert_cursor(std::string str, int cursor_pos) {
+std::string wrap_in_text_or_braces(std::string arg, bool wrap_in_text) {
+	if (wrap_in_text) {
+		return wrap_text(arg);
+	} else {
+		//return surround_str_in_braces_if_len_gt1(arg);
+		return arg;
+	}
+}
+
+std::string insert_cursor(std::string str, int cursor_pos, bool wrap_in_text) {
 	if (cursor_pos < 0) {
 		throw new BaseCalcException(std::string("cursor pos < 0 in ") + __func__);
 	}
@@ -811,7 +854,8 @@ std::string insert_cursor(std::string str, int cursor_pos) {
 	}
 
 	if (cursor_pos == str.size()) {
-		return "\\text{" + str + "}" + cursor_latex;
+		std::string output =  wrap_in_text_or_braces(str, wrap_in_text) + cursor_latex;
+		return output;
 	}
 
 	std::string l_str = str.substr(0, cursor_pos);
@@ -820,16 +864,24 @@ std::string insert_cursor(std::string str, int cursor_pos) {
 	std::string output = "";
 
 	if (l_str.size() > 0) {
-		output += "\\text{" + l_str + "}";
+		output += wrap_in_text_or_braces(l_str, wrap_in_text);
 	}
 
 	output += cursor_latex;
 
 	if (r_str.size() > 0) {
-		output += "\\text{" + r_str + "}";
+		output += wrap_in_text_or_braces(r_str, wrap_in_text);
 	}
 
 	return output;
+}
+
+bool is_numeric_only(std::string arg) {
+	// TODO TODO TODO
+	// partial_float_pattern = -?[ij][0-9]+(?:\.[0-9]*)?(?:[eE]-?[0-9]*)?[ij]
+	// check for exact matches to partial_float_pattern or the
+	// partial_float_pattern followed by partially complete "deg", then the pattern with ' and '' or "
+	return false;
 }
 
 std::string wip_token_to_latex(const NodeWipToken *wip_token, const InputInfo *info) {
@@ -845,9 +897,15 @@ std::string wip_token_to_latex(const NodeWipToken *wip_token, const InputInfo *i
 	bool inserted_cursor = false;
 	bool inserted_cursor_at_end = false;
 	bool no_whitespace_between_val_and_unit = false;
+	const bool wrap_in_text = !is_numeric_only(wip_token->wip_token);
 	if (info->cursor_node == wip_token && cursor_info->base_contains_pos(info->cursor_pos)) {
 		int cursor_offset =  info->cursor_pos - cursor_info->base_val_start_pos;
-		output = insert_cursor(wip_token->wip_token, cursor_offset);
+		// TODO TODO 2024-05-31 call some generic adjustment function for cases where the
+		// string is adjusted (e.g. "deg" replaced with "^\circ")
+		int cursor_adjustment = info->cursor_node->get_cursor_adjustment(info->cursor_pos);
+		//std::cout << "cursor_adjustment computed to: " << cursor_adjustment << std::endl;
+		cursor_offset += cursor_adjustment;
+		output = insert_cursor(wip_token->wip_token, cursor_offset, wrap_in_text);
 
 		inserted_cursor = true;
 		if (cursor_offset == cursor_info->base_val_end_pos+1) {
@@ -859,7 +917,11 @@ std::string wip_token_to_latex(const NodeWipToken *wip_token, const InputInfo *i
 			no_whitespace_between_val_and_unit = true;
 		}
 	} else {
-		output = "\\text{" + wip_token->wip_token + "}";
+		if (wrap_in_text) {
+			output = wrap_text(wip_token->wip_token);
+		} else {
+			output = wip_token->wip_token;
+		}
 	}
 
 #if 0

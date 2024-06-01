@@ -407,12 +407,19 @@ std::vector<Node*> parse_func_args(std::string func_args_str, int start_pos, Inp
 	return args;
 }
 
+class wip_valvar_token_info {
+	public:
+	std::vector<std::string> orig_pieces;
+	std::vector<std::string> new_pieces;
+};
+
 bool parse_wip_valvar_token(std::string *str_input,
                             int *input_pos,
                             std::string *wip_token_out,
                             std::string *wip_angle_out,
                             std::vector<UnitInfoInput> *wip_units_out,
-                            WipValVarTokenCursorPos *cursor_pos_info_out) {
+                            WipValVarTokenCursorPos *cursor_pos_info_out,
+                            class wip_valvar_token_info *token_info_out) {
 
 
 // TODO share this with parse_unit
@@ -429,11 +436,14 @@ bool parse_wip_valvar_token(std::string *str_input,
 	static const std::regex wip_token_regex( "^"
 	                                       "\\s*"
 	                                       "("
+	                                        "(?:"
 	                                          "[ij]?"
 	                                          "[0-9]+"
 	                                          "\\.?[0-9]*"
 	                                          "(?:[eE]-?[0-9]*)?"
 	                                          "[ij]?"
+	                                          "(?:(?:deg)|(?:(?:'')|(?:['\"])))?"
+	                                        ")+"
 	                                       ")" 
 #if LITERAL_ANGLES_ENABLED
 	                                       "(" // optional angle at end if followed by "angle<angle>"
@@ -479,6 +489,27 @@ bool parse_wip_valvar_token(std::string *str_input,
 	#error "add angle cursor pos info"
 #endif
 	std::string whitespace_between_val_and_unit = result.str(2);
+
+#if 1
+	// TODO replace with regex search, to match only whole word \<deg\>, so if it
+	// is part of a variable then it won't match
+	std::string find_str = "deg";
+	std::string repl_str = "^\\circ";
+	auto deg_idx = wip_token_str.find(find_str);
+	if (deg_idx != std::string::npos) {
+		wip_token_str.replace(deg_idx, find_str.size(), repl_str);
+		std::string l_part = wip_token_str.substr(0,deg_idx);
+		std::string r_part = wip_token_str.substr(deg_idx + find_str.size());
+		token_info_out->orig_pieces.push_back(l_part);
+		token_info_out->orig_pieces.push_back(find_str);
+		token_info_out->orig_pieces.push_back(r_part);
+
+		token_info_out->new_pieces.push_back(l_part);
+		token_info_out->new_pieces.push_back(repl_str);
+		token_info_out->new_pieces.push_back(r_part);
+	}
+#endif
+
 	//std::string wip_units_str = result.str(3);
 	cursor_pos_info_out->base_val_start_pos = *input_pos;
 	cursor_pos_info_out->base_val_end_pos   = *input_pos + wip_token_str.size() - 1;
@@ -541,6 +572,13 @@ bool parse_wip_valvar_token(std::string *str_input,
 
 
 void handle_cursor_node(int prev_pos, int current_pos, Node *node, InputInfo *info_out, const parse_params_s *params) {
+#if 0
+	std::string node_str_debug = "(node is null)";
+	if (node) {
+		node_str_debug = node->to_string();
+	}
+	std::cout << "[debug] " << __func__ << node_str_debug << std::endl;
+#endif
 	if (params->parse_wip) {
 		if (prev_pos <= params->cursor_pos &&
 		    //params->cursor_pos < current_pos) {
@@ -557,16 +595,39 @@ void handle_cursor_node(int prev_pos, int current_pos, Node *node, InputInfo *in
 	
 }
 
+static std::string replace_str(std::string s, std::string arg_find, std::string arg_replace) {
+	size_t idx = s.find(arg_find);
+	if (idx != std::string::npos) {
+		s.replace(idx, arg_find.length(), arg_replace);
+	}
+	return s;
+}
+
 bool parse_non_op( std::string *str_input, int *input_pos, Node** n_out, InputInfo *info_out, const parse_params_s *params) {
+	// NOTE: this is checked if it is null later.
+	// This is ugly and can cause nasty bugs if dereferenced when it doesn't point to a valid
+	// node. TODO refactor
+	*n_out = nullptr;
 	if (params->parse_wip) {
 		std::string wip_token, wip_angle;
 		//int prev_pos = *input_pos;
 		//bool found_cursor = false;
 		auto cursor_pos_info = std::unique_ptr<WipValVarTokenCursorPos>(new WipValVarTokenCursorPos());
 		std::vector<UnitInfoInput> wip_units;
-		bool found_val = parse_wip_valvar_token(str_input, input_pos, &wip_token, &wip_angle, &wip_units, cursor_pos_info.get());
+		class wip_valvar_token_info token_info;
+		bool found_val = parse_wip_valvar_token(str_input, input_pos, &wip_token, &wip_angle, &wip_units, cursor_pos_info.get(), &token_info);
 		if (found_val) {
-			*n_out = new NodeWipToken(wip_token, wip_angle, wip_units);
+			// TODO TODO TODO 2024-05-30 left off here...
+			// I think this is the last thing that needs to be fixed before it's done.
+			//
+			// TODO need to figure out how to replace "45deg..." with "45^\circ"
+			// I forget how the text cursor works...
+			//wip_token = replace_str(wip_token, "deg", "}^\\circ\\text{");
+			(void)replace_str;
+			NodeWipToken *node_wip_token = new NodeWipToken(wip_token, wip_angle, wip_units);
+			node_wip_token->orig_str_pieces = token_info.orig_pieces;
+			node_wip_token->new_str_pieces  = token_info.new_pieces;
+			*n_out = node_wip_token;
 			bool cursor_in_node = cursor_pos_info->contains_pos(params->cursor_pos);
 			if (cursor_in_node) {
 				info_out->cursor_node = *n_out;
@@ -1051,7 +1112,7 @@ void calc_parse_throws(std::list<Node*> *node_list,
 			any_found = true;
 		}
 
-		Node *non_op_node;
+		Node *non_op_node = nullptr;
 		bool found_non_op = parse_non_op( &str_input, input_pos, &non_op_node, info_out, params );
 
 		if( found_non_op ) {

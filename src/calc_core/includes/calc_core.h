@@ -80,6 +80,7 @@ class Node {
 		virtual bool         has_units(void) const;
 		virtual UnitInfoInputAry get_units(void) const;
 		virtual std::vector<Node*> get_children(void) const;
+		virtual int          get_cursor_adjustment(int cursor_pos) const;
 };
 std::ostream& operator<<(std::ostream &out, const Node& n);
 
@@ -165,10 +166,18 @@ class NodeWipToken : public Node {
 		NodeOp*      promote_to_op(void);
 		bool has_units(void) const;
 		UnitInfoInputAry get_units(void) const;
+		int get_cursor_adjustment(int cursor_pos) const;
 	
 		std::string wip_token;
 		std::string wip_angle;
 		std::vector<UnitInfoInput> wip_units;
+	//private:
+		// When parts of a wip token are replaced, they are split
+		// and the originals are stored in `orig_str_pieces`, and the new ones are
+		// stored in `new_str_pieces`, where the indices must match.
+		// Currently the only use of this is replacing "deg" with "^\\circ"
+		std::vector<std::string> orig_str_pieces;
+		std::vector<std::string> new_str_pieces;
 };
 
 class NodeWipBrackets : public Node {
