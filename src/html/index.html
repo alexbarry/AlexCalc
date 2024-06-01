@@ -390,7 +390,7 @@
 			<button id="btn_clear"		class="btn btn_important" style="z-index: 1; width:195%">			clear</button>
 			<div class="btn unused"></div> <!-- spacer for btn_clear -->
 			<button id="btn_bksp"		class="btn btn_important">			bksp</button>
-			<div class="btn unused"></div>
+			<button id="btn_deg_min_sec" class="btn num">                   &deg;</button>
 			<button id="btn_up"		class="btn meta"> &uarr; </button>
 			<div class="btn unused"></div>
 
@@ -1125,7 +1125,10 @@
 			btn_var_display_cancel: document.getElementById("btn_var_display_cancel"),
 			btn_unit_display_cancel: document.getElementById("btn_unit_display_cancel"),
 
+			btn_deg_min_sec: document.getElementById("btn_deg_min_sec"),
 			normal_btns: [
+				document.getElementById("btn_deg_min_sec"),
+
 				document.getElementById("btn_log"),
 				document.getElementById("btn_ln"),
 
