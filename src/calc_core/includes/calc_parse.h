@@ -51,6 +51,7 @@ bool parse_unit(std::string *str_input, int *input_pos, std::vector<UnitInfoInpu
 
 
 calc_float_t parse_float_w_optional_deg_str(std::string str);
+bool separate_deg_min_sec(std::string str, deg_min_sec_s *output);
 
 int parse_test_cases(void);
 

@@ -22,7 +22,6 @@ export const DEG_MIN_SEC_TOKENS: Set<String> = new Set([
 export interface CalcParams {
 	polar: boolean;
 	angle_mode: AngleMode;
-	polar: boolean;
 }
 
 export interface InputTokenT {
@@ -43,7 +42,6 @@ export interface CalcState {
 	polar_state: boolean;
 	degree_min_sec: AngleDegMinSec;
 	angle_mode: AngleMode;
-	polar_state: boolean;
 	input_tokens: InputTokenT[];
 	cursor_idx: number;
 
