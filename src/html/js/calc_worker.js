@@ -14,6 +14,7 @@ var Module = {
 		alexcalc_init();
 		calcdata_ptr = alexcalc_new_calcdata();
 		console.log( "alexcalc_get_unit_info_json: ", alexcalc_get_unit_info_json());
+		console.log( "alexcalc_info_func: ", alexcalc_info_func());
 	},
 };
 

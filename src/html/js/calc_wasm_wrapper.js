@@ -14,6 +14,14 @@ function alexcalc_init() {
 	}
 }
 
+function alexcalc_info_func() {
+	let rc = Module.ccall('alexcalc_info_func',
+	                      'string',
+	                      [],
+	                      []);
+	return rc;
+}
+
 function alexcalc_new_calcdata() {
 	let ptr = Module.ccall('alexcalc_new_calcdata',
 	                      'number',
