@@ -81,6 +81,7 @@ class Node {
 		virtual UnitInfoInputAry get_units(void) const;
 		virtual std::vector<Node*> get_children(void) const;
 		virtual int          get_cursor_adjustment(int cursor_pos) const;
+		virtual std::string  node_type_name(void) const { return "Node"; }
 };
 std::ostream& operator<<(std::ostream &out, const Node& n);
 
@@ -103,6 +104,7 @@ class NodeValue : public Node {
 		UnitInfoInputAry get_units(void) const;
 
 		std::vector<UnitInfoInput> input_units;
+		virtual std::string  node_type_name(void) const { return "NodeValue"; }
 };
 
 class NodeValueRect : public NodeValue {
@@ -111,6 +113,7 @@ class NodeValueRect : public NodeValue {
 		virtual ~NodeValueRect(void) {};
 		virtual std::string to_string(void) const;
 		val_t        get_val(const CalcData *calcData, angle_mode_t angle_mode) const;
+		virtual std::string  node_type_name(void) const { return "NodeValueRect"; }
 
 
 	//private:
@@ -125,6 +128,7 @@ class NodeValuePolar : public NodeValue {
 		virtual ~NodeValuePolar(void) {};
 		virtual std::string to_string(void) const;
 		val_t        get_val(const CalcData *calcData, angle_mode_t angle_mode) const;
+		virtual std::string  node_type_name(void) const { return "NodeValuePolar"; }
 	//private:
 		std::string mag_str;
 		std::string angle_str;
@@ -138,6 +142,7 @@ class NodeVar : public Node {
 		val_t        eval(const CalcData *data);
 		node_type    get_node_type(void);
 		NodeOp*      promote_to_op(void);
+		virtual std::string  node_type_name(void) const { return "NodeVar"; }
 	
 		std::string var_name;
 };
@@ -151,6 +156,7 @@ class NodeFunc : public Node {
 		val_t        eval(const CalcData *data);
 		node_type    get_node_type(void);
 		NodeOp*      promote_to_op(void);
+		virtual std::string  node_type_name(void) const { return "NodeFunc"; }
 	
 		std::string func_name;
 		std::vector<Node*> args;
@@ -167,6 +173,7 @@ class NodeWipToken : public Node {
 		bool has_units(void) const;
 		UnitInfoInputAry get_units(void) const;
 		int get_cursor_adjustment(int cursor_pos) const;
+		virtual std::string  node_type_name(void) const { return "NodeWipToken"; }
 	
 		std::string wip_token;
 		std::string wip_angle;
@@ -188,6 +195,7 @@ class NodeWipBrackets : public Node {
 		val_t        eval(const CalcData *data);
 		node_type    get_node_type(void);
 		NodeOp*      promote_to_op(void);
+		virtual std::string  node_type_name(void) const { return "NodeWipBrackets"; }
 	
 		Node* arg;
 		bool right_brack_present;
@@ -199,6 +207,8 @@ class NodeWipFuncCall : public Node {
 		~NodeWipFuncCall(void);
 		std::string to_string(void) const;
 		node_type get_node_type(void);
+		virtual std::string  node_type_name(void) const { return "NodeWipFuncCall"; }
+
 		NodeFunc* arg;
 		bool right_brack_present;
 };
@@ -219,6 +229,7 @@ class NodeOp : public Node {
 		NodeOp*      promote_to_op(void);
 		bool         needs_args(void);
 		std::vector<Node*> get_children(void) const;
+		virtual std::string  node_type_name(void) const { return "NodeOp"; }
 	
 		op_t  op;
 		std::vector<Node*> children;
@@ -237,6 +248,7 @@ class NodeApplyUnits : public Node {
 	std::string  to_string(void) const;
 	val_t        eval(const CalcData *data);
 	node_type    get_node_type(void);
+	virtual std::string  node_type_name(void) const { return "NodeApplyUnits"; }
 
 	Node *n;
 	UnitInfoInputAry unit_info;
