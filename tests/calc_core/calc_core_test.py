@@ -157,6 +157,19 @@ tests = [
 		( 'cos(200deg0\')',   cos_grad(200), 'gradian'),
 		( "cos(200deg0'0'')", cos_grad(200), 'gradian'),
 		( 'cos(200deg0\'0")', cos_grad(200), 'gradian'),
+
+		( '30\'', 0.5, 'gradian'),
+		( '30\'', 0.5, 'degree'),
+
+		( "30''", 30/60/60, 'gradian'),
+		( "30''", 30/60/60, 'degree'),
+
+		( '30"', 30/60/60, 'gradian'),
+		( '30"', 30/60/60, 'degree'),
+
+		( "30'15''", 30/60 + 15/60/60, 'gradian'),
+		( "30'15\"", 30/60 + 15/60/60, 'gradian'),
+
 ]
 
 cursor = '\\text{[]}'
@@ -474,7 +487,9 @@ for test_idx, test_params in enumerate(tests):
 	if mem_leak:
 		mem_leak_tests.append( (test, mem_leak) )
 	# if expected_answer == received_answer:
-	if within_frac(expected_answer, received_answer, 1e-9):
+	# Note that for something like 0.3333... only so many decimal places are provided,
+	# so don't expect more than 1e-7 where 7 is the number of decimal places plus one
+	if within_frac(expected_answer, received_answer, 1e-7):
 		if print_all: print( 'received answer %r' % received_answer, end =' ' ) 
 		if print_all: print( bcolors.OKGREEN + 'test passed' + bcolors.ENDC )
 	else:

@@ -81,12 +81,17 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 // This one needs to be first, otherwise "deg" is interpreted as a unit
 #if VALS_DEG_MIN_SECS_ENABLED
 	                                             "(?:"
-	                                                 "(?:" FLOAT_PATTERN ")" DEGREE_PATTERN
+	                                             "(?:"
+	                                             "(?=.)" // note that this is necessary to avoid matching an empty string,
+	                                                      // which results in an infinite loop.
+	                                                //"[a-zA-Z0-9-]"
+	                                                 "(?:" FLOAT_PATTERN "" DEGREE_PATTERN ")?"
 	                                                 "\\s*"
-	                                                 // perhaps it shouldn't be possible to omit minutes and include seconds
 	                                                 "(?:" "" FLOAT_PATTERN "" MINUTE_PATTERN ")?"
 	                                                 "\\s*"
 	                                                 "(?:" "" FLOAT_PATTERN "" SECOND_PATTERN ")?"
+	                                             "$"
+	                                             ")"
 	                                             ")"
 	                                             "|"
 #endif
@@ -193,12 +198,14 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 
 static const std::regex val_deg_min_sec_regex(
 	                                             "(?:"
-	                                                 "(" FLOAT_PATTERN ")" DEGREE_PATTERN
+	                                                 "(?!$)"
+	                                                 "(?:" "(" FLOAT_PATTERN ")" DEGREE_PATTERN ")?"
 	                                                 "\\s*"
 	                                                 // perhaps it shouldn't be possible to omit minutes and include seconds
 	                                                 "(?:" "(" FLOAT_PATTERN ")" MINUTE_PATTERN ")?"
 	                                                 "\\s*"
 	                                                 "(?:" "(" FLOAT_PATTERN ")" SECOND_PATTERN ")?"
+	                                                 "$"
 	                                             ")"
 );
 
