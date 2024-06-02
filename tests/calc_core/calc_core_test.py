@@ -489,7 +489,7 @@ for test_idx, (str_input, cursor_pos, expected_output) in enumerate(latex_tests)
 
 # ?? Why is this not part of the previous one?
 print("Checking for memory leaks in up to %d LaTeX tests..." % len(latex_tests))
-for str_input, cursor_pos, expected_output in latex_tests:
+for test_idx, (str_input, cursor_pos, expected_output) in enumerate(latex_tests):
 	try:
 		actual_output, mem_leak, output_err = run_latex_test(str_input, cursor_pos)
 	except Exception as e:
