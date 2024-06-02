@@ -353,7 +353,15 @@ def run_test(test, cmds):
 	cmd_str = '\n'.join(':%s' % x for x in cmds)
 	if cmd_str: cmd_str += '\n'
 	test_input = bytes( ":echo on\n" + cmd_str + test + '\n:alloc\n:exit\n', encoding='utf-8' )
-	output, output_err   = p.communicate( input=test_input, timeout=1 )
+	try:
+		output, output_err   = p.communicate( input=test_input, timeout=1 )
+	except subprocess.TimeoutExpired:
+		# NOTE: without this, if the process gets stuck in an infinite loop,
+		# it can consume all your ram and remain running even after the tests execute.
+		print('Killing process...')
+		p.kill()
+		raise
+	
 	output_err = output_err.decode('utf-8')
 	output = output.decode( 'utf-8' )
 	output = output.split( '\n' )
