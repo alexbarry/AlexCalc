@@ -413,6 +413,23 @@ class wip_valvar_token_info {
 	std::vector<std::string> new_pieces;
 };
 
+// a more permissive version of the val regex, that allows
+// for partially written values
+#define WIP_TOKEN_REGEX  "^" \
+                           "\\s*" \
+                           "(" \
+                            "(?:" \
+                              "[ij]?" \
+                              "[0-9]+" \
+                              "\\.?[0-9]*" \
+                              "(?:[eE]-?[0-9]*)?" \
+                              "[ij]?" \
+                              "(?:(?:deg)|(?:(?:'')|(?:['\"])))?" \
+                            ")+" \
+                           ")"  \
+                           "(\\s*)" /* whitespace separating units */ \
+                                       
+
 bool parse_wip_valvar_token(std::string *str_input,
                             int *input_pos,
                             std::string *wip_token_out,
@@ -431,38 +448,8 @@ bool parse_wip_valvar_token(std::string *str_input,
                         
 
 
-	// a more permissive version of the val regex, that allows
-	// for partially written values
-	static const std::regex wip_token_regex( "^"
-	                                       "\\s*"
-	                                       "("
-	                                        "(?:"
-	                                          "[ij]?"
-	                                          "[0-9]+"
-	                                          "\\.?[0-9]*"
-	                                          "(?:[eE]-?[0-9]*)?"
-	                                          "[ij]?"
-	                                          "(?:(?:deg)|(?:(?:'')|(?:['\"])))?"
-	                                        ")+"
-	                                       ")" 
-#if LITERAL_ANGLES_ENABLED
-	                                       "(" // optional angle at end if followed by "angle<angle>"
-	                                          ANGLE_OP_SYMBOL // literal "angle" symbol for angle
-	                                          "(" // actual numeric value that we want to capture for angle
-	                                             "(?:-)?" // optional negative sign
-	                                             "[0-9]*" // 
-	                                             "(?:\\.[0-9]*)?" // optional decimal after angle
-	                                          ")"
-	                                        ")?" 
-#endif
 
-	                                       "(\\s*)" // whitespace separating units
-#if 0
-	                                       "(" 
-												"(?:" UNIT_WIP_REGEX ")*"
-	                                       ")" 
-#endif
-	                                       );
+	static const std::regex wip_token_regex(WIP_TOKEN_REGEX);
 
 	static const std::regex wip_unit_regex(UNIT_WIP_REGEX);
 
@@ -568,6 +555,16 @@ bool parse_wip_valvar_token(std::string *str_input,
 #endif
 
 	return true;
+}
+
+bool is_numeric_only(std::string arg) {
+	static const std::regex wip_token_regex(WIP_TOKEN_REGEX);
+	std::smatch result;
+
+	bool found = std::regex_search( arg,
+	                                result,
+	                                wip_token_regex );
+	return found;
 }
 
 

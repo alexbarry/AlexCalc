@@ -220,13 +220,18 @@ std::string surround_str_in_braces_if_len_gt1(std::string str) {
 	}
 }
 
+std::string surround_in_braces_if_len_gt1(const std::string &arg) {
+	if (arg.size() > 1) {
+		return "{" + arg + "}";
+	} else {
+		return arg;
+	}
+}
+
+
 std::string surround_in_braces_if_len_gt1(Node *n, const InputInfo *info) {
 	std::string latex = raw_node_to_latex(n, info);
-	if (latex.size() > 1) {
-		return "{" + latex + "}";
-	} else {
-		return latex;
-	}
+	return surround_in_braces_if_len_gt1(latex);
 }
 
 
@@ -617,6 +622,15 @@ std::string input_units_to_latex(const CalcData *calcData,
 	return input_units_to_latex(calcData, input_units, -1, nullptr);
 }
 
+std::string replace_all(std::string arg, const std::string &find, const std::string &repl) {
+	size_t pos = 0;
+	while ( (pos = arg.find(find, pos)) != std::string::npos) {
+		arg.replace(pos, find.length(), repl);
+		pos += repl.length();
+	}
+	return arg;
+}
+
 std::string input_units_to_latex(const CalcData *calcData,
                                  const std::vector<UnitInfoInput> *input_units,
                                  int cursor_pos,
@@ -648,10 +662,11 @@ std::string input_units_to_latex(const CalcData *calcData,
 				    unit_cursor_info->pow_val_start_pos <= cursor_pos &&
 				    cursor_pos <= unit_cursor_info->pow_val_end_pos) {
 					int cursor_offset = cursor_pos - unit_cursor_info->pow_val_start_pos;
-					pow_str = "{" + insert_cursor(input_unit.pow_wip_str, cursor_offset) + "}";
+					pow_str = "{" + insert_cursor(input_unit.pow_wip_str, cursor_offset, false) + "}";
 				} else {
-					pow_str = wrap_text(input_unit.pow_wip_str);
+					pow_str = surround_in_braces_if_len_gt1(input_unit.pow_wip_str);
 				}
+				pow_str = replace_all(pow_str, "-", NEG_SYMB_LATEX);
 			} else {
 				pow_str = "\\square";
 			}
@@ -876,13 +891,7 @@ std::string insert_cursor(std::string str, int cursor_pos, bool wrap_in_text) {
 	return output;
 }
 
-bool is_numeric_only(std::string arg) {
-	// TODO TODO TODO
-	// partial_float_pattern = -?[ij][0-9]+(?:\.[0-9]*)?(?:[eE]-?[0-9]*)?[ij]
-	// check for exact matches to partial_float_pattern or the
-	// partial_float_pattern followed by partially complete "deg", then the pattern with ' and '' or "
-	return false;
-}
+
 
 std::string wip_token_to_latex(const NodeWipToken *wip_token, const InputInfo *info) {
 
