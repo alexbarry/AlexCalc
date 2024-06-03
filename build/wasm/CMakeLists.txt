@@ -25,8 +25,10 @@ list(APPEND EXPORTED_FUNCTIONS_WASM
          \"_alexcalc_data_state_set\", \
          \"_alexcalc_get_unit_info_json\", \
          \"_alexcalc_add_recently_used_unit\", \
-         \"_alexcalc_get_recently_used_units_json\" \
-        ]")
+         \"_alexcalc_get_recently_used_units_json\", \
+         \"_malloc\", \
+         \"_free\" \
+     ]")
 
 
 list(APPEND EMCC_LINK_OPTS "-Wall")
@@ -59,9 +61,9 @@ set(CMAKE_SHARED_LINKER_FLAGS "${EMCC_LINK_OPTS}")
 
 # On linux, I get an error if I don't provide any sources when calling `add_executable`
 # So add this "empty.cpp" file.
-add_executable (calc_wasm.js "${SRC_DIR}/calc_core/empty.cpp")
+add_executable (calc_wasm "${SRC_DIR}/calc_core/empty.cpp")
                 
-target_compile_options(calc_wasm.js PRIVATE "${EMCC_COMPILE_OPTS}")
+target_compile_options(calc_wasm PRIVATE "${EMCC_COMPILE_OPTS}")
 
 target_compile_options(calc_core PRIVATE "${EMCC_COMPILE_OPTS}")
-target_link_libraries(calc_wasm.js PRIVATE calc_json "${EMCC_LINK_OPTS}")
+target_link_libraries(calc_wasm PRIVATE calc_json "${EMCC_LINK_OPTS}")

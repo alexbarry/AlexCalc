@@ -10,8 +10,8 @@ cd "${DIR}"
 
 mkdir -p out
 cd out
-cmake ../
-cmake --build .
+emcmake cmake ../
+cmake --build . $@
 
 SRC_DIR="../../../src"
 rm -f bin/index.html
