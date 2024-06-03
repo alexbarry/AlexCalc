@@ -1,0 +1,16 @@
+body.very_dark h1, body.very_dark h2, body.very_dark h3, body.very_dark h4, body.very_dark h5, body.very_dark h6, body.very_dark p, body.very_dark div, body.very_dark span, body.very_dark sup, body.very_dark sub, body.very_dark label {
+	color: #666;
+}
+
+body.very_dark {
+	background-color: #000;
+}
+
+body.very_dark div.main {
+	background-color:#111;
+	border: 1px solid grey;
+}
+
+body.very_dark .unimportant {
+	color:gray;
+}

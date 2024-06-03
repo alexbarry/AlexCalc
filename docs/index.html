@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<meta name="description" content="Scientific calculator with LaTeX equation display, variables, units, complex numbers.">
+	<meta name="keywords" content="calculator, scientific calculator, LaTeX, equation display, variables, units, complex numbers, imaginary numbers">
+	<meta name="author" content="Alex Barry">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="color-scheme" content="light dark">
+	<link rel="icon" type="image/png" href="graphics/favicon.png">
+	<link rel="apple-touch-icon" href="graphics/favicon.png">
+
+	<link rel="stylesheet" type="text/css" href="css/style_very_dark.css">
+	<link rel="stylesheet" type="text/css" href="css/calc_style_very_dark.css">
+	<link rel="stylesheet" type="text/css" href="css/style_dark.css">
+	<link rel="stylesheet" type="text/css" href="css/calc_style_dark.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/calc_style.css">
+	<script type="text/javascript" src="js/dropdown_and_inc_widget.js"></script>
+	<!-- TODO figure out how to include this file from within calc_ui.js -->
+	<script type="text/javascript" src="js/calc_ui_unit_sel.js"></script>
+	<script type="text/javascript" src="js/calc_ui.js"></script>
+	<!--<script type="text/javascript" src="js/calc_wasm.js"></script>-->
+	<!--<script type="text/javascript" src="js/calc_wasm_wrapper.js"></script>-->
+	<!-- Needed by MathJax (I think) -->
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<!-- For LaTeX support -->
+	<!--<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>-->
+
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"></script>
+	<title>AlexCalc</title>
+
+	<style>
+
+	* {
+		        box-sizing: border-box;
+		   -moz-box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+	}
+
+	html, body {
+		padding:0;
+		margin: 0;
+	}
+
+
+	html {
+		height: 100%;
+		width:  100%;
+	}
+	body {
+		/* will this help prevent scrolling on mobile? */
+		/* position: fixed; */
+
+		height: calc(100% - 2*5px); /* 5px is margin of div.main */
+		width:  100%;
+	}
+
+
+	div.main {
+		height: calc(100% - 2*5px);
+		margin: 5px auto;
+		display:flex;
+		flex-direction:column;
+		padding: 5px; /* TODO  I'm not sure if this is causing the window to be slightly too big on android firefox */
+	}
+
+	/* TODO try out aligning content to bottom of this, to be closer to the buttons?
+	 */
+	.output_txt_cls {
+		height:100%;
+		overflow-y:scroll;
+		overflow-x:auto;
+	}
+
+	.output_text_window_container {
+		min-height:60px;
+		flex:8;
+	}
+
+	.output_btn_container {
+		position:relative;
+	}
+	.output_btns {
+		position:absolute;
+		right:20px; /* a bit of room for the scroll bar */
+		z-index:2;
+		/*float:right;*/
+	}
+
+	.input_wip_display_cls {
+		min-height:60px;
+		max-height:80px;
+		flex:1;
+	}
+
+	.button_section {
+		/* TODO should be at least big enough to see a few rows of buttons,
+		 * but not more than big enough to see all the buttons */
+		flex:0;
+		min-height:280px;
+		position:relative;
+	}
+	.buttons {
+		overflow:auto;
+		width:100%;
+		height:100%;
+		display:inline-grid;
+		/* grid-template-columns: repeat(6, minmax(100px, 1fr)); */
+		grid-template-columns: repeat(6, 1fr);
+	}
+
+	.btn {
+		min-width:52px;
+		/*margin: minmax(0, 8pt);*/
+		margin: 2px;
+		min-height: 16pt;
+		max-height: 24pt;
+		border-radius: 10px;
+
+		/* prevent double tap of a button from zooming on iOS */
+		touch-action: manipulation;
+	}
+	
+
+	.input_txt_cls {
+	}
+
+	.input_txt_cls > textarea {
+		width:100%;
+		height:100%;
+		/* font-size:16pt; */ /* any smaller and iOS safari will zoom */
+	}
+
+
+	.btn > * {
+      /* This makes child nodes of .btn classes not receive click events.
+      * This is so clicking on e.g. a superscript of a button won't
+      * set evt.target to the superscript instead of the button
+      */
+	  pointer-events: none;
+
+	}
+
+	/* This makes child nodes of .btn classes not receive click events.
+	 * This is so clicking on e.g. a superscript of a button won't
+	 * set evt.target to the superscript instead of the button
+	 */
+	.no_click_handling {
+		pointer-events: none;
+	}
+
+	.popup_selector_cls {
+		display:flex;
+		flex-direction:column;
+		justify-content: center;
+		align-content: center;
+
+		text-align:center;
+	}
+
+	.popup_cls {
+		z-index:2;
+		border: 1px solid black;
+		border-radius:30px;
+		position:absolute;
+
+		max-width:690px;
+		height: calc(100% - 80px);
+	}
+
+	.max_size_popup {
+		flex:1;
+		top: 0; left: 0; /* right: 0; bottom: 0; */
+		width: calc(100% - 2*10px);
+		height: calc(100% - 2*10px);
+		position:absolute;
+		margin: 10px;
+	}
+
+	.popup_selector_exit_btn {
+		position:absolute;
+		right:10px;
+		top:10px;
+		border-radius:10px;
+		margin:0;
+		padding: 5px;
+	}
+
+	.var_selector_columns {
+		display:flex;
+		flex-direction:row;
+	}
+
+	.var_tbl_div {
+		flex:1;
+		max-height:200px;
+		overflow-y:scroll;
+	}
+
+	.new_var_div {
+		flex:1;
+		display:flex;
+		flex-direction:column;
+	}
+
+	.new_var_buttons_container {
+		overflow:auto;
+		display:inline-grid;
+		grid-template-columns: repeat(4, 1fr);
+	}
+
+	thead {
+		/* TODO not all the background/borders moves with this */
+		position: sticky;
+		top: 0;
+	}
+
+	.var_tbl {
+		text-align:right;
+		margin:auto;
+		border: 1px solid black;
+		border-collapse:collapse;
+	}
+	td, th {
+		border: 1px dashed lightgrey;
+		padding:5pt;
+	}
+
+	tbody {
+		overflow-y:scroll;
+		max-height: 130px;
+	}
+
+	th {
+		position: sticky;
+		top: 0;
+		text-align:center !important;
+		border-bottom:1px solid black;
+	}
+
+	.var_table_row {
+		max-height:50px;
+	}
+
+	.var_tbl_name_col {
+		text-align:left;
+		width: 8em;
+	}
+	.var_tbl_val_col {
+		width: 12em;
+	}
+
+
+	.var_display_button_row {
+		display:flex;
+	}
+	.var_display_btn {
+		margin:2px;
+		flex:1;
+	}
+
+
+
+	.unit_sel_item {
+		/*
+		color: #0000AA;
+		text-decoration: underline;
+		cursor: pointer;
+		*/
+	}
+
+	.popup_btn_ctrl_style {
+		min-height:30px;
+	}
+
+	.var_btn_style {
+		margin:2px;
+		min-height:20px;
+		cursor: pointer;
+	}
+
+	.unit_adjuster {
+		display:flex;
+		flex-direction:column;
+	}
+
+	.unit_adjuster_tbl {
+		display:table;
+	}
+	.unit_adjuster_row {
+		display:flex;
+		justify-self:center;
+		align-self:bottom;
+		text-align:center;
+		display:table-row;
+	}
+
+	.unit_sel_header {
+		margin-bottom:5px;
+	}
+
+	#unit_list_filter {
+		width:90%;
+	}
+
+	#unit_category_list {
+		margin-top: 0;
+	}
+
+	.unit_adjuster_row_big_text {
+		font-size:36pt;
+	}
+
+	.unit_adjuster_cell {
+		display:table-cell;
+		border:1px dashed grey;
+	}
+
+
+	div.footer {
+		width:100%;
+		text-align:center;
+	}
+
+	.footer_items {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.footer_items > * {
+		margin: 0;
+		padding: 0;
+		padding-right:5px;
+		padding-left:5px;
+		display: inline-block;
+	}
+	</style>
+</head>
+<body>
+	<div class="main">
+
+	<div class="output_text_window_container">
+		<div class="output_btn_container">
+		<div class="output_btns" style="text-align:right">
+			<select id="dark_mode_select">
+				<option value="light">Light mode</option>
+				<option value="dark">Dark mode</option>
+				<option value="very_dark">Very dark mode</option>
+			</select>
+			<br/>
+			<label for="checkbox_show_raw">Show raw</label>
+			<input type="checkbox" id="checkbox_show_raw">
+		</div>
+		</div>
+
+	<div id="output_text_window" class="output_txt_cls">
+		<div id="output_text">
+
+		<h1>AlexCalc</h1>
+		<p id="wasm_loading_msg">Calc binary is loading, please wait...</p>
+		<p id="calc_terms_notice_small">By using this application you agree with its terms of use, available in the <a href="#" id="about_popup_link_terms_notice">about section</a>.</p>
+		<!--
+		<p>\[ e^{j\theta} + 1 = 0 \]</p>
+		<p>\[ Z_o = \sqrt{\frac{R + j \omega L}{G + j \omega C}} \]</p>
+		<p>\[ Z_o = \sqrt{\frac{\square + j \omega L}{G + j \omega C}} \]</p>
+		<p>\[ H(s) = \frac{(s + 3)(s - 4)}{(s-5)(s-2)(s-8)^2} \]</p>
+		<p>\[ x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} \]</p>
+		<p>\[ e^{i\pi} + 1 = 0 \]</p>
+		<p>\[ \sin^2(\theta) + \cos^2(\theta) = 1\]</p>
+		<p>\[ e^{j\theta} = \cos \theta + j \sin \theta\]</p>
+		<p>\[ \sin \theta = \frac{e^{j\theta} - e^{-j\theta}}{2j} \]</p>
+		-->
+		</div>
+		<p id="input_wip_display">
+		</p>
+	</div>
+	</div>
+
+	<div class="input_txt_cls">
+		<textarea id="input_text" autofocus placeholder="Press buttons or type here"></textarea>
+	</div>
+	
+	<div class="button_section">
+	<div class="buttons" id="main_btns">
+
+			<!-- row 0 -->
+			<button id="btn_clear"		class="btn btn_important" style="z-index: 1; width:195%">			clear</button>
+			<div class="btn unused"></div> <!-- spacer for btn_clear -->
+			<button id="btn_bksp"		class="btn btn_important">			bksp</button>
+			<div class="btn unused"></div>
+			<button id="btn_up"		class="btn meta"> &uarr; </button>
+			<div class="btn unused"></div>
+
+			<!-- row 1 -->
+			<button id="btn_inv"		class="btn meta">			inv		</button>
+			<button id="btn_polar_toggle" class="btn meta">			polar	</button>
+			<button id="btn_degree_toggle"class="btn meta">			degree	</button>
+			<button id="btn_left"		class="btn meta">			&larr;		</button>
+			<button id="btn_down"		class="btn meta">			&darr;		</button>
+			<button id="btn_right"		class="btn meta">			&rarr;		</button>
+
+			<!-- row 2 -->
+			<button id="btn_alt"		class="btn meta">			alt		</button>
+			<button id="btn_log"		class="btn func">			\(\log_{10}\) </button>
+			<button id="btn_sin"		class="btn func">			\(\sin\)		</button>
+			<button id="btn_cos"		class="btn func">			\(\cos\)	    </button>
+			<button id="btn_tan"		class="btn func">			\(\tan\)     </button>
+			<button id="btn_pow"		class="btn op">				^		</button>
+
+			<!-- row 3 -->
+			<button id="btn_vars"		class="btn var">			var   	</button>
+			<button id="btn_ln"		    class="btn func">			\(\ln\) </button>
+			<button id="btn_par_l"		class="btn specop">			(		</button>
+			<button id="btn_delim"		class="btn specop">			,		</button>
+			<button id="btn_par_r"		class="btn specop">			)		</button>
+			<button id="btn_div"		class="btn op">				&#247;	</button>
+
+			<!-- row 4 -->
+			<button id="btn_units"		class="btn var">			units	</button>
+			<button id="btn_sqrt"		class="btn func">			\(\sqrt{\,\,\,}\)	</button>
+			<button id="btn_7"			class="btn num">			7		</button>
+			<button id="btn_8"			class="btn num">			8		</button>
+			<button id="btn_9"			class="btn num">			9		</button>
+			<button id="btn_mult"		class="btn op">				&#215;	</button>
+
+			<!-- row 5 -->
+			<button id="btn_var1"		class="btn var">			\(x\)	</button>
+			<button id="btn_pi"	        class="btn var">		  \(\pi\)		</button>
+			<button id="btn_4"			class="btn num">			4		</button>
+			<button id="btn_5"			class="btn num">			5		</button>
+			<button id="btn_6"			class="btn num">			6		</button>
+			<button id="btn_sub"		class="btn op">				-		</button>
+
+			<!-- row 6 -->
+			<!--
+			<button id="btn_degree"		class="btn var" disabled>			&deg;   </button>
+			-->
+			<button id="btn_ans"		class="btn var">			ans 	</button>
+			<button id="btn_e"			class="btn var">			\(e\)	</button>
+			<button id="btn_1"			class="btn num">			1		</button>
+			<button id="btn_2"			class="btn num">			2		</button>
+			<button id="btn_3"			class="btn num">			3		</button>
+			<button id="btn_add"		class="btn op">				+		</button>
+
+			<!-- row 7 -->
+			<button id="btn_sto"		class="btn op">				store	</button>
+			<button id="btn_i"			class="btn num">			i		</button>
+			<button id="btn_0"			class="btn num">			0		</button>
+			<button id="btn_decimal"	class="btn num">			.		</button>
+			<button id="btn_exp"		class="btn num">			EXP		</button>
+			<button id="btn_enter"		class="btn btn_important">			enter	</button>
+	</div>
+	<div id="var_selector" class="popup_cls max_size_popup popup_selector_cls" style="display:none">
+		<button id="btn_var_display_cancel" class="popup_selector_exit_btn btn_important popup_btn_ctrl_style">X</button>
+		<div class="var_selector_columns">
+		<!-- TODO maybe have a button to toggle making this take up the full screen? -->
+		<div class="var_tbl_div">
+		<h2>Existing variables</h2>
+		<table class="var_tbl">
+			<thead>
+				<tr>
+					<th class="var_tbl_name_col">Name</th>
+					<th class="var_tbl_val_col">Value</th>
+				</tr>
+			</thead>
+			<tbody id="var_tbl_body">
+			<!-- example row
+			<tr class="var_table_row">
+				<td class="var_tbl_name_col">\(x\)</td>
+				<td class="var_tbl_val_col">0.1234</td>
+			</tr>
+			-->
+			</tbody>
+		</table>
+		</div>
+
+		<div class="new_var_div">
+		<h2>Define new variable</h2>
+			<div class="new_var_buttons_container">
+			<button class="var_btn_style" id="btn_new_var_x">\(x\)</button>
+			<button class="var_btn_style" id="btn_new_var_y">\(y\)</button>
+			<button class="var_btn_style" id="btn_new_var_z">\(z\)</button>
+			<button class="var_btn_style" id="btn_new_var_theta">\(\theta\)</button>
+			<button class="var_btn_style" id="btn_new_var_alpha">\(\alpha\)</button>
+			<button class="var_btn_style" id="btn_new_var_beta">\(\beta\)</button>
+			<button class="var_btn_style" id="btn_new_var_gamma">\(\gamma\)</button>
+			<button class="var_btn_style" id="btn_new_var_epsilon">\(\epsilon\)</button>
+			<button class="var_btn_style" id="btn_new_var_a">\(a\)</button>
+			<button class="var_btn_style" id="btn_new_var_b">\(b\)</button>
+			<button class="var_btn_style" id="btn_new_var_c">\(c\)</button>
+			<button class="var_btn_style" id="btn_new_var_d">\(d\)</button>
+			<button class="var_btn_style" id="btn_new_var_R1">\(R_1\)</button>
+			<button class="var_btn_style" id="btn_new_var_V1">\(V_1\)</button>
+			<button class="var_btn_style" id="btn_new_var_I1">\(I_1\)</button>
+			<button class="var_btn_style" id="btn_new_var_L">\(L\)</button>
+			<button class="var_btn_style" id="btn_new_var_R2">\(R_2\)</button>
+			<button class="var_btn_style" id="btn_new_var_V2">\(V_2\)</button>
+			<button class="var_btn_style" id="btn_new_var_I2">\(I_2\)</button>
+			<button class="var_btn_style" id="btn_new_var_C">\(C\)</button>
+			<button class="var_btn_style" id="btn_new_var_omega">\(\omega\)</button>
+			<button class="var_btn_style" id="btn_new_var_f">\(f\)</button>
+			<button class="var_btn_style" id="btn_new_var_P">\(P\)</button>
+			<button class="var_btn_style" id="btn_new_var_G">\(G\)</button>
+			</div>
+			<input id="custom_var_name_input" placeholder="Or enter custom variable name"></input>
+		</div>
+		</div>
+		<!--<hr/>-->
+		<div class="var_display_button_row">
+			<button id="btn_var_display_insert" class="var_display_btn popup_btn_ctrl_style btn_important popup_btn_ctrl_style" disabled>Insert variable</button>
+			<!--<button id="btn_var_display_cancel" class="var_display_btn popup_btn_ctrl_style btn_important popup_btn_ctrl_style">Cancel</button>-->
+		</div>
+
+	</div>
+
+	<div id="unit_selector" class="popup_cls max_size_popup popup_selector_cls" style="display:none; position:absolute">
+		<button id="btn_unit_display_cancel" class="popup_selector_exit_btn btn_important popup_btn_ctrl_style">X</button>
+		<div class="var_selector_columns" style="max-height:80%">
+		<!-- TODO maybe have a button to toggle making this take up the full screen? -->
+		<div class="var_tbl_div" style="flex:1">
+		<h2>Recently Used</h2>
+		<table class="var_tbl">
+			<thead>
+				<tr>
+					<th class="var_tbl_name_col">Name</th>
+					<th class="var_tbl_val_col">Value</th>
+				</tr>
+			</thead>
+			<tbody id="tbody_units_recently_used">
+			<!-- example data
+			<tr class="var_table_row">
+				<td class="var_tbl_name_col">mm^2</td>
+			</tr>
+			<tr class="var_table_row">
+				<td class="var_tbl_name_col">s</td>
+			</tr>
+			<tr class="var_table_row">
+				<td class="var_tbl_name_col">kPa</td>
+			</tr>
+			-->
+			</tbody>
+		</table>
+		</div>
+
+		<div class="new_var_div" style="flex:2; text-align:left; overflow-y:scroll; max-height:100%">
+		<div id="unit_category_selector" class="unit_category_selector">
+		<h2 class="unit_sel_header">Select Unit</h2>
+			<input id="unit_list_filter" placeholder="Filter units"></input>
+			<ul id="unit_category_list">
+			</ul>
+		</div>
+		<div id="unit_adjuster" class="unit_adjuster" style="display:none">
+			<a id="back_to_unit_selection" class="no_visited" href="#">Back to unit selection</a>
+			<div class="unit_adjuster_tbl">
+			<div class="unit_adjuster_row">
+				<div class="unit_adjuster_cell "><button id="si_prefix_inc_btn" class="var_btn_style">&uarr;</button></div>
+				<div class="unit_adjuster_cell "><button id="base_inc_btn" class="var_btn_style">&uarr;</button></div>
+				<div class="unit_adjuster_cell "><button id="pow_inc_btn" class="var_btn_style">&uarr;</button></div>
+			</div>
+			<div class="unit_adjuster_row unit_adjuster_row_big_text">
+				<div class="unit_adjuster_cell unit_adjuster_prefix"><span id="unit_adjuster_prefix_val">&nbsp;</span></div>
+				<div class="unit_adjuster_cell unit_adjuster_base"><span id="unit_adjuster_base_val">&nbsp;</span></div>
+				<div class="unit_adjuster_cell unit_adjuster_pow"><span><sup id="unit_adjuster_pow_display">&nbsp;</sup></span></div>
+			</div>
+			<div class="unit_adjuster_row">
+				<div class="unit_adjuster_cell ">
+					<select id="unit_si_prefix_select">
+						<!-- example 
+						<option value="0">M,  10^6 (kilo)</option>
+						<option value="1">k,  10^3 (kilo)</option>
+						<option value="2">no prefix, 10^0</option>
+						<option value="3">d,  10^-1 (deci)</option>
+						<option value="4">c,  10^-2 (centi)</option>
+						<option value="5">m,  10^-3 (milli)</option>
+						<option value="6">u,  10^-6 (micro)</option>
+						<option value="7">n,  10^-9 (nano)</option>
+						-->
+					</select>
+				</div>
+				<div class="unit_adjuster_cell ">
+					<select id="unit_adjuster_base_val_select">
+					</select>
+				</div>
+				<div class="unit_adjuster_cell ">
+					<select id="unit_adjuster_pow_select">
+						<!-- example 
+						<option value="0"> 4</option>
+						<option value="1"> 3</option>
+						<option value="2"> 2</option>
+						<option value="3"> 1</option>
+						<option value="4">-1</option>
+						<option value="5">-2</option>
+						<option value="6">-3</option>
+						<option value="7">-4</option>
+						-->
+					</select>
+				</div>
+			</div>
+			<div class="unit_adjuster_row">
+				<div class="unit_adjuster_cell "><button id="si_prefix_dec_btn" class="var_btn_style">&darr;</button></div>
+				<div class="unit_adjuster_cell "><button id="base_dec_btn" class="var_btn_style">&darr;</button></div>
+				<div class="unit_adjuster_cell "><button id="pow_dec_btn" class="var_btn_style">&darr;</button></div>
+			</div>
+			</div>
+
+		</div>
+		</div>
+		</div>
+		<!--<hr/>-->
+		<div class="var_display_button_row">
+			<button id="btn_unit_display_insert" class="var_display_btn popup_btn_ctrl_style btn_important popup_btn_ctrl_style" disabled>Insert unit</button>
+			<!--<button id="btn_var_display_cancel" class="var_display_btn popup_btn_ctrl_style btn_important popup_btn_ctrl_style">Cancel</button>-->
+		</div>
+	</div>
+
+	</div>
+	<div id="about_popup" class="popup_cls" style="display:none;overflow-y:scroll;padding:20px">
+		<button id="close_about_popup_x_btn" class="popup_selector_exit_btn btn_important popup_btn_ctrl_style" style="display:float">X</button>
+		<h2 style="text-align:center;margin-top:0">About AlexCalc</h2>
+		<p>AlexCalc is a scientific calculator with an equation display, and supports variables, units, and complex numbers.</p>
+		<p><a class="licenses" href="help.html">How to use AlexCalc</a>.</p>
+		<p>Created by <a href="https://github.com/alexbarry">Alex Barry</a>.</p>
+		<p>Also available on other platforms:
+			<ul>
+				<li><strong>Android app</strong>: <a href="https://play.google.com/store/apps/details?id=net.alexbarry.calc_android">Google Play</a></li>
+				<li><strong>iOS</strong>: <a href="add_to_ios_home.html">How to add a shortcut to home screen on iOS</a>
+				<li><strong>Web</strong> (desktop/mobile): <a href="https://alexbarry.github.io/AlexCalc/">https://alexbarry.github.io/AlexCalc/</a> (you should be on this page now)</li>
+			</ul>
+		</p>
+		<p>Please submit comments, feedback, feature requests, or discussions to:
+		<ul>
+			<li><strong>Github</strong>: <a href="https://github.com/alexbarry/AlexCalc" style="font-family:monospace">github.com/alexbarry/AlexCalc</a></li>
+			<li><strong>Reddit</strong>: <a href="https://www.reddit.com/r/alexcalc/" style="font-family:monospace">reddit.com/r/alexcalc</a></li>
+			<li><strong>Discord</strong>: <a href="https://discord.gg/ckNstZc2nF" style="font-family:monospace">discord.gg/ckNstZc2nF</a></li>
+			<li><strong>Email</strong>: <span style="font-family:monospace">alexbarry.dev2 [ at ] gmail.com</span></li>
+			<li><strong>Matrix</strong>: <a href="https://matrix.to/#/#alexcalc:matrix.org" style="font-family:monospace">#alexcalc:matrix.org</a></li>
+		</ul>
+		</p>
+		<p><strong>Terms of use</strong>: <span style="font-family:monospace">THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<span><p>
+
+		<p><a class="licenses" href="licenses.html">Licenses</a></p>
+		<p><a id="close_about_popup_link" href="#">Close the "About" popup</a></p>
+	</div>
+
+
+	</div>
+	<div class="footer">
+		<ul class="footer_items">
+			<li><a id="open_about_popup_link" href="#">About</a></li>
+			<li><a href="help.html">Help</a></li>
+			<li><a class="licenses" href="licenses.html">Licenses</a></li>
+		</ul>
+	</div>
+
+	<!--
+	   Detecting whether "forced dark mode" is enabled on chrome, since for some reason it doesn't
+	   cause the {typical test for whether or not the user wants darkmode} to return true, which is:
+	  
+	       window.matchMedia("(prefers-color-scheme: dark)")
+	  
+	   So this is an unfortunate hack.
+	   The alternative would be to let chrome invert my light theme willy-nilly, but that doesn't seem to work
+	   very well with my (perhaps poor) choice of light mode colours.
+	   See https://developer.chrome.com/blog/auto-dark-theme/#detecting-auto-dark-theme
+	-->
+	<div id="auto_dark_mode_detection" style="display: none; background-color: canvas; color-scheme: light;"></div>
+
+
+	<script>
+		function abs(x) {
+			if (x < 0) { return -x; }
+			else { return x; }
+		}
+		window.MathJax = {
+			chtml: {
+				displayAlign: 'left',
+			},
+			/* Not sure if I should have this */
+			svg: {
+				fontCache: 'global',
+			}
+		};
+
+		//let promise = Promise.resolve();
+		//function mathjax_typeset(code) {
+		//}
+
+		const unit_sel = {
+			unit_sel_state: null,
+
+			root: document.getElementById("unit_selector"),
+
+			si_prefix_none_option_idx: null,
+			unit_category_selector_visible: true,
+			unit_sel_map: {},
+			back_to_unit_cat:       document.getElementById("back_to_unit_selection"),
+			unit_list_filter:       document.getElementById("unit_list_filter"),
+			unit_sel_tree:          document.getElementById("unit_category_list"),
+			unit_category_selector: document.getElementById("unit_category_selector"),
+			unit_adjuster:          document.getElementById("unit_adjuster"),
+			si_prefix_select:      document.getElementById("unit_si_prefix_select"),
+			si_prefix_inc_btn:      document.getElementById("si_prefix_inc_btn"),
+			si_prefix_dec_btn:      document.getElementById("si_prefix_dec_btn"),
+			unit_adjuster_prefix_val: document.getElementById("unit_adjuster_prefix_val"),
+
+			unit_adjuster_base_val: document.getElementById("unit_adjuster_base_val"),
+			unit_adjuster_base_select: document.getElementById("unit_adjuster_base_val_select"),
+			base_inc_btn:           document.getElementById("base_inc_btn"),
+			base_dec_btn:           document.getElementById("base_dec_btn"),
+
+			unit_pow_select:          document.getElementById("unit_adjuster_pow_select"),
+			unit_pow_btn_inc:         document.getElementById("pow_inc_btn"),
+			unit_pow_btn_dec:         document.getElementById("pow_dec_btn"),
+			unit_pow_display:         document.getElementById("unit_adjuster_pow_display"),
+
+			btn_unit_display_insert: document.getElementById("btn_unit_display_insert"),
+
+			on_insert_unit_btn_pressed: function (unit) {
+				console.log("inserting unit", unit);
+				public_add_unit_input_token(ui, unit);
+			},
+
+			tbody_units_recently_used: document.getElementById("tbody_units_recently_used"),
+
+			set_recently_used_units: function (ui_unit_sel, recently_used_units) {
+				let tbody = ui_unit_sel.tbody_units_recently_used;
+			
+				while (tbody.firstChild) {
+					tbody.removeChild(tbody.firstChild);
+				}
+			
+				for (let unit_info of recently_used_units) {
+					let tr = document.createElement("tr");
+					tr.classList.add("var_table_row");
+					let td_unit_name = document.createElement("td");
+					td_unit_name.classList.add("var_tbl_name_col");
+					td_unit_name.appendChild(document.createTextNode(unit_info));
+					tr.appendChild(td_unit_name);
+			
+					let td_unit_val = document.createElement("td");
+					td_unit_val.classList.add("var_tbl_name_col");
+					//td_unit_val.appendChild(document.createTextNode(""));
+					tr.appendChild(td_unit_val);
+
+					ui_unit_sel.row_info_map.set(tr, unit_info);
+
+					add_recently_used_unit_row_click_listener(ui_unit_sel, tr, unit_info);
+					tbody.append(tr);
+				}
+			},
+
+			row_info_map: new Map(),
+			currently_highlighted: null,
+
+			highlight_recently_used_unit: function (ui_unit_sel, elem) {
+				if (ui_unit_sel.currently_highlighted != null) {
+					ui_unit_sel.currently_highlighted.classList.remove("selected");
+					ui_unit_sel.currently_highlighted = null;
+				}
+
+				if (elem != null) {
+					elem.classList.add("selected");
+				}
+				ui_unit_sel.currently_highlighted = elem;
+			},
+		};
+
+		/**
+		 * Includes both input and output line.
+		 */ 
+		const MAX_OUTPUT_LINES = 20;
+
+		const ui = {
+
+			wasm_loaded: false,
+
+			about_popup: document.getElementById("about_popup"),
+
+			show_about_popup_btns: [
+				document.getElementById("open_about_popup_link"),
+				document.getElementById("about_popup_link_terms_notice"),
+			],
+			close_about_popup_btns: [
+				document.getElementById("close_about_popup_link"),
+				document.getElementById("close_about_popup_x_btn"),
+			],
+
+			on_wasm_load: function() {
+				console.log("wasm loaded");
+				ui.wasm_loaded = true;
+				//document.getElementById("wasm_loading_msg").innerHTML = "Calc binary ready!";
+				ui.generate_output_msg("Calc binary ready!", false);
+			},
+
+			// TODO I don't like how this subtlely calls into calc_worker_wrapper.js,
+			// figure out how to properly import a javascript file and reference it
+			// in a namespace or something
+			to_latex_async: function (x, cursor_pos, parse_wip) {
+				if (ui.wasm_loaded) {
+					return to_latex_async(x, cursor_pos, parse_wip);
+				} else {
+					return x;
+				}
+			},
+
+			update_calcstate: function (states) {
+				alexcalc_set_states(states);
+			},
+
+			calc_async:     function (x, callback) {
+				if (!ui.wasm_loaded) {
+					alert("wasm not loaded yet, please wait");
+					return null;
+				}
+				alexcalc_async(x, callback);
+			} ,
+
+
+			// determines if input wip display is shown
+			// (specifically, if there's significant whitespace after the
+			// last output, which is not desirable if you want to look at it
+			// and have a small screen)
+			// should be set to true when any input is given,
+			// set to false only when the user presses enter.
+			show_input_wip_display: false,
+
+			input_wip_display: document.getElementById("input_wip_display"),
+
+
+			generate_latex_node: function(tex, format, parent) {
+				console.debug("converting tex ", tex, " to latex node graphic");
+				//let options = MathJax.getMetricsFor(parent, false);
+				let options;
+				if (format === undefined) {
+					options = {
+						//display: true,
+						scale: 2.0,
+						//containerWidth: 400,
+						//lineWidth: 21,
+					};
+				} else if (format == "button") {
+					if (parent !== undefined) {
+						options = MathJax.getMetricsFor(parent, false);
+						options.display = false;
+					} else {
+						console.error("expected parent for button");
+						return null;
+					}
+					/*
+					options = {
+						display: false,
+						//align: "center",
+						scale: 1.25,
+					};*/
+				}
+				// without this step, the stylesheet generated by MathJax.chtmlStylesheet()
+				// will contain everything for all elements that have been created
+				// until the cache was last cleared
+				MathJax.startup.output.clearCache();
+				let elem = MathJax.tex2chtml(tex, options);
+				// without this step, symbols that haven't been loaded yet don't appear
+				let stylesheet = MathJax.chtmlStylesheet();
+				//document.head.appendChild(stylesheet);
+				return { elem: elem, stylesheet: stylesheet};
+			},
+
+			// TODO I think this is way too slow, see
+			//     http://docs.mathjax.org/en/latest/web/typeset.html#typeset-async
+			// but maybe there is a faster way if it doesn't have to search the whole page,
+			// can you tell it to refresh only one element?
+			//refresh_output_latex: function () { MathJax.typeset(); },
+
+			wip_display_stylesheet_nodes: [],
+
+			update_input_wip_display: function (tex) {
+				let parent = ui.input_wip_display;
+				while (parent.firstChild) { parent.removeChild(parent.firstChild); }
+				if (ui.show_input_wip_display) {
+					ui.input_wip_display.style.display = "block";
+					let latex_info = ui.generate_latex_node(tex);
+					ui.remove_input_wip_display_stylesheets();
+					ui.wip_display_stylesheet_nodes.push(latex_info.stylesheet);
+					document.head.appendChild(latex_info.stylesheet);
+					ui.input_wip_display.appendChild(latex_info.elem);
+				} else {
+					ui.input_wip_display.style.display = "none";
+				}
+			},
+
+			remove_input_wip_display_stylesheets: function() {
+				while(ui.wip_display_stylesheet_nodes.length > 0) {
+					let stylesheet = ui.wip_display_stylesheet_nodes.pop();
+					document.head.removeChild(stylesheet);
+				}
+			},
+
+			/**
+			 * contains references to elements added to `output_display`, and
+			 * their corresponding stylesheets.
+			 * Should be a list of objects with fields:
+			 *   - "elem": a reference to an HTML element for this output line, and
+			 *   - "stylesheets": a list of corresponding stylesheets.
+			 *
+			 */
+			output_display_refs: [],
+
+			// returns an object that will be passed to it again for clean up
+			// if this line of the output display is removed.
+			// (currently, the returned object is not used, but would be
+			// in the future if a specific line could be removed)
+			generate_output_display: function (raw_input, latex, calc_output, show_raw) {
+				console.debug("generate_output_display called with", raw_input, calc_output);
+				let tex_input = latex;
+				let raw_output = "";
+
+				let output_element = document.createElement("p");
+				let tex = tex_input;
+
+				let latex_info = ui.generate_latex_node(tex);
+				output_element.appendChild(latex_info.elem);
+				document.head.appendChild(latex_info.stylesheet);
+
+
+
+				if (show_raw) {
+					//output_element.appndChild(document.createElement("br"));
+					let debug_span = document.createElement("span");
+					debug_span.classList.add("raw_calc_io");
+					if (calc_output.rc == 0) {
+						raw_output = "{re: " + calc_output.re + ", im: " + calc_output.im + "}";
+					}
+					debug_span.innerText = raw_input + " = " + raw_output;
+					output_element.appendChild(debug_span);
+				}
+
+				if (calc_output.rc != 0) {
+					let error_msg = document.createElement("span");
+					error_msg.innerText = calc_output.msg;
+					error_msg.classList.add("error_msg");
+					output_element.appendChild(error_msg);
+				}
+
+				let ui_refs = { elem: output_element, stylesheets: [latex_info.stylesheet] };
+				if (calc_output.rc == 0) {
+					let tex_output = "= " + calc_output.val_str;
+					latex_output_info = ui.generate_latex_node(tex_output);
+
+					output_element.appendChild(latex_output_info.elem);
+					document.head.appendChild(latex_output_info.stylesheet);
+					ui_refs.stylesheets.push(latex_output_info.stylesheet);
+				}
+
+				ui.output_text.appendChild(output_element);
+				ui.output_display_refs.push(ui_refs);
+				ui.remove_output_display_entries(MAX_OUTPUT_LINES);
+
+
+				return ui_refs;
+			},
+
+			btn_stylesheets: [],
+
+			generate_latex_node_btn: function(tex, format, parent) {
+				let info = ui.generate_latex_node(tex, format, parent);
+				document.head.appendChild(info.stylesheet);
+				ui.btn_stylesheets.push(info.stylesheet);
+				return info.elem;
+			},
+
+			clear_latex_btn_stylesheets: function () {
+				while (ui.btn_stylesheets.length > 0) {
+					document.head.removeChild(ui.btn_stylesheets.shift());
+				}
+			},
+
+			generate_output_msg: function (msg, is_error) {
+				let output_element = document.createElement("p");
+				if (is_error) {
+					output_element.classList.add("error_msg");
+				}
+				output_element.innerHTML = msg; // TODO HTML escape this
+				ui.output_text.appendChild(output_element);
+				ui.output_disp_scroll_to_bottom();
+			},
+
+			output_disp_scroll_to_bottom: function() {
+				ui.output_text_window.scrollTop = ui.output_text_window.scrollHeight;
+			},
+
+			clear_output_display: function() {
+				ui.remove_output_display_entries(0);
+			},
+
+			remove_output_display_entries: function(keep_count) {
+				while(ui.output_display_refs.length > keep_count) {
+					let refs = ui.output_display_refs.shift();
+					ui.output_text.removeChild(refs.elem);
+					for (let stylesheet of refs.stylesheets) {
+						document.head.removeChild(stylesheet);
+					}
+				}
+				/*
+				// clear anything else, like the title and
+				// the "Calc binary is loading, please wait..." message
+				// though this will mask any bugs with the cleanup
+				while(ui.output_text.children.length > 0) {
+					ui.output_text.removeChild(ui.output_text.firstChild)
+				}
+
+				// put the title back
+				let title = document.createElement("h1");
+				title.innerHTML = "AlexCalc";
+				ui.output_text.appendChild(title);
+				*/
+			},
+
+			update_vars: function(vars) {
+				console.debug("update_vars", vars);
+				let tbody = document.getElementById("var_tbl_body");
+				while(tbody.firstChild) {
+					remove_variable_row_click_listener(ui, tbody.firstChild);
+					tbody.removeChild(tbody.firstChild);
+				}
+
+				for (var_info of vars) {
+					let name = var_info[0];
+					let val  = var_info[1];
+					let row = document.createElement("tr");
+					row.classList.add("var_table_row");
+
+					let name_cell = document.createElement("td");
+					name_cell.classList.add("var_tbl_name_col");
+					//name_cell.appendChild(ui.generate_latex_node(name));
+					name_cell.innerHTML = name;
+
+					let val_cell = document.createElement("td");
+					val_cell.classList.add("var_tbl_val_col");
+					val_cell.innerText = val;
+
+					row.appendChild(name_cell);
+					row.appendChild(val_cell);
+
+					add_variable_row_click_listener(ui, row, name);
+
+					tbody.appendChild(row);
+				}
+			},
+
+			is_mobile: function() {
+				return /Mobi/.test(navigator.userAgent);
+			},
+
+			set_focus_to_textarea: function () {
+				ui.input_text.focus();
+			},
+
+			var_btn_selected: function(elem) {
+				if (ui.state.var_btn_selected != null) {
+					ui.state.var_btn_selected.classList.remove("selected");
+				}
+
+				if (elem != null) {
+					elem.classList.add("selected");
+				}
+
+				ui.state.var_btn_selected = elem;
+			},
+
+			unit_sel: unit_sel,
+
+			input_text: document.getElementById("input_text"),
+
+			/* This element can be totally cleared, contains only title and
+			 * previous inputs */
+			output_text: document.getElementById("output_text"),
+
+			/* This is the element that is scrollable, containing:
+			 *    output_text,
+			 *    input_wip_display */
+			output_text_window: document.getElementById("output_text_window"),
+
+			checkbox_show_raw: document.getElementById("checkbox_show_raw"),
+			selected_theme: "light",
+			dark_mode_select: document.getElementById("dark_mode_select"),
+
+			custom_var_name_input: document.getElementById("custom_var_name_input"),
+			var_selector_display: document.getElementById("var_selector"),
+			btn_var_display_insert: document.getElementById("btn_var_display_insert"),
+
+			unit_category_list: document.getElementById("unit_category_list"),
+
+			btn_clear: document.getElementById("btn_clear"),
+			btn_bksp:  document.getElementById("btn_bksp"),
+			btn_begin: document.getElementById("btn_begin"),
+			btn_left:  document.getElementById("btn_left"),
+			btn_right: document.getElementById("btn_right"),
+			btn_up:    document.getElementById("btn_up"),
+			btn_down:  document.getElementById("btn_down"),
+			btn_end:   document.getElementById("btn_end"),
+
+			btn_inv:   document.getElementById("btn_inv"),
+			btn_alt:   document.getElementById("btn_alt"),
+			btn_polar_toggle: document.getElementById("btn_polar_toggle"),
+			btn_degree_toggle: document.getElementById("btn_degree_toggle"),
+			btn_vars:  document.getElementById("btn_vars"),
+			btn_units:  document.getElementById("btn_units"),
+			btn_enter: document.getElementById("btn_enter"),
+
+			btn_sin:   document.getElementById("btn_sin"),
+			btn_cos:   document.getElementById("btn_cos"),
+			btn_tan:   document.getElementById("btn_tan"),
+
+			btn_log:      document.getElementById("btn_log"),
+			btn_ln:       document.getElementById("btn_ln"),
+			btn_sqrt:     document.getElementById("btn_sqrt"),
+			btn_img_unit: document.getElementById("btn_i"),
+
+			btn_var1: document.getElementById("btn_var1"),
+			btn_pi:   document.getElementById("btn_pi"),
+			btn_e:    document.getElementById("btn_e"),
+			//btn_var2: document.getElementById("btn_var2"),
+			btn_var_display_cancel: document.getElementById("btn_var_display_cancel"),
+			btn_unit_display_cancel: document.getElementById("btn_unit_display_cancel"),
+
+			normal_btns: [
+				document.getElementById("btn_log"),
+				document.getElementById("btn_ln"),
+
+				document.getElementById("btn_sqrt"),
+				document.getElementById("btn_sin"),
+				document.getElementById("btn_cos"),
+				document.getElementById("btn_tan"),
+				document.getElementById("btn_pow"),
+
+				document.getElementById("btn_var1"),
+				document.getElementById("btn_pi"),
+				document.getElementById("btn_par_l"),
+				document.getElementById("btn_delim"),
+				document.getElementById("btn_par_r"),
+				document.getElementById("btn_div"),
+
+				//document.getElementById("btn_var2"),
+				document.getElementById("btn_e"),
+				document.getElementById("btn_7"),
+				document.getElementById("btn_8"),
+				document.getElementById("btn_9"),
+				document.getElementById("btn_mult"),
+
+				document.getElementById("btn_4"),
+				document.getElementById("btn_5"),
+				document.getElementById("btn_6"),
+				document.getElementById("btn_sub"),
+
+				document.getElementById("btn_ans"),
+				//document.getElementById("btn_degree"),
+				document.getElementById("btn_1"),
+				document.getElementById("btn_2"),
+				document.getElementById("btn_3"),
+				document.getElementById("btn_add"),
+
+				document.getElementById("btn_sto"),
+				document.getElementById("btn_i"),
+				document.getElementById("btn_0"),
+				document.getElementById("btn_decimal"),
+				document.getElementById("btn_exp"),
+			],
+
+			new_var_btns: [
+			{ id: "btn_new_var_x",       var_name: "x"      },
+			{ id: "btn_new_var_y",       var_name: "y"      },
+			{ id: "btn_new_var_z",       var_name: "z"      },
+			{ id: "btn_new_var_theta",   var_name: "theta"  },
+			{ id: "btn_new_var_alpha",   var_name: "alpha"  },
+			{ id: "btn_new_var_beta",    var_name: "beta"   },
+			{ id: "btn_new_var_gamma",   var_name: "gamma"  },
+			{ id: "btn_new_var_epsilon", var_name: "epsilon"},
+			{ id: "btn_new_var_a",       var_name: "a"      },
+			{ id: "btn_new_var_b",       var_name: "b"      },
+			{ id: "btn_new_var_c",       var_name: "c"      },
+			{ id: "btn_new_var_d",       var_name: "d"      },
+			{ id: "btn_new_var_R1",      var_name: "R_1"    },
+			{ id: "btn_new_var_V1",      var_name: "V_1"    },
+			{ id: "btn_new_var_I1",      var_name: "I_1"    },
+			{ id: "btn_new_var_L",       var_name: "L"      },
+			{ id: "btn_new_var_R2",      var_name: "R_1"    },
+			{ id: "btn_new_var_V2",      var_name: "V_1"    },
+			{ id: "btn_new_var_I2",      var_name: "I_1"    },
+			{ id: "btn_new_var_C",       var_name: "C"      },
+			{ id: "btn_new_var_omega",   var_name: "omega"  },
+			{ id: "btn_new_var_f",       var_name: "f"      },
+			{ id: "btn_new_var_P",       var_name: "P"      },
+			{ id: "btn_new_var_G",       var_name: "G"      },
+
+			],
+
+		};
+
+		init_ui(ui);
+
+		//Module['onRuntimeInitialized'] = function() {
+		//	ui.on_wasm_load()
+		//}
+	</script>
+	<script type="text/javascript" src="js/calc_worker_wrapper.js"></script>
+
+</body></html>
