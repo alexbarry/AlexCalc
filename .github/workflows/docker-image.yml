@@ -1,0 +1,40 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+
+  deploy:
+    # why can't this by nginx, like my docker images?
+    runs-on: ubuntu-22.04
+
+    permissions:
+      contents: write
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup docker buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Build AlexCalc static HTML via docker
+      run: |
+        docker build -t alexcalc_html \
+        -f Dockerfile \
+        --target=export_output  \
+        --output=./public \
+        .
+
+    - name: Deploy built HTML to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./public
+        destination_dir: docs
