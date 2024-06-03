@@ -105,11 +105,14 @@ onmessage = function(e) {
 		let latex = "\\text{error}";
 		let error = null;
 		try {
+			console.debug(`[debug] calc_worker calling alexcalc with "${data.raw_input}", ${calcdata_ptr}`);
 			calc_output = alexcalc(data.raw_input, calcdata_ptr);
+			console.debug(`[debug] calc_worker alexcalc returned `, output);
 			// TODO should output latex from alexcalc too, since node is already parsed
 			latex = alexcalc_to_latex(data.raw_input, calcdata_ptr, cursor_pos, parse_wip);
 		} catch(e) {
 			//error = e;
+			console.error("js alexcalc_to_latex returned error", e);
 			error = { message: e.message, fileName: e.fileName, lineNumber: e.lineNumber};
 			console.error(e);
 		}
