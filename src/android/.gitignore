@@ -1,0 +1,27 @@
+*.iml
+.gradle
+/local.properties
+/keystore.properties
+app/keys.lnk
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+
+# alex added these 3 because they kept changing for things that seemed related
+# to the UI state, not the code. (zoom levels, AVD states??)
+# Hopefully ignoring them doesn't break anything
+/.idea/render.experimental.xml
+/.idea/deploymentTargetDropDown.xml
+/.idea/misc.xml
+
+# I also ran:
+# git update-index --assume-unchanged src/android/.idea/misc.xml
+
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx

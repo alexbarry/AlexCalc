@@ -1,0 +1,6 @@
+.*.swp
+bin/
+obj/
+cscope.out
+log/
+*.pyc

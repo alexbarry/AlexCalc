@@ -1,0 +1,7 @@
+/build
+
+# why do these get dumped here??
+/arm8/
+/universal/
+/x86_64/
+

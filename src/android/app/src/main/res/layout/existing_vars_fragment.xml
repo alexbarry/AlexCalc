@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/existing_var_title"
+        style="@style/PopupTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/existing_variables"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/existing_vars_btns_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/new_var_btn"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/define_new_variable"/>
+
+    <Button
+        android:id="@+id/delete_vars_btn"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_all_vars"/>
+    </LinearLayout>
+    <ScrollView
+        android:id="@+id/existing_var_selector_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+    <TableLayout
+        android:id="@+id/existing_var_table"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            style="@style/ExistingVarsRow">
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="x" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="3+4j km" />
+        </TableRow>
+
+        <TableRow
+            style="@style/ExistingVarsRow" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="theta" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="90" />
+        </TableRow>
+
+        <TableRow
+            style="@style/ExistingVarsRow" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="Z_o" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="50 angle 45 kOhm" />
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="x" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="3+4j km" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="theta" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="90" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="Z_o" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="50 angle 45 kOhm" />
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="x" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="3+4j km" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="theta" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="90" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="Z_o" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="50 angle 45 kOhm" />
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="x" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="3+4j km" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="theta" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="90" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="Z_o" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="50 angle 45 kOhm" />
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="x" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="3+4j km" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="theta" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="90" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="Z_o" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="50 angle 45 kOhm" />
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="x" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="3+4j km" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="theta" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="90" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="Z_o" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="50 angle 45 kOhm" />
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="x" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="3+4j km" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="theta" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="90" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="Z_o" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="50 angle 45 kOhm" />
+        </TableRow>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="x" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="3+4j km" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="theta" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="90" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                style="@style/ExistingVarsColName"
+                android:text="Z_o" />
+
+            <TextView
+                style="@style/ExistingVarsColVal"
+                android:text="50 angle 45 kOhm" />
+        </TableRow>
+
+    </TableLayout>
+    </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/existing_var_selector_scroll">
+        <Button
+            android:id="@+id/existing_var_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cancel"/>
+        <Button
+            android:id="@+id/existing_var_insert"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Insert variable"/>
+    </LinearLayout>
+</LinearLayout>

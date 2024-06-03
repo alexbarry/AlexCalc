@@ -1,0 +1,25 @@
+/* html:not(.style-scope)[dark] { */
+
+body.dark h1, body.dark h2, body.dark h3, body.dark h4, body.dark h5, body.dark h6, body.dark p, body.dark div, body.dark span, body.dark sup, body.dark sub, body.dark label {
+	/*color: #fff;*/
+	/* Chrome `#enable-force-dark` seems to invert colours brighter than this,
+	* at least for the MathJax fraction bar and line in square root symbols.
+	* Using #cdcdcd appears to prevent it from getting inverted, but
+	* Using #cecece (or #fff) will result it in being changed to something 
+	* dark.
+	*/
+	color: #cdcdcd;
+}
+
+body.dark {
+	background-color: #000;
+}
+
+body.dark div.main {
+	background-color:#111;
+	border: 1px solid grey;
+}
+
+body.dark .unimportant {
+	color:gray;
+}

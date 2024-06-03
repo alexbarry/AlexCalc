@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1B246E</color>
+    <color name="colorPrimaryDark">#1A1F4A</color>
+    <!-- This is used for the active radio button colour,
+         and the text cursor when using the keyboard (soft or real),
+         and there's an underline with this colour under the active edit text -->
+    <!--<color name="colorAccent">#A70101</color>-->
+    <color name="colorAccent">#3C55CC</color>
+
+    <color name="windowBackground">#222</color>
+    <color name="dialogBackground">#222</color>
+
+    <color name="windowBackground_verydark">#000000</color>
+
+
+    <color name="btn_default">#181818</color>
+    <color name="btn_text">#fff</color>
+    <color name="btn_important">#602424</color>
+    <color name="btn_meta">#540</color>
+    <color name="btn_var">#206065</color>
+    <color name="btn_func">#255813</color>
+    <color name="btn_op">#2A2A8A</color>
+    <color name="btn_specop">#2929BF</color>
+    <color name="btn_num">#464646</color>
+
+</resources>

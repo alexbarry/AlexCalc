@@ -1,0 +1,105 @@
+apply plugin: 'com.android.application'
+
+def keystorePropertiesFile=rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+android {
+    compileSdkVersion 30
+	// I am not impressed that at first, Android Studio dumped the passwords here in
+	// plaintext.
+    signingConfigs {
+        release {
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+        }
+    }
+    buildToolsVersion "29.0.3"
+    ndkVersion '21.2.6472646'
+
+    defaultConfig {
+        applicationId "net.alexbarry.calc_android"
+        minSdkVersion 23
+        targetSdkVersion 30
+        versionCode 7
+        versionName "1.0.3"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+
+			// TODO does cppFlags here work?
+			// cppFlags "-Werror"
+
+			// Specifying external directory for native build files because they get big
+			// and I'm running out of room in my cloud storage backup
+			//buildStagingDirectory "C:/tmp/android_native_build/calc/"
+        }
+    }
+
+    flavorDimensions 'cpuArch'
+    productFlavors {
+        arm8 {
+            dimension 'cpuArch'
+            ndk {
+                abiFilters 'arm64-v8a', 'armeabi-v7a'
+            }
+        }
+        x86_64 {
+            dimension 'cpuArch'
+            ndk {
+                abiFilters 'x86_64', 'x86'
+            }
+        }
+        universal {
+            dimension 'cpuArch'
+            // include all default ABIs. with NDK-r16,  it is:
+            //   armeabi-v7a, arm64-v8a, x86, x86_64
+        }
+    }
+}
+
+apply plugin: 'com.google.android.gms.oss-licenses-plugin'
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        // maven { url "https://maven.google.com" }
+    }
+
+    dependencies {
+        classpath "com.google.android.gms:oss-licenses-plugin:0.10.4"
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'androidx.navigation:navigation-fragment:2.3.5'
+    implementation 'androidx.navigation:navigation-ui:2.0.0'
+    implementation 'androidx.preference:preference:1.1.1'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation "com.google.android.gms:play-services-oss-licenses:17.0.0"
+}

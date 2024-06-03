@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/unit_popup_title"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Select a unit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/PopupTitle"
+        />
+
+    <TextView
+        android:id="@+id/unit_name"
+        app:layout_constraintTop_toBottomOf="@id/unit_popup_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <TableLayout
+        android:id="@+id/unit_adjuster_tbl"
+        app:layout_constraintTop_toBottomOf="@id/unit_name"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/unit_prefix_label"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="@string/unit_prefix_label"/>
+            <TextView
+                android:id="@+id/unit_base_label"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="@string/unit_base_label"/>
+            <TextView
+                android:id="@+id/unit_pow_label"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="@string/unit_pow_label"/>
+        </TableRow>
+
+        <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/unit_prefix_inc_btn"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/arrow_up"/>
+        <Button
+            android:id="@+id/unit_base_inc_btn"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/arrow_up"/>
+        <Button
+            android:id="@+id/unit_pow_inc_btn"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/arrow_up"/>
+    </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <Spinner
+                android:id="@+id/unit_prefix_spinner"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:spinnerMode="dropdown" />
+
+            <Spinner
+                android:id="@+id/unit_base_spinner"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:spinnerMode="dropdown"/>
+            <Spinner
+                android:id="@+id/unit_pow_spinner"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:spinnerMode="dropdown"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/unit_prefix_dec_btn"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="@string/arrow_down"/>
+            <Button
+                android:id="@+id/unit_base_dec_btn"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="@string/arrow_down"/>
+            <Button
+                android:id="@+id/unit_pow_dec_btn"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="@string/arrow_down"/>
+        </TableRow>
+
+    </TableLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/unit_adjuster_tbl"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/btn_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/back"/>
+
+    <Button
+        android:id="@+id/insert_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/insert_unit"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

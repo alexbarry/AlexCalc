@@ -1,0 +1,164 @@
+<resources>
+    <string name="app_name">AlexCalc</string>
+    <string name="action_settings">Settings</string>
+	<string name="about">About</string>
+
+	<!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+	<string name="clear">clear</string>
+	<string name="clear_screen">clear scrn</string>
+	<string name="bksp">bksp</string>
+	<string name="delete">del</string>
+	<string name="inv">inv</string>
+	<string name="polar">polar</string>
+	<string name="rect">rect</string>
+	<string name="degree">degree</string>
+	<string name="radian">radian</string>
+	<string name="alt">alt</string>
+	<string name="log10">log<sub>10</sub></string>
+	<string name="sin">sin</string>
+	<string name="cos">cos</string>
+	<string name="tan">tan</string>
+
+	<!-- TODO make sure these are used when the inv/alt buttons are pressed -->
+	<string name="pow">^</string>
+	<string name="var">var</string>
+	<string name="ln">ln</string>
+	<string name="lparen">(</string>
+	<string name="delim">,</string>
+	<string name="rparen">)</string>
+	<string name="div">\u00F7</string>
+	<string name="units">units</string>
+	<string name="to_units">to units</string>
+	<string name="sqrt">sqrt</string>
+	<string name="num1">1</string>
+	<string name="num2">2</string>
+	<string name="num3">3</string>
+	<string name="num4">4</string>
+	<string name="num5">5</string>
+	<string name="num6">6</string>
+	<string name="num7">7</string>
+	<string name="num8">8</string>
+	<string name="num9">9</string>
+	<string name="num0">0</string>
+	<string name="decimal">.</string>
+	<string name="img_unit_i">i</string>
+	<string name="img_unit_j">j</string>
+	<string name="exp">EXP</string>
+	<string name="mult">\u00D7</string>
+	<string name="var_x">x</string>
+	<string name="pi">\u03C0</string>
+	<string name="sub">-</string>
+	<string name="ans">ans</string>
+	<string name="e">e</string>
+	<string name="add">+</string>
+	<string name="store">sto</string>
+	<string name="enter">enter</string>
+
+    <!--
+    <string name="arrow_up">^</string>
+    <string name="arrow_left">&lt;-</string>
+    <string name="arrow_down">v</string>
+    <string name="arrow_right">-></string>
+    -->
+
+    <string name="arrow_up">\u2191</string>
+    <string name="arrow_left">\u2190</string>
+    <string name="arrow_down">\u2193</string>
+    <string name="arrow_right">\u2192</string>
+	<string name="arrow_begin">|\u2190</string>
+	<string name="arrow_end">\u2192|</string>
+
+	<string name="txt_input_hint">Press buttons or type here</string>
+	<string name="insert_variable">Insert variable</string>
+	<string name="existing_variables">Existing variables</string>
+	<string name="define_new_variable">Define new variable</string>
+	<string name="custom_var_name_hint">Or enter custom variable name</string>
+	<string name="cancel">Cancel</string>
+	<string name="back">Back</string>
+
+
+	<string name="btn_var_theta">\u03B8</string>
+	<string name="btn_var_alpha">\u03B1</string>
+	<string name="btn_var_beta">\u03B2</string>
+	<string name="btn_var_gamma">\u03B3</string>
+	<string name="btn_var_epsilon">\u03B5</string>
+	<string name="btn_var_omega">\u03C9</string>
+	<string name="btn_var_r1">R<sub>1</sub></string>
+	<string name="btn_var_v1">V<sub>1</sub></string>
+	<string name="btn_var_i1">I<sub>1</sub></string>
+	<string name="btn_var_r2">R<sub>2</sub></string>
+	<string name="btn_var_v2">V<sub>2</sub></string>
+	<string name="btn_var_i2">I<sub>2</sub></string>
+
+	<string name="insert_unit">Insert Unit</string>
+	<string name="unit_prefix_label">prefix</string>
+	<string name="unit_base_label">unit name</string>
+	<string name="unit_pow_label">power</string>
+
+	<string name="colour_theme_pref_label">Color Theme</string>
+	<string name="colour_theme_follow_system">Follow system</string>
+	<string name="colour_theme_light">Light</string>
+	<string name="colour_theme_dark">Dark</string>
+	<string name="colour_theme_verydark">Very Dark</string>
+	<string-array name="colour_themes">
+		<item>@string/colour_theme_follow_system</item>
+		<item>@string/colour_theme_light</item>
+		<item>@string/colour_theme_dark</item>
+		<item>@string/colour_theme_verydark</item>
+	</string-array>
+
+	<string name="preference_key_theme_select">theme_select_preference</string>
+
+    <string name="delete_all_vars">Delete all vars</string>
+	<string name="delete_recently_used_units">Clear</string>
+	<string name="delete_vars_popup_title">Delete all variables</string>
+	<string name="delete_vars_popup_msg">Are you sure you want to delete all variables?</string>
+	<string name="yes">Yes</string>
+	<string name="delete_units_popup_title">Clear Recently Used Units</string>
+	<string name="delete_units_popup_msg">Are you sure you want to clear all recently used units?</string>
+	<string name="about_title">About AlexCalc</string>
+
+	<string name="about_text_html">
+		&lt;p>Created by Alex Barry.&lt;/p>
+		&lt;p>Available as a web app at &lt;a href="https://alexbarry.github.io/AlexCalc/">https://alexbarry.github.io/AlexCalc/&lt;a>&lt;/p>
+		&lt;p>Please submit comments, feedback, feature requests, or discussions to:
+		&lt;ul>
+		    &lt;li>&lt;strong>Github&lt;/strong>: &lt;a href="https://github.com/alexbarry/AlexCalc">https://github.com/alexbarry/AlexCalc
+&lt;/a>&lt;/li>
+			&lt;li>&lt;strong>Reddit&lt;/strong>: &lt;a href="https://www.reddit.com/r/alexcalc/" style="font-family:monospace">reddit.com/r/alexcalc&lt;/a>&lt;/li>
+			&lt;li>&lt;strong>Discord&lt;/strong>: &lt;a href="https://discord.gg/ckNstZc2nF" style="font-family:monospace">discord.gg/ckNstZc2nF&lt;/a>&lt;/li>
+			&lt;li>&lt;strong>Email&lt;/strong>: &lt;a href="mailto:alexbarry.dev2@gmail.com" style="font-family:monospace">alexbarry.dev2@gmail.com&lt;/a>&lt;/li>
+			&lt;li>&lt;strong>Matrix&lt;/strong>: &lt;a href="https://matrix.to/#/#alexcalc:matrix.org" style="font-family:monospace">#alexcalc:matrix.org&lt;/a>&lt;/li>
+		&lt;/ul>
+		&lt;/p>
+		&lt;br/>
+		&lt;p>&lt;strong>Terms of use:&lt;/strong> &lt;span style="font-family:monospace">THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.&lt;span>&lt;p>
+	</string>
+	<string name="about_text_raw">
+Created by Alex Barry.\n
+Available as a web app at https://alexbarry.github.io/AlexCalc/ \n
+Please submit comments, feedback, feature requests, or discussions to:\n
+  Github: https://github.com/alexbarry/AlexCalc \n
+  Reddit: https://www.reddit.com/r/alexcalc/ \n
+  Discord: https://discord.gg/ckNstZc2nF \n
+  Email: alexbarry.dev2@gmail.com \n
+  Matrix: https://matrix.to/#/#alexcalc:matrix.org \n
+
+Terms of use: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. \n
+	</string>
+	<string name="open_source_licenses_title">Open Source Licenses</string>
+	<string name="show_licenses">Show Licenses</string>
+
+	<string name="small_msg_terms">
+		By using this application you agree with its terms of use, available in the \"about\" section.
+	</string>
+	<string name="help">Help</string>
+</resources>

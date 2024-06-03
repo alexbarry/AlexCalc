@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/new_variable_title"
+        style="@style/PopupTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/define_new_variable"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <ScrollView
+        android:id="@+id/new_var_selector_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/new_variable_title">
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4">
+
+            <Button
+                android:id="@+id/btn_new_var_x"
+                style="@style/DefineNewVarButton"
+                android:text="x" />
+
+            <Button
+                android:id="@+id/btn_new_var_y"
+                style="@style/DefineNewVarButton"
+                android:text="y" />
+
+            <Button
+                android:id="@+id/btn_new_var_z"
+                style="@style/DefineNewVarButton"
+                android:text="z" />
+
+            <Button
+                android:id="@+id/btn_new_var_theta"
+                style="@style/DefineNewVarButton"
+                android:text="@string/btn_var_theta" />
+
+            <Button
+                android:id="@+id/btn_new_var_alpha"
+                style="@style/DefineNewVarButton"
+                android:text="@string/btn_var_alpha" />
+
+            <Button
+                android:id="@+id/btn_new_var_beta"
+                style="@style/DefineNewVarButton"
+                android:text="@string/btn_var_beta" />
+
+            <Button
+                android:id="@+id/btn_new_var_gamma"
+                style="@style/DefineNewVarButton"
+                android:text="@string/btn_var_gamma" />
+
+            <Button
+                android:id="@+id/btn_new_var_epsilon"
+                style="@style/DefineNewVarButton"
+                android:text="@string/btn_var_epsilon" />
+
+            <Button
+                android:id="@+id/btn_new_var_a"
+                style="@style/DefineNewVarButton"
+                android:text="a" />
+
+            <Button
+                android:id="@+id/btn_new_var_b"
+                style="@style/DefineNewVarButton"
+                android:text="b" />
+
+            <Button
+                android:id="@+id/btn_new_var_c"
+                style="@style/DefineNewVarButton"
+                android:text="c" />
+
+            <Button
+                android:id="@+id/btn_new_var_d"
+                style="@style/DefineNewVarButton"
+                android:text="d" />
+
+            <Button
+                android:id="@+id/btn_new_var_r1"
+                style="@style/DefineNewVarButton"
+                android:text="@string/btn_var_r1" />
+
+            <Button
+                android:id="@+id/btn_new_var_v1"
+                style="@style/DefineNewVarButton"
+                android:text="@string/btn_var_v1" />
+
+            <Button
+                android:id="@+id/btn_new_var_i1"
+                style="@style/DefineNewVarButton"
+                android:text="@string/btn_var_i1" />
+
+            <Button
+                android:id="@+id/btn_new_var_L"
+                style="@style/DefineNewVarButton"
+                android:text="L" />
+
+            <Button
+                android:id="@+id/btn_new_var_r2"
+                style="@style/DefineNewVarButton"
+                android:text="@string/btn_var_r2" />
+
+            <Button
+                android:id="@+id/btn_new_var_v2"
+                style="@style/DefineNewVarButton"
+                android:text="@string/btn_var_v2" />
+
+            <Button
+                android:id="@+id/btn_new_var_i2"
+                style="@style/DefineNewVarButton"
+                android:text="@string/btn_var_i2" />
+
+            <Button
+                android:id="@+id/btn_new_var_C"
+                style="@style/DefineNewVarButton"
+                android:text="C" />
+
+            <Button
+                android:id="@+id/btn_new_var_omega"
+                style="@style/DefineNewVarButton"
+                android:text="@string/btn_var_omega" />
+
+            <Button
+                android:id="@+id/btn_new_var_f"
+                style="@style/DefineNewVarButton"
+                android:text="f" />
+
+            <Button
+                android:id="@+id/btn_new_var_p"
+                style="@style/DefineNewVarButton"
+                android:text="P" />
+
+            <Button
+                android:id="@+id/btn_new_var_g"
+                style="@style/DefineNewVarButton"
+                android:text="G" />
+
+        </GridLayout>
+    </ScrollView>
+
+    <EditText
+        android:id="@+id/custom_var_name_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/new_var_selector_scroll"
+        android:inputType="text"
+        android:imeOptions="actionGo"
+        android:hint="@string/custom_var_name_hint"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/custom_var_name_edittext">
+
+
+    <Button
+        android:id="@+id/btn_insert_var_cancel"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:text="@string/back" />
+
+
+     <Button
+        android:id="@+id/btn_insert_custom_var_name"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:text="@string/insert_variable" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

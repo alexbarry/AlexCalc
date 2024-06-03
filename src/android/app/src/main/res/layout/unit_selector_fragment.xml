@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/unit_popup_title"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Select a unit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/PopupTitle"
+        />
+    <Button
+        android:id="@+id/btn_unit_recently_used"
+        app:layout_constraintTop_toBottomOf="@id/unit_popup_title"
+        android:text="Recently Used Units"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <EditText
+        android:id="@+id/unit_filter"
+        app:layout_constraintTop_toBottomOf="@id/btn_unit_recently_used"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Filter units"/>
+
+    <!-- Looks like it includes a built in scroll view -->
+    <ExpandableListView
+        android:id="@+id/unit_expandable_list_view"
+        app:layout_constraintTop_toBottomOf="@id/unit_filter"
+        app:layout_constraintBottom_toTopOf="@id/unit_selector_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constrainedHeight="true"
+        />
+
+
+    <Button
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/unit_selector_cancel"
+        android:text="@string/cancel"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

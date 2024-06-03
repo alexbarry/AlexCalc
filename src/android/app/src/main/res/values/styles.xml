@@ -1,0 +1,164 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppThemeBase" parent="Theme.AppCompat.DayNight.NoActionBar">
+
+
+        <!--
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
+        -->
+
+
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <!-- TODO I may update this to be a darker shade of grey -->
+        <item name="android:textColor">@color/btn_text</item>
+        <item name="android:buttonStyle">@style/AppTheme.ButtonThemeDefault</item>
+
+        <item name="btnTextColour">@color/btn_text</item>
+        <item name="btnColourImportant">@color/btn_important</item>
+        <item name="btnColourMeta">@color/btn_meta</item>
+        <item name="btnColourVar">@color/btn_var</item>
+        <item name="btnColourFunc">@color/btn_func</item>
+        <item name="btnColourOp">@color/btn_op</item>
+        <item name="btnColourSpecOp">@color/btn_specop</item>
+        <item name="btnColourNum">@color/btn_num</item>
+    </style>
+
+    <style name="AppTheme" parent="AppThemeBase">
+        <item name="windowBackground">@color/windowBackground</item>
+        <item name="android:windowBackground">?windowBackground</item>
+    </style>
+
+    <style name="Theme_VeryDark" parent="AppTheme">
+        <item name="colorPrimary">@color/colorPrimary_VeryDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark_VeryDark</item>
+        <item name="colorAccent">@color/colorAccent_VeryDark</item>
+        <!-- TODO I may update this to be a darker shade of grey -->
+        <item name="android:textColor">@color/btn_text_verydark</item>
+
+        <!-- TODO why is the buttons' view background #222 instead of #000?? -->
+        <item name="windowBackground">@color/windowBackground_verydark</item>
+        <item name="android:windowBackground">@color/windowBackground_verydark</item>
+
+        <item name="btnTextColour">@color/btn_text_verydark</item>
+        <item name="btnColourImportant">@color/btn_important_verydark</item>
+        <item name="btnColourMeta">@color/btn_meta_verydark</item>
+        <item name="btnColourVar">@color/btn_var_verydark</item>
+        <item name="btnColourFunc">@color/btn_func_verydark</item>
+        <item name="btnColourOp">@color/btn_op_verydark</item>
+        <item name="btnColourSpecOp">@color/btn_specop_verydark</item>
+        <item name="btnColourNum">@color/btn_num_verydark</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="Theme.AppCompat.DayNight">
+        <item name="android:background">?windowBackground</item>
+    </style>
+
+    <style name="AppTheme.DialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:background">?windowBackground</item>
+    </style>
+
+    <!-- This theme includes UI buttons, like "cancel" or "recently used units"
+         in the units/var popups -->
+    <style name="AppTheme.ButtonThemeBase" parent="Widget.AppCompat.Button">
+        <item name="android:textColor">?btnTextColour</item>
+    </style>
+
+    <!-- This theme is only for UI buttons -->
+    <style name="AppTheme.ButtonThemeDefault" parent="AppTheme.ButtonThemeBase">
+        <item name="android:backgroundTint">@color/btn_default</item>
+    </style>
+
+    <!-- This theme is only for buttons that appear in the calculator button grid -->
+    <style name="AlexCalcButton" parent="AppTheme.ButtonThemeBase">
+        <!-- layout_width of 0dp means the buttons will be equal size
+        in the grid in a GridLayout. Otherwise, the column with
+        the most text is the widest -->
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:minWidth">0dip</item>
+        <item name="android:padding">0dip</item>
+        <item name="android:background">@color/btn_num</item>
+        <item name="android:layout_margin">2dip</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="AlexCalcButtonImportant" parent="AlexCalcButton">
+        <item name="android:backgroundTint">?btnColourImportant</item>
+    </style>
+
+    <style name="AlexCalcButtonMeta" parent="AlexCalcButton">
+        <item name="android:backgroundTint">?btnColourMeta</item>
+    </style>
+
+    <style name="AlexCalcButtonFunc" parent="AlexCalcButton">
+        <item name="android:backgroundTint">?btnColourFunc</item>
+    </style>
+
+    <style name="AlexCalcButtonOp" parent="AlexCalcButton">
+        <item name="android:backgroundTint">?btnColourOp</item>
+    </style>
+
+    <style name="AlexCalcButtonVar" parent="AlexCalcButton">
+        <item name="android:backgroundTint">?btnColourVar</item>
+    </style>
+
+    <style name="AlexCalcButtonNum" parent="AlexCalcButton">
+        <item name="android:backgroundTint">?btnColourNum</item>
+    </style>
+
+    <style name="DefineNewVarButton">
+        <!-- layout_width of 0dp means the buttons will be equal size
+             in the grid in a GridLayout. Otherwise, the column with
+             the most text is the widest -->
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:minWidth">0dip</item>
+        <item name="android:padding">0dip</item>
+        <item name="android:layout_margin">2dip</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="PopupTitle">
+        <item name="android:textSize">12pt</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ExistingVarsRow">
+        <item name="android:layout_height">48dp</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
+    <style name="ExistingVarsColName">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_column">1</item>
+        <item name="android:textSize">22dp</item>
+
+    </style>
+
+    <!-- NOTE that when this style is applied programatically when dynamically creating TextViews,
+         gravity and weight don't seem to work -->
+    <style name="ExistingVarsColVal">
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">right</item>
+        <item name="android:textSize">22dp</item>
+    </style>
+
+</resources>

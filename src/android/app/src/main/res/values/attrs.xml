@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="windowBackground" format="color"/>
+
+    <attr name="btnTextColour" format="color"/>
+    <attr name="btnColourImportant" format="color"/>
+    <attr name="btnColourMeta" format="color"/>
+    <attr name="btnColourVar" format="color"/>
+    <attr name="btnColourFunc" format="color"/>
+    <attr name="btnColourOp" format="color"/>
+    <attr name="btnColourSpecOp" format="color"/>
+    <attr name="btnColourNum" format="color"/>
+</resources>

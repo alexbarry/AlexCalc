@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#4B4B9F</color>
+    <color name="colorPrimaryDark">#26263E</color>
+    <color name="colorAccent">#00AEFF</color>
+
+    <color name="windowBackground">#ffffff</color>
+    <!--<color name="windowBackground">#e9e9ff</color>-->
+    <color name="dialogBackground">@android:color/transparent</color>
+
+
+
+    <color name="btn_default">#ddd</color>
+    <color name="btn_text">#000</color>
+    <color name="btn_important">#FAA</color>
+    <color name="btn_meta">#FFEDD2</color>
+    <color name="btn_var">#BCEEF2</color>
+    <color name="btn_func">#E1EEDD</color>
+    <!--<color name="btn_op">#88C</color>-->
+    <color name="btn_op">#AAF</color>
+    <color name="btn_specop">#AAF</color>
+    <color name="btn_num">#DDD</color>
+
+
+
+    <color name="windowBackground_verydark">#000000</color>
+    <color name="dialogBackground_verydark">#000000</color>
+
+
+    <color name="colorPrimary_VeryDark">#000000</color>
+    <color name="colorPrimaryDark_VeryDark">#000000</color>
+    <!-- This is used for the active radio button colour,
+         and the text cursor when using the keyboard (soft or real),
+         and there's an underline with this colour under the active edit text -->
+    <!--<color name="colorAccent">#A70101</color>-->
+    <color name="colorAccent_VeryDark">#3C55CC</color>
+
+    <color name="btn_default_verydark">#181818</color>
+    <color name="btn_text_verydark">#888</color>
+    <color name="btn_important_verydark">#300</color>
+    <color name="btn_meta_verydark">#210</color>
+    <color name="btn_var_verydark">#182218</color>
+    <color name="btn_func_verydark">#181818</color>
+    <color name="btn_op_verydark">#001</color>
+    <color name="btn_specop_verydark">#001</color>
+    <color name="btn_num_verydark">#282828</color>
+</resources>

@@ -1,0 +1,1020 @@
+{
+  "group_name": "root",
+  "child_groups": [
+    {
+      "group_name": "Distance",
+      "child_groups": [],
+      "child_units": [
+        {
+          "nice_name": "metre",
+          "unit_names": [
+            [
+              {
+                "name": "m",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "lightyear",
+          "unit_names": [
+            [
+              {
+                "name": "ly",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "astronomical unit",
+          "unit_names": [
+            [
+              {
+                "name": "au",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "parsec",
+          "unit_names": [
+            [
+              {
+                "name": "pc",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "inch",
+          "unit_names": [
+            [
+              {
+                "name": "in",
+                "pow": 1
+              }
+            ],
+            [
+              {
+                "name": "inch",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "foot",
+          "unit_names": [
+            [
+              {
+                "name": "ft",
+                "pow": 1
+              }
+            ],
+            [
+              {
+                "name": "feet",
+                "pow": 1
+              }
+            ],
+            [
+              {
+                "name": "foot",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "yard",
+          "unit_names": [
+            [
+              {
+                "name": "yard",
+                "pow": 1
+              }
+            ],
+            [
+              {
+                "name": "yd",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "mile",
+          "unit_names": [
+            [
+              {
+                "name": "mile",
+                "pow": 1
+              }
+            ],
+            [
+              {
+                "name": "mi",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "nautical mile",
+          "unit_names": [
+            [
+              {
+                "name": "nmi",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        }
+      ]
+    },
+    {
+      "group_name": "Area",
+      "child_groups": [],
+      "child_units": [
+        {
+          "nice_name": "square metre",
+          "unit_names": [
+            [
+              {
+                "name": "m",
+                "pow": 2
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "hectare",
+          "unit_names": [
+            [
+              {
+                "name": "ha",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "acre",
+          "unit_names": [
+            [
+              {
+                "name": "acre",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "square inches",
+          "unit_names": [
+            [
+              {
+                "name": "in",
+                "pow": 2
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "square feet",
+          "unit_names": [
+            [
+              {
+                "name": "ft",
+                "pow": 2
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "square yard",
+          "unit_names": [
+            [
+              {
+                "name": "yd",
+                "pow": 2
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "square miles",
+          "unit_names": [
+            [
+              {
+                "name": "mi",
+                "pow": 2
+              }
+            ]
+          ],
+          "si_prefixable": false
+        }
+      ]
+    },
+    {
+      "group_name": "Volume",
+      "child_groups": [],
+      "child_units": [
+        {
+          "nice_name": "cubic metre",
+          "unit_names": [
+            [
+              {
+                "name": "m",
+                "pow": 3
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "Litre",
+          "unit_names": [
+            [
+              {
+                "name": "L",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "teaspoon",
+          "unit_names": [
+            [
+              {
+                "name": "tsp",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "tablespoon",
+          "unit_names": [
+            [
+              {
+                "name": "tbsp",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "fluid ounce",
+          "unit_names": [
+            [
+              {
+                "name": "floz",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "cup",
+          "unit_names": [
+            [
+              {
+                "name": "cup",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "gallon",
+          "unit_names": [
+            [
+              {
+                "name": "gallon",
+                "pow": 1
+              }
+            ],
+            [
+              {
+                "name": "gal",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "quart",
+          "unit_names": [
+            [
+              {
+                "name": "quart",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "pint",
+          "unit_names": [
+            [
+              {
+                "name": "pint",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "cubic inches",
+          "unit_names": [
+            [
+              {
+                "name": "in",
+                "pow": 3
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "cubic feet",
+          "unit_names": [
+            [
+              {
+                "name": "ft",
+                "pow": 3
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "cubic yard",
+          "unit_names": [
+            [
+              {
+                "name": "yd",
+                "pow": 3
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "cubic miles",
+          "unit_names": [
+            [
+              {
+                "name": "mi",
+                "pow": 3
+              }
+            ]
+          ],
+          "si_prefixable": false
+        }
+      ]
+    },
+    {
+      "group_name": "Time",
+      "child_groups": [],
+      "child_units": [
+        {
+          "nice_name": "second",
+          "unit_names": [
+            [
+              {
+                "name": "s",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "minute",
+          "unit_names": [
+            [
+              {
+                "name": "minute",
+                "pow": 1
+              }
+            ],
+            [
+              {
+                "name": "min",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "hour",
+          "unit_names": [
+            [
+              {
+                "name": "hr",
+                "pow": 1
+              }
+            ],
+            [
+              {
+                "name": "hour",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "day",
+          "unit_names": [
+            [
+              {
+                "name": "day",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "month",
+          "unit_names": [
+            [
+              {
+                "name": "month",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "year",
+          "unit_names": [
+            [
+              {
+                "name": "year",
+                "pow": 1
+              }
+            ],
+            [
+              {
+                "name": "yr",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        }
+      ]
+    },
+    {
+      "group_name": "Speed",
+      "child_groups": [],
+      "child_units": [
+        {
+          "nice_name": "metres per second",
+          "unit_names": [
+            [
+              {
+                "name": "m",
+                "pow": 1
+              },
+              {
+                "name": "s",
+                "pow": -1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "kilometres per hour",
+          "unit_names": [
+            [
+              {
+                "name": "km",
+                "pow": 1
+              },
+              {
+                "name": "hr",
+                "pow": -1
+              }
+            ],
+            [
+              {
+                "name": "kph",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "miles per hour",
+          "unit_names": [
+            [
+              {
+                "name": "mph",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "feet per second",
+          "unit_names": [
+            [
+              {
+                "name": "ft",
+                "pow": 1
+              },
+              {
+                "name": "s",
+                "pow": -1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        }
+      ]
+    },
+    {
+      "group_name": "Pressure",
+      "child_groups": [],
+      "child_units": [
+        {
+          "nice_name": "Pascal",
+          "unit_names": [
+            [
+              {
+                "name": "Pa",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "atmosphere",
+          "unit_names": [
+            [
+              {
+                "name": "atm",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "torr",
+          "unit_names": [
+            [
+              {
+                "name": "torr",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "mm Hg",
+          "unit_names": [
+            [
+              {
+                "name": "mmHg",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "pounds per square inch",
+          "unit_names": [
+            [
+              {
+                "name": "psi",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "cm H2O",
+          "unit_names": [
+            [
+              {
+                "name": "cmH2O",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "mm H2O",
+          "unit_names": [
+            [
+              {
+                "name": "mmH2O",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        }
+      ]
+    },
+    {
+      "group_name": "Mass/Force",
+      "child_groups": [],
+      "child_units": [
+        {
+          "nice_name": "gram",
+          "unit_names": [
+            [
+              {
+                "name": "g",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "Newton",
+          "unit_names": [
+            [
+              {
+                "name": "N",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "metric ton",
+          "unit_names": [
+            [
+              {
+                "name": "ton",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "pound (mass)",
+          "unit_names": [
+            [
+              {
+                "name": "lb",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "pound (force)",
+          "unit_names": [
+            [
+              {
+                "name": "lbf",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "ounce",
+          "unit_names": [
+            [
+              {
+                "name": "oz",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "slug",
+          "unit_names": [
+            [
+              {
+                "name": "slug",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        }
+      ]
+    },
+    {
+      "group_name": "Energy/Electricity/Frequency",
+      "child_groups": [],
+      "child_units": [
+        {
+          "nice_name": "Hertz",
+          "unit_names": [
+            [
+              {
+                "name": "Hz",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "Joule (Energy)",
+          "unit_names": [
+            [
+              {
+                "name": "J",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "electron Volt",
+          "unit_names": [
+            [
+              {
+                "name": "eV",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "calorie",
+          "unit_names": [
+            [
+              {
+                "name": "cal",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "British thermal unit",
+          "unit_names": [
+            [
+              {
+                "name": "btu",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "Watt (Power)",
+          "unit_names": [
+            [
+              {
+                "name": "W",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "horsepower",
+          "unit_names": [
+            [
+              {
+                "name": "hp",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+        {
+          "nice_name": "Volt (Voltage)",
+          "unit_names": [
+            [
+              {
+                "name": "V",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "Amp (Current)",
+          "unit_names": [
+            [
+              {
+                "name": "A",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "Ohm (Resistance)",
+          "unit_names": [
+            [
+              {
+                "name": "Ohm",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "Coulomb (Charge)",
+          "unit_names": [
+            [
+              {
+                "name": "C",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "Siemen (Conductance)",
+          "unit_names": [
+            [
+              {
+                "name": "S",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "Tesla",
+          "unit_names": [
+            [
+              {
+                "name": "T",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "Webber",
+          "unit_names": [
+            [
+              {
+                "name": "Wb",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "Henry (Inductance)",
+          "unit_names": [
+            [
+              {
+                "name": "H",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "Farad (Capacitance)",
+          "unit_names": [
+            [
+              {
+                "name": "F",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        }
+      ]
+    },
+    {
+      "group_name": "Miscellaneous",
+      "child_groups": [],
+      "child_units": [
+        {
+          "nice_name": "Kelvin (Temperature)",
+          "unit_names": [
+            [
+              {
+                "name": "K",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "moles",
+          "unit_names": [
+            [
+              {
+                "name": "mol",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "candella",
+          "unit_names": [
+            [
+              {
+                "name": "cd",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "Gray",
+          "unit_names": [
+            [
+              {
+                "name": "Gy",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "Sievert",
+          "unit_names": [
+            [
+              {
+                "name": "Sv",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        }
+      ]
+    }
+  ],
+  "child_units": []
+}
