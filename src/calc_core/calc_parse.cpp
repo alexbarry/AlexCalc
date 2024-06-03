@@ -178,6 +178,7 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 	//std::string exponent        = result.str(4);
 
 	/* remove the match from str_input */
+	assert(match_len <= str_input->size());
 	str_input->erase( 0, match_len );
 	*input_pos += match_len;
 

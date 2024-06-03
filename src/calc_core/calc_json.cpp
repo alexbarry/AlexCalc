@@ -205,6 +205,13 @@ int alexcalc_json_str_output(const char *str_input, void *calc_ptr, char *str_ou
 		log(std::string("calc_err2: ") + e->msg);
 		delete e;
 		return 0;
+	} catch(...) {
+		std::cerr << "other exception type while parsing" << std::endl;
+		int rc = -6;
+		write_json_msg(str_output, str_output_len, rc, "unknown err");
+		log(std::string("calc_err6"));
+
+		return 0;
 	}
 
 
@@ -219,7 +226,7 @@ int alexcalc_json_str_output(const char *str_input, void *calc_ptr, char *str_ou
 	try {
 		output = input_info.eval(calcData);
 
-		std::cout << "Parsed \"" << str_input << "\" to: " << input_info.n->to_string()
+		std::cout << "[debug] Parsed \"" << str_input << "\" to: " << input_info.n->to_string()
 		          << ", evaluated to: " << output.to_string() << std::endl;
 	} catch( BaseCalcException * e ) {
 		std::cerr << "BaseCalcException when evaluating: " << e->msg << std::endl;
@@ -237,7 +244,7 @@ int alexcalc_json_str_output(const char *str_input, void *calc_ptr, char *str_ou
 		delete input_info.n;
 		return 0;
 	} catch (...) {
-		std::cerr << "other exception type" << std::endl;
+		std::cerr << "other exception type while evaluating" << std::endl;
 		int rc = -5;
 		write_json_msg(str_output, str_output_len, rc, "unknown err");
 		log(std::string("calc_err5"));
@@ -282,6 +289,7 @@ int alexcalc_to_latex_once(const char *str_input,
 	}
 
 	std::cout << "Parsed \"" << str_input << "\" to: " << input_info.n->to_string() << ", ";
+	std::cout << std::endl;
 
 	std::string latex = node_to_latex(&input_info);
 	delete input_info.n;
