@@ -31,9 +31,9 @@ tests = [
 		( '1+2*3',                       7          ),
 		( '3*(1+2)-4',                   5          ),
 		( '3  *  (1  +  2 ) - 4',        5          ),
-		( '2^3^4',                       2.41785e24 ),
+		( '2^3^4',                       (2**3**4)  ),
 		( '(2^3)^4',                     4096       ),
-		( '2^(3^4)',                     2.41785e24 ),
+		( '2^(3^4)',                     (2**(3**4))),
 		( '8^4',                         4096       ),
 		( '3 + 4 * 5',                   23         ),
 		( '3 * 4 + 5',                   17         ),
@@ -79,13 +79,13 @@ tests = [
 		( 'cos(pi/4)^(-2)',              2),
 		( 'sin(pi/4)^2',                 0.5),
 		( 'cos(pi/4)^2',                 0.5),
-		( 'sin(pi/3)^2',                 0.5),
+		( 'sin(pi/3)^2',                 math.sin(math.pi/3)**2),
 		( 'cos(pi/3)',                   0.5),
 		( 'cos(pi/6 + pi/6)',            0.5),
 		( 'cos(pi/6+pi/6)',              0.5),
 		( 'cos(pi/6 +pi/6)',             0.5),
 		( 'cos(pi/6+ pi/6)',             0.5),
-		( 'sin(pi/3)^2',                 0.75),
+		( 'sin(pi/3)^2',                 math.sin(math.pi/3)**2),
 		( 'sin( (pi*0.5 + pi/2)/(1 + 2))^2',                 0.75),
 		( 'sqrt((e/3+2*e/3)^(i*pi)+2)+3',    4.0),
 
@@ -133,7 +133,7 @@ tests = [
 		( 'getangle(sqrt(1angle90))',        45, 'degree'),
 		( 'getangle(sqrt(1angle-90))',      -45, 'degree'),
 		( 'getangle(sqrt((3+4j)*(3+4j)))',        math.atan2(4,3)),
-		( 'getangle(-sqrt((3+4j)*-(3+4j)))',      math.atan2(4,3)),
+		( 'getangle(-sqrt((3+4j)*-(3+4j)))',      math.atan2(-4,3)),
 		( 'getangle(sqrt((3+4j)*(3+4j)))',        math.atan2(4,3)),
 
 		( 'cos(200)', -1, 'gradian'),
@@ -147,10 +147,10 @@ tests = [
 		( "200deg0'",      200.0,             'gradian'),
 		( "200deg30'",     200.5,             'gradian'),
 		( "200deg60'",     201.0,             'gradian'),
-		( "200deg30'30''", 200.5 + 0.5/60/60, 'gradian'),
-		( '200deg30\'30"', 200.5 + 0.5/60/60, 'gradian'),
-		( '200deg30\'20"', 200.5 + 20/60/60/60, 'gradian'),
-		( '200deg30\'1"', 200.5 + 1/60/60/60, 'gradian'),
+		( "200deg30'30''", 200 + 30/60 + 30/60/60, 'gradian'),
+		( '200deg30\'30"', 200 + 30/60 + 30/60/60, 'gradian'),
+		( '200deg30\'20"', 200 + 30/60 + 20/60/60, 'gradian'),
+		( '200deg30\'1"', 200.5 + 1/60/60, 'gradian'),
 
 		( 'cos(200)',         cos_grad(200), 'gradian'),
 		( 'cos(200deg)',      cos_grad(200), 'gradian'),
@@ -163,6 +163,9 @@ tests = [
 
 		( "30''", 30/60/60, 'gradian'),
 		( "30''", 30/60/60, 'degree'),
+
+		( "30'' + 30''", 30/60/60 + 30/60/60, 'gradian'),
+		( "30'' + 30''", 30/60/60 + 30/60/60, 'degree'),
 
 		( '30"', 30/60/60, 'gradian'),
 		( '30"', 30/60/60, 'degree'),
@@ -179,7 +182,18 @@ tests = [
 		( "90 deg + 45 deg", 90+45, 'gradian'),
 		( "90 deg + 45 deg", 90+45, 'gradian'),
 
-		( "90deg30'+45deg10''", 90.5+45+10/60, 'gradian'),
+		( "90deg30'+45deg10''", 90.5+45+10/60/60, 'gradian'),
+
+		( "0deg50''", 50/60/60, 'gradian'),
+		( "0deg50\"", 50/60/60, 'gradian'),
+		( "0deg50'", 50/60, 'gradian'),
+
+		( "0deg50'", 50/60, 'gradian'),
+		( "0deg50''", 50/60/60, 'gradian'),
+
+		( "50'", 50/60, 'gradian'),
+		( "50''", 50/60/60, 'gradian'),
+
 
 ]
 
@@ -402,7 +416,7 @@ def run_test(test, cmds):
 		else:
 			print('Unsure how to validate cmd %r' % cmd)
 	if len(output) < 2:
-		raise Exception('expected calc_output and mem_test_output, recvd: %r' % output )
+		raise Exception('expected calc_output and mem_test_output, recvd: %r; stderr: %r' % (output, output_err) )
 	calc_output = output[0]
 	memory_test_output = output[1]
 
@@ -476,10 +490,13 @@ mem_leak_tests = []
 print_all = False
 #print_all = True
 
+def calc_diff_frac(a,b):
+	if a == 0: return a == b
+	return abs(a - b)/a
+
 def within_frac(a,b, frac):
 	if isinstance(b,Exception): return False
-	if a == 0: return a == b
-	return (a - b)/a < frac
+	return calc_diff_frac(a,b) < frac
 
 print("Starting to run up to %d normal tests..." % len(tests))
 for test_idx, test_params in enumerate(tests):
@@ -500,11 +517,11 @@ for test_idx, test_params in enumerate(tests):
 	# if expected_answer == received_answer:
 	# Note that for something like 0.3333... only so many decimal places are provided,
 	# so don't expect more than 1e-7 where 7 is the number of decimal places plus one
-	if within_frac(expected_answer, received_answer, 1e-7):
+	if within_frac(expected_answer, received_answer, 1e-12):
 		if print_all: print( 'received answer %r' % received_answer, end =' ' ) 
 		if print_all: print( bcolors.OKGREEN + 'test passed' + bcolors.ENDC )
 	else:
-		if print_all: print( 'expected %r, received %r' % ( expected_answer, received_answer ), end=' '  ) 
+		if print_all: print( 'expected %r, received %r' % ( expected_answer, received_answer), end=' '  ) 
 		if print_all: print( bcolors.FAIL + 'test FAILED' + bcolors.ENDC )
 		print('stderr: ')
 		print(output_err)
@@ -565,12 +582,14 @@ if failed_tests:
 		expected = str(expected)
 		received = str(received)
 		print('Test idx %3d failed' % test_idx)
+		off_by_frac = calc_diff_frac(float(expected), float(received))
 		if len(expected) < 20 and len(received) < 20:
-			print( '%-60s expected "%s", actual "%s"' % ( test, expected, received ) )
+			print( '%-60s expected "%s", actual "%s" (off by frac: %r)' % ( test, expected, received, off_by_frac ) )
 		else:
 			print( '%-60s' % test )
 			print( 'expected "%s"' % expected)
 			print( 'actual   "%s"' % received)
+			print( 'off by frac %r' % off_by_frac)
 			diff_pos = get_first_diff_pos(expected, received)
 			print( '          %s' % ( (diff_pos*' ') + '^') + '(pos=%d)' % diff_pos)
 
