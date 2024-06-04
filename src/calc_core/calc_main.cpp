@@ -33,6 +33,7 @@ int main(void) {
 	bool show_cursor = false;
 	int  cursor_pos = -1;
 	struct calc_fmt_params params = get_default_params();
+	//params.max_decimal_places = 20;
 
 	bool user_exit = false;
 
