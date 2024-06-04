@@ -170,6 +170,17 @@ tests = [
 		( "30'15''", 30/60 + 15/60/60, 'gradian'),
 		( "30'15\"", 30/60 + 15/60/60, 'gradian'),
 
+		( "90deg+45deg", 90+45, 'gradian'),
+		( "90deg+45deg", 90+45, 'gradian'),
+
+		( "90deg + 45deg", 90+45, 'gradian'),
+		( "90deg + 45deg", 90+45, 'gradian'),
+
+		( "90 deg + 45 deg", 90+45, 'gradian'),
+		( "90 deg + 45 deg", 90+45, 'gradian'),
+
+		( "90deg30'+45deg10''", 90.5+45+10/60, 'gradian'),
+
 ]
 
 cursor = '\\text{[]}'

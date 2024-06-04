@@ -71,6 +71,8 @@ class ValInfo {
 #define MINUTE_PATTERN "'"
 #define SECOND_PATTERN "(?:(?:'')|(?:\"))"
 
+#define DEG_MIN_SEC_PATTERN "(?:" DEGREE_PATTERN "|" SECOND_PATTERN "|" MINUTE_PATTERN ")"
+
 bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, std::unique_ptr<ValInfo> *val_info_out, const parse_params_s *params)
 {
 	static const std::regex raw_val_regex( "^"
@@ -82,7 +84,10 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 #if VALS_DEG_MIN_SECS_ENABLED
 	                                             "(?:"
 	                                             "(?:"
-	                                             "(?=.)" // note that this is necessary to avoid matching an empty string,
+	                                             //"(?=.)" // note that this is necessary to avoid matching an empty string,
+	                                                 "(?:" FLOAT_PATTERN "\\s*" DEG_MIN_SEC_PATTERN "){1,3}"
+	                                                 "\\s*"
+#if 0
 	                                                      // which results in an infinite loop.
 	                                                //"[a-zA-Z0-9-]"
 	                                                 "(?:" FLOAT_PATTERN "" DEGREE_PATTERN ")?"
@@ -90,7 +95,9 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 	                                                 "(?:" "" FLOAT_PATTERN "" MINUTE_PATTERN ")?"
 	                                                 "\\s*"
 	                                                 "(?:" "" FLOAT_PATTERN "" SECOND_PATTERN ")?"
+	                                             // TODO can't use "end of line" here, because stuff may follow this token, like a plus sign and more numbers
 	                                             "$"
+#endif
 	                                             ")"
 	                                             ")"
 	                                             "|"
@@ -199,14 +206,12 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 
 static const std::regex val_deg_min_sec_regex(
 	                                             "(?:"
-	                                                 "(?!$)"
-	                                                 "(?:" "(" FLOAT_PATTERN ")" DEGREE_PATTERN ")?"
+	                                                 "(?:" "(" FLOAT_PATTERN ")\\s*" DEGREE_PATTERN ")?"
 	                                                 "\\s*"
 	                                                 // perhaps it shouldn't be possible to omit minutes and include seconds
-	                                                 "(?:" "(" FLOAT_PATTERN ")" MINUTE_PATTERN ")?"
+	                                                 "(?:" "(" FLOAT_PATTERN ")\\s*" MINUTE_PATTERN ")?"
 	                                                 "\\s*"
-	                                                 "(?:" "(" FLOAT_PATTERN ")" SECOND_PATTERN ")?"
-	                                                 "$"
+	                                                 "(?:" "(" FLOAT_PATTERN ")\\s*" SECOND_PATTERN ")?"
 	                                             ")"
 );
 
@@ -224,6 +229,10 @@ bool separate_deg_min_sec(std::string str, deg_min_sec_s *output) {
 	std::smatch result;
 	bool found = std::regex_search(str, result, val_deg_min_sec_regex);
 	if (!found) {
+		return false;
+	}
+
+	if (result.str(0).size() == 0) {
 		return false;
 	}
 
@@ -256,9 +265,19 @@ calc_float_t parse_float_w_optional_deg_str(std::string str) {
 	deg_min_sec_s deg_min_sec;
 	if (separate_deg_min_sec(str, &deg_min_sec)) {
 		//std::cerr << "found deg/min/sec with deg=" << deg_min_sec.deg << ", min=" << deg_min_sec.min << ", sec=" << deg_min_sec.sec << std::endl;
-		calc_float_t val = parse_float_str(deg_min_sec.deg);
-		val += parse_float_str(deg_min_sec.min)/60;
-		val += parse_float_str(deg_min_sec.sec)/60/60;
+		calc_float_t val = 0;
+		if (deg_min_sec.deg.size() > 0) {
+			val += parse_float_str(deg_min_sec.deg);
+		}
+
+		if (deg_min_sec.min.size() > 0) {
+			val += parse_float_str(deg_min_sec.min)/60;
+		}
+
+		if (deg_min_sec.sec.size() > 0) {
+			val += parse_float_str(deg_min_sec.sec)/60/60;
+		}
+
 		return val;
 	} else {
 		return parse_float_str(str);
