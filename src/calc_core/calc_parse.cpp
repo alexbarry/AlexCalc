@@ -68,7 +68,7 @@ class ValInfo {
 
 
 #define DEGREE_PATTERN "deg"
-#define MINUTE_PATTERN "'"
+#define MINUTE_PATTERN "'(?!')"
 #define SECOND_PATTERN "(?:(?:'')|(?:\"))"
 
 #define DEG_MIN_SEC_PATTERN "(?:" DEGREE_PATTERN "|" SECOND_PATTERN "|" MINUTE_PATTERN ")"
