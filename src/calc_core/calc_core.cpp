@@ -1369,16 +1369,17 @@ calc_flt_fmt_t format_calc_float_params(calc_float_t val, const struct calc_fmt_
 
 std::string calc_float_to_str(calc_float_t flt, const struct calc_fmt_params &params) {
 	calc_flt_fmt_t val_fmt = format_calc_float_params(flt, params);
+	//val_fmt.decimal_places = 20;
 	char buff[256];
 	if (std::isnan(flt)) {
 		snprintf(buff, sizeof(buff), "NaN");
 	} else if (std::isinf(flt)) {
 		snprintf(buff, sizeof(buff), "%sInf", (flt < 0) ? "-" : "");
 	} else if (val_fmt.exponent == 0) {
-		snprintf(buff, sizeof(buff), "%.*" CALC_FLOAT_FMT "f", val_fmt.decimal_places, val_fmt.base);
+		snprintf(buff, sizeof(buff), "%.*" CALC_FLOAT_FMT "f", val_fmt.decimal_places + 1, val_fmt.base);
 	} else {
 		//snprintf(buff, sizeof(buff), "%.*" CALC_FLOAT_FMT "f * 10^%d", val_fmt.decimal_places, val_fmt.base, val_fmt.exponent);
-		snprintf(buff, sizeof(buff), "%.*" CALC_FLOAT_FMT "fe%d", val_fmt.decimal_places, val_fmt.base, val_fmt.exponent);
+		snprintf(buff, sizeof(buff), "%.*" CALC_FLOAT_FMT "fe%d", val_fmt.decimal_places + 1, val_fmt.base, val_fmt.exponent);
 	}
 	return std::string(buff);
 }
