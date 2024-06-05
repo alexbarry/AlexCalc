@@ -129,6 +129,7 @@
 	<string name="about_text_html">
 		&lt;p>Created by Alex Barry.&lt;/p>
 		&lt;p>Available as a web app at &lt;a href="https://alexbarry.github.io/AlexCalc/">https://alexbarry.github.io/AlexCalc/&lt;a>&lt;/p>
+		&lt;p>Source available at &lt;a href="https://github.com/alexbarry/AlexCalc/">github.com/alexbarry/AlexCalc&lt;a>&lt;/p>
 		&lt;p>Please submit comments, feedback, feature requests, or discussions to:
 		&lt;ul>
 		    &lt;li>&lt;strong>Github&lt;/strong>: &lt;a href="https://github.com/alexbarry/AlexCalc">https://github.com/alexbarry/AlexCalc
@@ -145,6 +146,7 @@
 	<string name="about_text_raw">
 Created by Alex Barry.\n
 Available as a web app at https://alexbarry.github.io/AlexCalc/ \n
+Source available at https://github.com/alexbarry/AlexCalc/ \n
 Please submit comments, feedback, feature requests, or discussions to:\n
   Github: https://github.com/alexbarry/AlexCalc \n
   Reddit: https://www.reddit.com/r/alexcalc/ \n
