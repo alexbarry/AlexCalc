@@ -1,0 +1,1 @@
+Updated to target Android SDK level 34. (previously was 30)
