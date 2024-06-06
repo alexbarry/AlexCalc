@@ -122,7 +122,7 @@ public class CalcButtonsHelper {
     private ButtonCallback callback;
 
     public CalcButtonsHelper(ButtonCallback callback) {
-		this.callback = callback;
+        this.callback = callback;
         button_id_to_android_layout_elem_id.put(ButtonId.CLEAR,         R.id.button_clear);
         button_id_to_android_layout_elem_id.put(ButtonId.BKSP,          R.id.button_bksp);
         button_id_to_android_layout_elem_id.put(ButtonId.UP,            R.id.button_up);
