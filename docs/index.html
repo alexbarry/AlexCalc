@@ -390,14 +390,14 @@
 			<button id="btn_clear"		class="btn btn_important" style="z-index: 1; width:195%">			clear</button>
 			<div class="btn unused"></div> <!-- spacer for btn_clear -->
 			<button id="btn_bksp"		class="btn btn_important">			bksp</button>
-			<button id="btn_deg_min_sec" class="btn num">                   &deg;</button>
+			<div class="btn unused"></div>
 			<button id="btn_up"		class="btn meta"> &uarr; </button>
 			<div class="btn unused"></div>
 
 			<!-- row 1 -->
 			<button id="btn_inv"		class="btn meta">			inv		</button>
 			<button id="btn_polar_toggle" class="btn meta">			polar	</button>
-			<button id="btn_angle_mode"class="btn meta">			radian	</button>
+			<button id="btn_degree_toggle"class="btn meta">			degree	</button>
 			<button id="btn_left"		class="btn meta">			&larr;		</button>
 			<button id="btn_down"		class="btn meta">			&darr;		</button>
 			<button id="btn_right"		class="btn meta">			&rarr;		</button>
@@ -633,7 +633,6 @@
 		<p>Please submit comments, feedback, feature requests, or discussions to:
 		<ul>
 			<li><strong>Github</strong>: <a href="https://github.com/alexbarry/AlexCalc" style="font-family:monospace">github.com/alexbarry/AlexCalc</a></li>
-			<li><strong>Reddit</strong>: <a href="https://www.reddit.com/r/alexcalc/" style="font-family:monospace">reddit.com/r/alexcalc</a></li>
 			<li><strong>Discord</strong>: <a href="https://discord.gg/ckNstZc2nF" style="font-family:monospace">discord.gg/ckNstZc2nF</a></li>
 			<li><strong>Email</strong>: <span style="font-family:monospace">alexbarry.dev2 [ at ] gmail.com</span></li>
 			<li><strong>Matrix</strong>: <a href="https://matrix.to/#/#alexcalc:matrix.org" style="font-family:monospace">#alexcalc:matrix.org</a></li>
@@ -651,6 +650,7 @@
 		<ul class="footer_items">
 			<li><a id="open_about_popup_link" href="#">About</a></li>
 			<li><a href="help.html">Help</a></li>
+			<li><a href="https://github.com/alexbarry/AlexCalc">Source</a></li>
 			<li><a class="licenses" href="licenses.html">Licenses</a></li>
 		</ul>
 	</div>
@@ -1104,7 +1104,7 @@
 			btn_inv:   document.getElementById("btn_inv"),
 			btn_alt:   document.getElementById("btn_alt"),
 			btn_polar_toggle: document.getElementById("btn_polar_toggle"),
-			btn_angle_mode: document.getElementById("btn_angle_mode"),
+			btn_degree_toggle: document.getElementById("btn_degree_toggle"),
 			btn_vars:  document.getElementById("btn_vars"),
 			btn_units:  document.getElementById("btn_units"),
 			btn_enter: document.getElementById("btn_enter"),
@@ -1125,10 +1125,7 @@
 			btn_var_display_cancel: document.getElementById("btn_var_display_cancel"),
 			btn_unit_display_cancel: document.getElementById("btn_unit_display_cancel"),
 
-			btn_deg_min_sec: document.getElementById("btn_deg_min_sec"),
 			normal_btns: [
-				document.getElementById("btn_deg_min_sec"),
-
 				document.getElementById("btn_log"),
 				document.getElementById("btn_ln"),
 

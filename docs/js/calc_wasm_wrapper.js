@@ -31,7 +31,6 @@ function alexcalc_new_calcdata() {
 }
 
 function alexcalc(input_text, calcdata) {
-	console.debug(`[debug] alexcalc js called with "${input_text}"`);
 	//let json_str = Module.ccall('alexcalc_json_str_output', 'string', ['string'], [input_text]);
 	//let output = JSON.parse(json_str);
 	//return output;
@@ -40,23 +39,20 @@ function alexcalc(input_text, calcdata) {
 	let output_buff = _malloc(MAX_VAL_OUTPUT_SIZE);
 	let output = "error";
 	try {
-		console.debug(`[debug] calling alexcalc_json_str_output from js`);
 		let rc = Module.ccall('alexcalc_json_str_output',
 		                      'number',
 		                      ['string', 'number', 'number', 'number'],
 		                      [input_text, calcdata, output_buff, MAX_VAL_OUTPUT_SIZE]);
-		console.debug(`[debug] called alexcalc_json_str_output from js, rc=${rc}`);
 		if (rc == 0) {
 			output = UTF8ToString(output_buff, MAX_VAL_OUTPUT_SIZE);
 		} else {
 			throw "alexcalc_json_str_output returned " + rc;
 		}
 	} finally {
-		console.debug(`[debug] alexcalc_json_str_output finally: freeing output_buff`);
 		_free(output_buff);
 	}
 
-	console.debug("[debug] alexcalc js received calc output: ", output);
+	console.debug("received calc output: ", output);
 	let output_json = JSON.parse(output);
 	return output_json;
 }
@@ -111,8 +107,8 @@ function alexcalc_data_state_set(calcdata_ptr, state) {
 	try {
 		let rc = Module.ccall('alexcalc_data_state_set',
 		                      'number',
-		                      ['number', 'number', 'string'],
-		                      [calcdata_ptr, state.polar, state.angle_mode]);
+		                      ['number', 'number', 'number'],
+		                      [calcdata_ptr, state.polar, state.degree]);
 		if (rc == 0) {
 		} else {
 			throw "alexcalc_data_state_set returned " + rc;

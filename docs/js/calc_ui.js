@@ -1,45 +1,6 @@
 const ANGLE_OP_SYMBOL = "angle"
 const ENABLE_HYPERBOLIC_TRIG = false;
 
-const DEG_SYMBOL = "deg";
-const MIN_SYMBOL = "'";
-const SEC_SYMBOL = "''";
-
-const INIT_DEG_MIN_SEC_SYMBOL = DEG_SYMBOL;
-
-const DEG_MIN_SEC_TOKENS = new Set([
-	DEG_SYMBOL,
-	MIN_SYMBOL,
-	SEC_SYMBOL,
-]);
-
-const ANGLE_MODE_RAD  = "radian";
-const ANGLE_MODE_DEG  = "degree";
-const ANGLE_MODE_GRAD = "gradian";
-
-function next_angle_setting(angle_setting) {
-	switch (angle_setting) {
-		case ANGLE_MODE_RAD:  return ANGLE_MODE_DEG;
-		case ANGLE_MODE_DEG:  return ANGLE_MODE_GRAD;
-		case ANGLE_MODE_GRAD: return ANGLE_MODE_RAD;
-	}
-	console.error(`Unhandled angle setting ${angle_setting}`);
-}
-
-function next_deg_min_sec(degree_min_sec, cycle) {
-	switch(degree_min_sec) {
-		case DEG_SYMBOL: return MIN_SYMBOL;
-		case MIN_SYMBOL: return SEC_SYMBOL;
-
-		case SEC_SYMBOL:
-			if (!cycle) {
-				return SEC_SYMBOL;
-			} else {
-				return DEG_SYMBOL;
-			}
-	}
-}
-
 function init_ui_state() {
 	return {
 		/** "inverse" button, switches buttons e.g sine to arcsine */
@@ -48,10 +9,7 @@ function init_ui_state() {
 		alt_state: false,
 
 		polar_state: false,
-		//degree_state: false,
-		angle_mode: ANGLE_MODE_RAD,
-
-		degree_min_sec: INIT_DEG_MIN_SEC_SYMBOL,
+		degree_state: false,
 
 		show_raw_calc_io_state: false,
 
@@ -113,7 +71,7 @@ function InputToken(token_str, is_unit) {
 
 function get_calcstate(ui_state) {
 	return { polar: ui_state.polar_state,
-	         angle_mode: ui_state.angle_mode};
+	         degree: ui_state.degree_state};
 }
 
 const BTN_ID_TO_GET_TOKEN_FUNC = new Map();
@@ -176,35 +134,6 @@ function var_token_factory(var_btn_num) {
 	};
 }
 
-function is_degree_min_sec_token(token) {
-	return token != null && DEG_MIN_SEC_TOKENS.has(token.str);
-}
-
-function btn_deg_min_sec_handler(ui) {
-	const prev_token = get_prev_input_token(ui);
-	console.log("btn_deg_min_sec_handler, prev_token=", prev_token);
-	if (ui.state.angle_mode != ANGLE_MODE_GRAD && 
-	    ui.state.angle_mode != ANGLE_MODE_DEG) {
-		ui.generate_output_msg("To insert degree/minute/second indicators, calculator must be in gradians or degrees mode. Press the button that says 'radian' until it says 'degree' or 'gradian'", true);
-		return "";
-	} else if (is_degree_min_sec_token(prev_token)) {
-		console.debug("Replacing prev degree/min/sec input token since button was pressed repeatedly");
-		//let new_deg_min_sec_token = InputToken(ui.state.degree_min_sec, false);
-		//replace_prev_input_token(ui, new_deg_min_sec_token);
-		//return "";
-
-		remove_prev_input_token(ui);
-		const to_return = ui.state.degree_min_sec;
-		ui.state.degree_min_sec = next_deg_min_sec(ui.state.degree_min_sec, true);
-		return to_return;
-	} else {
-		const to_return = ui.state.degree_min_sec;
-		ui.state.degree_min_sec = next_deg_min_sec(ui.state.degree_min_sec, false);
-		return to_return;
-	}
-}
-
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_deg_min_sec", btn_deg_min_sec_handler);
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_log",    ret_token_factory_w_inv("log(", "10^"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_pow",    ret_token_factory("^"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_ln",     ret_token_factory_w_inv("ln(", "e^("));
@@ -226,8 +155,7 @@ BTN_ID_TO_GET_TOKEN_FUNC.set("btn_6",      ret_token_factory("6"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sub",    ret_token_factory("-"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_ans",    ret_token_factory("ans"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_pi",     ret_token_factory_w_alt("pi", "z"));
-// ?? I don't think I use this anymore?
-//BTN_ID_TO_GET_TOKEN_FUNC.set("btn_degree", ret_token_factory("o"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_degree", ret_token_factory("o"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_1",      ret_token_factory("1"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_2",      ret_token_factory("2"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_3",      ret_token_factory("3"));
@@ -300,11 +228,6 @@ function update_trig_btns(ui) {
 	
 }
 
-function deg_min_sec_to_btn_text(deg_min_sec_symbol) {
-	if (deg_min_sec_symbol == "deg") { return "&deg;" }
-	else { return deg_min_sec_symbol; }
-}
-
 function update_other_btns(ui) {
 	if (!ui.state.alt_state) {
 		ui.btn_img_unit.innerHTML = "i";
@@ -330,14 +253,11 @@ function update_other_btns(ui) {
 		ui.btn_polar_toggle.innerHTML = "rect";
 	}
 
-	switch (ui.state.angle_mode) {
-		case ANGLE_MODE_RAD:  ui.btn_angle_mode.innerHTML = "radian";  break;
-		case ANGLE_MODE_DEG:  ui.btn_angle_mode.innerHTML = "degree";  break;
-		case ANGLE_MODE_GRAD: ui.btn_angle_mode.innerHTML = "gradian"; break;
-		console.error(`Unhnalded angle mode ${ui.state.angle_mode}`);
+	if (!ui.state.degree_state) {
+		ui.btn_degree_toggle.innerHTML = "degree";
+	} else {
+		ui.btn_degree_toggle.innerHTML = "radian";
 	}
-
-	ui.btn_deg_min_sec.innerHTML = deg_min_sec_to_btn_text(ui.state.degree_min_sec);
 }
 
 function update_var_btns(ui) {
@@ -444,9 +364,7 @@ function handle_normal_btn(ui, e) {
 	}
 	let token_func = BTN_ID_TO_GET_TOKEN_FUNC.get(id);
 	let token = token_func(ui);
-	if (token != "") {
-		btn_token_pressed(ui, token);
-	}
+	btn_token_pressed(ui, token);
 }
 
 function btn_token_pressed(ui, token, needs_mult) {
@@ -455,11 +373,6 @@ function btn_token_pressed(ui, token, needs_mult) {
 	update_input_textarea(ui);
 	ui.state.alt_state = false;
 	ui.state.inv_state = false;
-
-	if (!token_is_num(token)) {
-		ui.state.degree_min_sec = INIT_DEG_MIN_SEC_SYMBOL;
-	}
-
 	update_btns(ui);
 }
 
@@ -490,9 +403,8 @@ function handle_btn_clear(ui) {
 		ui.clear_output_display();
 		ui.state.alt_state = false;
 		ui.state.inv_state = false;
+		update_btns(ui);
 	}
-	ui.state.degree_min_sec = INIT_DEG_MIN_SEC_SYMBOL;
-	update_btns(ui);
 }
 
 function handle_btn_bksp(ui) {
@@ -510,8 +422,6 @@ function handle_btn_bksp(ui) {
 function handle_user_enter(ui) {
 	history_entry_add(ui, ui.state.input_tokens.slice());
 	let raw_input = ui.input_text.value;
-	ui.state.degree_min_sec = INIT_DEG_MIN_SEC_SYMBOL;
-	update_btns(ui);
 	//set_on_calc_output_ready(function (raw_input, latex, calc_output) {
 	let callback = function (raw_input, latex, calc_output, calcdata) {
 		calc_output_ready(ui, raw_input, latex, calc_output, calcdata);
@@ -737,30 +647,15 @@ function handle_new_var_btn_pressed(ui, btn) {
 	update_insert_var_btn_enabled_state(ui);
 }
 
-function get_prev_input_token(ui) {
-	if (ui.state.input_tokens.length > 0) { 
-		let i = ui.state.cursor_idx - 1;
-		if (i >= 0) {
-			return ui.state.input_tokens[i];
-		};
-	}
-
-	return null;
-}
-
-function remove_prev_input_token(ui) {
-	if (ui.state.input_tokens.length > 0) { 
-		let i = ui.state.cursor_idx - 1;
-		if (i >= 0) {
-			ui.state.input_tokens.splice(i, 1);
-			ui.state.cursor_idx -= 1;
-		};
-	}
-}
-
 function insert_new_input_token(ui, token_str, needs_mult, token_is_unit) {
 	console.debug("insert_new_input_token ", token_str, "needs_mult = ", needs_mult, "token_is_unit =", token_is_unit);
-	let prev_token = get_prev_input_token(ui);
+	let prev_token = null;
+	if (ui.state.input_tokens.length > 0) { 
+		let i = ui.state.cursor_idx - 1;
+		if (i >= 0) {
+			prev_token = ui.state.input_tokens[i];
+		};
+	}
 	if (prev_token != null && needs_mult == undefined) {
 		// TODO this is bad if you move the cursor and delete the thing before one of these.
 		// should probably make them separate tokens. At least add a setting for this
@@ -832,7 +727,6 @@ function token_is_bin_op(token) {
 
 function token_is_num(token) {
 	if (token == null || token.length == 0) { return false; }
-	if (DEG_MIN_SEC_TOKENS.has(token)) { return true; }
 	return /^(\*)?[0-9E]$/.test(token);
 }
 
@@ -913,20 +807,9 @@ function handle_polar_toggle(ui) {
 	// TODO maybe update the past couple of outputs too?
 }
 
-function get_angle_mode_msg(angle_mode) {
-	let output = `Angle mode is now \"${angle_mode}\": `;
-	switch (angle_mode) {
-		case ANGLE_MODE_RAD: output  += "cos(2*pi) = 1"; break;
-		case ANGLE_MODE_DEG: output  += "cos(360) = 1";  break;
-		case ANGLE_MODE_GRAD: output += "cos(400) = 1"; break;
-	}
-	return output;
-}
-
-function handle_angle_mode(ui) {
-	ui.state.angle_mode = next_angle_setting(ui.state.angle_mode);
-	debug_log("ui", "Switching to next angle mode: " + ui.state.angle_mode);
-	ui.generate_output_msg(get_angle_mode_msg(ui.state.angle_mode), false);
+function handle_degree_toggle(ui) {
+	ui.state.degree_state = !ui.state.degree_state;
+	debug_log("ui", "Toggling degree state to: " + ui.state.degree_state);
 	ui.update_calcstate(get_calcstate(ui.state));
 	update_btns(ui);
 	update_latex_display(ui);
@@ -985,7 +868,7 @@ function init_ui_throws(ui) {
 		{ btn: ui.btn_down,    handler: function (e) { handle_btn_history(ui, 1); } },
 		{ btn: ui.btn_enter,   handler: function (e) { handle_user_enter(ui); } },
 		{ btn: ui.btn_polar_toggle,  handler: function (e) { handle_polar_toggle(ui); } },
-		{ btn: ui.btn_angle_mode, handler: function (e) { handle_angle_mode(ui); } },
+		{ btn: ui.btn_degree_toggle, handler: function (e) { handle_degree_toggle(ui); } },
 	];
 
 	ui.checkbox_show_raw.checked = ui.state.show_raw_calc_io
