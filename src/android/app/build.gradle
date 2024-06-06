@@ -23,7 +23,6 @@ android {
         }
     }
 */
-    buildToolsVersion "29.0.3"
     ndkVersion '21.2.6472646'
 
     defaultConfig {
@@ -50,7 +49,7 @@ android {
 
     externalNativeBuild {
         cmake {
-            version "3.18.1"
+            version "3.21.3"
             path "src/main/cpp/CMakeLists.txt"
 
 			// TODO does cppFlags here work?
@@ -82,6 +81,7 @@ android {
             //   armeabi-v7a, arm64-v8a, x86, x86_64
         }
     }
+    namespace: 'net.alexbarry.calc_android'
 }
 
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
