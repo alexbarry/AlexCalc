@@ -1,13 +1,19 @@
 apply plugin: 'com.android.application'
 
+// TODO make keystore properties optional, and only required if building a signed build
+/*
 def keystorePropertiesFile=rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+*/
 
 android {
     compileSdkVersion 34
 	// I am not impressed that at first, Android Studio dumped the passwords here in
 	// plaintext.
+
+// TODO make an unsigned build the default?
+/*
     signingConfigs {
         release {
             storeFile file(keystoreProperties['storeFile'])
@@ -16,6 +22,7 @@ android {
             keyPassword keystoreProperties['keyPassword']
         }
     }
+*/
     buildToolsVersion "29.0.3"
     ndkVersion '21.2.6472646'
 
@@ -33,7 +40,8 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            // TODO make an unsigned build the default?
+            //signingConfig signingConfigs.release
             ndk {
                 debugSymbolLevel 'FULL'
             }
