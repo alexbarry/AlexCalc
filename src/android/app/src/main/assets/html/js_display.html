@@ -67,17 +67,15 @@
             return { elem: elem, stylesheet: stylesheet};
         }
 
-		function add_latex_node_to_parent_async(tex, arg_parent) {
+		function add_latex_node_to_parent_promise(tex, arg_parent) {
 			MathJax.texReset();
 			var options = MathJax.getMetricsFor(arg_parent);
 			options.scale = 2.0;
-			MathJax.tex2chtmlPromise(tex, options).then( (node) => {
-				arg_parent.appendChild(node);
-				MathJax.startup.document.clear();
-				MathJax.startup.document.updateDocument();
-				scroll_to_bottom();
+			return MathJax.tex2chtmlPromise(tex, options).then( (node) => {
+					arg_parent.appendChild(node);
+					MathJax.startup.document.clear();
+					MathJax.startup.document.updateDocument();
 			});
-
 		}
 
         var output_stylesheets = [];
@@ -101,10 +99,10 @@
             output_text_window.appendChild(output.elem);
             document.head.appendChild(output.stylesheet);
 */
-			add_latex_node_to_parent_async(tex, output_text_window);
-
-            remove_output_display_elems(MAX_ELEMS);
-            scroll_to_bottom();
+			add_latex_node_to_parent_promise(tex, output_text_window).then( () => {
+				remove_output_display_elems(MAX_ELEMS);
+				scroll_to_bottom();
+			});
         }
 
         function add_output_line_txt(msg, is_err) {
@@ -169,8 +167,9 @@
             input_wip_display.appendChild(output.elem);
             document.head.appendChild(output.stylesheet);
 			*/
-            add_latex_node_to_parent_async(tex, input_wip_display);
-            scroll_to_bottom();
+			add_latex_node_to_parent_promise(tex, input_wip_display).then(() => {
+				scroll_to_bottom();
+			});
         }
 
         function clear_wip_tex() {
