@@ -5,7 +5,7 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 34
 	// I am not impressed that at first, Android Studio dumped the passwords here in
 	// plaintext.
     signingConfigs {
@@ -22,9 +22,9 @@ android {
     defaultConfig {
         applicationId "net.alexbarry.calc_android"
         minSdkVersion 23
-        targetSdkVersion 30
-        versionCode 7
-        versionName "1.0.3"
+        targetSdkVersion 34
+        versionCode 8
+        versionName "1.0.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -42,6 +42,7 @@ android {
 
     externalNativeBuild {
         cmake {
+            version "3.18.1"
             path "src/main/cpp/CMakeLists.txt"
 
 			// TODO does cppFlags here work?

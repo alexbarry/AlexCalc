@@ -1,3 +1,4 @@
+<!doctype html>
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -66,6 +67,17 @@
             return { elem: elem, stylesheet: stylesheet};
         }
 
+		function add_latex_node_to_parent_promise(tex, arg_parent) {
+			MathJax.texReset();
+			var options = MathJax.getMetricsFor(arg_parent);
+			options.scale = 2.0;
+			return MathJax.tex2chtmlPromise(tex, options).then( (node) => {
+					arg_parent.appendChild(node);
+					MathJax.startup.document.clear();
+					MathJax.startup.document.updateDocument();
+			});
+		}
+
         var output_stylesheets = [];
         var output_elems = [];
 
@@ -79,12 +91,18 @@
         
         function add_output_line_tex(tex) {
             console.debug("add_output_line_tex: " + tex);
+
+			// TODO why doesn't this work anymore???
+/*
             var output = generate_latex_node(tex);
             output_elems.push({ elem: output.elem, stylesheets: [output.stylesheet]});
             output_text_window.appendChild(output.elem);
             document.head.appendChild(output.stylesheet);
-            remove_output_display_elems(MAX_ELEMS);
-            scroll_to_bottom();
+*/
+			add_latex_node_to_parent_promise(tex, output_text_window).then( () => {
+				remove_output_display_elems(MAX_ELEMS);
+				scroll_to_bottom();
+			});
         }
 
         function add_output_line_txt(msg, is_err) {
@@ -141,12 +159,17 @@
 
             clear_wip_tex();
 
+			// TODO why doesn't this work anymore???
+			/*
             var output = generate_latex_node(tex);
             wip_stylesheets.push(output.stylesheet);
             wip_elems.push(output.elem);
             input_wip_display.appendChild(output.elem);
             document.head.appendChild(output.stylesheet);
-            scroll_to_bottom();
+			*/
+			add_latex_node_to_parent_promise(tex, input_wip_display).then(() => {
+				scroll_to_bottom();
+			});
         }
 
         function clear_wip_tex() {

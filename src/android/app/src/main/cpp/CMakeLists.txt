@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4.1)
+cmake_minimum_required(VERSION 3.10.2)
 
 set(SRC_DIR "../../../../../")
 
@@ -13,8 +13,8 @@ list(APPEND COMPILE_OPTS
 
 # TODO this must not be working, because I have a ton of
 # warnings that would cause errors
-set(CMAKE_C_FLAGS   "${COMPILE_OPTS}")
-set(CMAKE_CXX_FLAGS "${COMPILE_OPTS}")
+#set(CMAKE_C_FLAGS   "${COMPILE_OPTS}")
+#set(CMAKE_CXX_FLAGS "${COMPILE_OPTS}")
 
 add_library(calc_android_jni SHARED
             calc_android_jni.cpp)
