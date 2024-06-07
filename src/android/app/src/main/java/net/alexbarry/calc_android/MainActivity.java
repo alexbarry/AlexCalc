@@ -26,7 +26,8 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
+//import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
+import com.mikepenz.aboutlibraries.LibsBuilder;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -60,9 +61,13 @@ public class MainActivity extends AppCompatActivity {
         public void show_android_licenses() {
             // https://developers.google.com/android/guides/opensource#java
             String title = getString(R.string.open_source_licenses_title);
+            /*
             OssLicensesMenuActivity.setActivityTitle(title);
             Intent showLicensesIntent = new Intent(MainActivity.this, OssLicensesMenuActivity.class);
             startActivity(showLicensesIntent);
+             */
+            LibsBuilder libsBuilder = new LibsBuilder();
+            libsBuilder.start(MainActivity.this);
         }
 
         @Override
