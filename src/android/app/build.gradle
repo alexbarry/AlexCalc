@@ -85,7 +85,6 @@ android {
     namespace 'net.alexbarry.calc_android'
 }
 
-//apply plugin: 'com.google.android.gms.oss-licenses-plugin
 apply plugin: 'com.mikepenz.aboutlibraries.plugin'
 
 buildscript {
@@ -97,7 +96,6 @@ buildscript {
     }
 
     dependencies {
-        //classpath "com.google.android.gms:oss-licenses-plugin:0.10.4"
         classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:11.2.1"
     }
 }
@@ -112,7 +110,6 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.0.0'
     implementation 'androidx.preference:preference:1.1.1'
     testImplementation 'junit:junit:4.12'
-    //implementation "com.google.android.gms:play-services-oss-licenses:17.0.0"
     implementation "com.mikepenz:aboutlibraries-core:11.2.1"
     implementation "com.mikepenz:aboutlibraries:11.2.1"
     implementation 'com.google.android.material:material:1.8.0'
