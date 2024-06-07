@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
 			android:columnCount="6">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_clear"
 				style="@style/AlexCalcButtonImportant"
                 android:layout_row="0"
@@ -65,233 +65,233 @@
 				android:layout_columnWeight="2"
                 android:text="@string/clear" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_bksp"
 				style="@style/AlexCalcButtonImportant"
                 android:text="@string/bksp" />
 
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_up"
 				style="@style/AlexCalcButtonMeta"
                 android:layout_row="0"
                 android:layout_column="4"
                 android:text="@string/arrow_up" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_inv"
 				style="@style/AlexCalcButtonMeta"
                 android:layout_row="1"
                 android:layout_column="0"
                 android:text="@string/inv" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_polar"
 				style="@style/AlexCalcButtonMeta"
                 android:text="@string/polar" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_degree"
 				style="@style/AlexCalcButtonMeta"
                 android:text="@string/degree" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_left"
 				style="@style/AlexCalcButtonMeta"
                 android:text="@string/arrow_left" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_down"
 				style="@style/AlexCalcButtonMeta"
                 android:text="@string/arrow_down" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_right"
 				style="@style/AlexCalcButtonMeta"
                 android:text="@string/arrow_right" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_alt"
 				style="@style/AlexCalcButtonMeta"
                 android:text="@string/alt" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_log10"
 				style="@style/AlexCalcButtonFunc"
                 android:text="@string/log10" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_sin"
 				style="@style/AlexCalcButtonFunc"
                 android:text="@string/sin" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_cos"
 				style="@style/AlexCalcButtonFunc"
                 android:text="@string/cos" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_tan"
 				style="@style/AlexCalcButtonFunc"
                 android:text="@string/tan" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_pow"
 				style="@style/AlexCalcButtonOp"
                 android:text="@string/pow" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_var"
 				style="@style/AlexCalcButtonVar"
                 android:text="@string/var" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_ln"
 				style="@style/AlexCalcButtonFunc"
                 android:text="@string/ln" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_lparen"
 				style="@style/AlexCalcButtonOp"
                 android:text="@string/lparen" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_delim"
 				style="@style/AlexCalcButtonOp"
                 android:text="@string/delim" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_rparen"
 				style="@style/AlexCalcButtonOp"
                 android:text="@string/rparen" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_div"
 				style="@style/AlexCalcButtonOp"
                 android:text="@string/div" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_units"
 				style="@style/AlexCalcButtonVar"
 				android:layout_column="0"
 				android:layout_row="4"
                 android:text="@string/units" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_sqrt"
 				style="@style/AlexCalcButtonFunc"
 				android:text="@string/sqrt" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_7"
 				style="@style/AlexCalcButtonNum"
 				android:text="@string/num7" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_8"
 				style="@style/AlexCalcButtonNum"
 				android:text="@string/num8" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_9"
 				style="@style/AlexCalcButtonNum"
 				android:text="@string/num9" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_mult"
 				style="@style/AlexCalcButtonOp"
 				android:text="@string/mult" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_var1"
 				style="@style/AlexCalcButtonVar"
 				android:layout_row="5"
 				android:layout_column="0"
 				android:text="@string/var_x" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_pi"
 				style="@style/AlexCalcButtonVar"
 				android:text="@string/pi" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_4"
 				style="@style/AlexCalcButtonNum"
 				android:text="@string/num4" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_5"
 				style="@style/AlexCalcButtonNum"
 				android:text="@string/num5" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_6"
 				style="@style/AlexCalcButtonNum"
 				android:text="@string/num6" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_sub"
 				style="@style/AlexCalcButtonOp"
 				android:text="@string/sub" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_ans"
 				style="@style/AlexCalcButtonVar"
 				android:layout_row="6"
 				android:layout_column="0"
 				android:text="@string/ans" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_e"
 				style="@style/AlexCalcButtonVar"
 				android:text="@string/e" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_1"
 				style="@style/AlexCalcButtonNum"
 				android:text="@string/num1" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_2"
 				style="@style/AlexCalcButtonNum"
 				android:text="@string/num2" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_3"
 				style="@style/AlexCalcButtonNum"
 				android:text="@string/num3" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_add"
 				style="@style/AlexCalcButtonOp"
 				android:text="@string/add" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_sto"
 				style="@style/AlexCalcButtonOp"
 				android:text="@string/store" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_img_unit"
 				style="@style/AlexCalcButtonNum"
 				android:text="@string/img_unit_i" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_0"
 				style="@style/AlexCalcButtonNum"
 				android:text="@string/num0" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_decimal"
 				style="@style/AlexCalcButtonNum"
 				android:text="@string/decimal" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_exp"
 				style="@style/AlexCalcButtonNum"
 				android:text="@string/exp" />
 
-			<Button
+			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_enter"
 				style="@style/AlexCalcButtonImportant"
 				android:text="@string/enter" />

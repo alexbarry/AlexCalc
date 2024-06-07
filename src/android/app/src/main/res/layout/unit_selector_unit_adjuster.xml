@@ -50,17 +50,20 @@
         <TableRow
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <Button
+        <com.google.android.material.button.MaterialButton
+            style="@style/AppTheme.ButtonThemeDefault"
             android:id="@+id/unit_prefix_inc_btn"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="@string/arrow_up"/>
-        <Button
+        <com.google.android.material.button.MaterialButton
+            style="@style/AppTheme.ButtonThemeDefault"
             android:id="@+id/unit_base_inc_btn"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="@string/arrow_up"/>
-        <Button
+        <com.google.android.material.button.MaterialButton
+            style="@style/AppTheme.ButtonThemeDefault"
             android:id="@+id/unit_pow_inc_btn"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
@@ -91,17 +94,20 @@
         <TableRow
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <Button
+            <com.google.android.material.button.MaterialButton
+                style="@style/AppTheme.ButtonThemeDefault"
                 android:id="@+id/unit_prefix_dec_btn"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:text="@string/arrow_down"/>
-            <Button
+            <com.google.android.material.button.MaterialButton
+                style="@style/AppTheme.ButtonThemeDefault"
                 android:id="@+id/unit_base_dec_btn"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:text="@string/arrow_down"/>
-            <Button
+            <com.google.android.material.button.MaterialButton
+                style="@style/AppTheme.ButtonThemeDefault"
                 android:id="@+id/unit_pow_dec_btn"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
@@ -118,14 +124,16 @@
         app:layout_constraintRight_toRightOf="parent"
         android:orientation="horizontal">
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        style="@style/AppTheme.ButtonThemeDefault"
         android:id="@+id/btn_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="@string/back"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        style="@style/AppTheme.ButtonThemeDefault"
         android:id="@+id/insert_unit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

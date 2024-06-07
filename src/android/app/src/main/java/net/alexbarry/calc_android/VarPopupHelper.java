@@ -4,7 +4,6 @@ import static net.alexbarry.calc_android.Utils.strMapToString;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
@@ -24,8 +23,11 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.constraintlayout.widget.ConstraintLayout;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,8 +101,8 @@ public class VarPopupHelper {
 		this.activity = activity;
         // TODO need an intermediate fragment or something (maybe some form of tabs?) to switch between "(new) var selector" and
         // existing vars. Maybe show existing vars first, with a link or text directing to the tab to define new ones
-    	AlertDialog.Builder builder_existing_var = new AlertDialog.Builder(activity, R.style.AppTheme_DialogTheme);
-		AlertDialog.Builder builder_new_var = new AlertDialog.Builder(activity, R.style.AppTheme_DialogTheme);
+		MaterialAlertDialogBuilder builder_existing_var = new MaterialAlertDialogBuilder(activity, R.style.MyMaterialAlertDialogBackground);
+		MaterialAlertDialogBuilder builder_new_var = new MaterialAlertDialogBuilder(activity, R.style.MyMaterialAlertDialogBackground);
 		LayoutInflater inflater = activity.getLayoutInflater();
 
     	// TODO existing vars should have a button that should switch from existing_vars fragment

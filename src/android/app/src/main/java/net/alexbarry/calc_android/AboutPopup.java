@@ -1,6 +1,8 @@
 package net.alexbarry.calc_android;
 
-import android.app.AlertDialog;
+//import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.Html;
@@ -23,7 +25,8 @@ class AboutPopup {
     }
 
     private AlertDialog build(Context context) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        //AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.MyMaterialAlertDialogBackground);
 
         builder.setTitle(R.string.about_title);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

@@ -15,7 +15,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        style="@style/AppTheme.ButtonThemeDefault"
         android:id="@+id/btn_delete_recently_used_units"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -76,13 +77,15 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/recently_used_units_selector_scroll">
-        <Button
+        <com.google.android.material.button.MaterialButton
+            style="@style/AppTheme.ButtonThemeDefault"
             android:id="@+id/btn_back"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="New unit"/>
-        <Button
+        <com.google.android.material.button.MaterialButton
+            style="@style/AppTheme.ButtonThemeDefault"
             android:id="@+id/btn_insert_recently_used_unit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

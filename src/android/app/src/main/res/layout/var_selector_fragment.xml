@@ -26,122 +26,122 @@
             android:layout_height="wrap_content"
             android:columnCount="4">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_x"
                 style="@style/DefineNewVarButton"
                 android:text="x" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_y"
                 style="@style/DefineNewVarButton"
                 android:text="y" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_z"
                 style="@style/DefineNewVarButton"
                 android:text="z" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_theta"
                 style="@style/DefineNewVarButton"
                 android:text="@string/btn_var_theta" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_alpha"
                 style="@style/DefineNewVarButton"
                 android:text="@string/btn_var_alpha" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_beta"
                 style="@style/DefineNewVarButton"
                 android:text="@string/btn_var_beta" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_gamma"
                 style="@style/DefineNewVarButton"
                 android:text="@string/btn_var_gamma" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_epsilon"
                 style="@style/DefineNewVarButton"
                 android:text="@string/btn_var_epsilon" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_a"
                 style="@style/DefineNewVarButton"
                 android:text="a" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_b"
                 style="@style/DefineNewVarButton"
                 android:text="b" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_c"
                 style="@style/DefineNewVarButton"
                 android:text="c" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_d"
                 style="@style/DefineNewVarButton"
                 android:text="d" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_r1"
                 style="@style/DefineNewVarButton"
                 android:text="@string/btn_var_r1" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_v1"
                 style="@style/DefineNewVarButton"
                 android:text="@string/btn_var_v1" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_i1"
                 style="@style/DefineNewVarButton"
                 android:text="@string/btn_var_i1" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_L"
                 style="@style/DefineNewVarButton"
                 android:text="L" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_r2"
                 style="@style/DefineNewVarButton"
                 android:text="@string/btn_var_r2" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_v2"
                 style="@style/DefineNewVarButton"
                 android:text="@string/btn_var_v2" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_i2"
                 style="@style/DefineNewVarButton"
                 android:text="@string/btn_var_i2" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_C"
                 style="@style/DefineNewVarButton"
                 android:text="C" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_omega"
                 style="@style/DefineNewVarButton"
                 android:text="@string/btn_var_omega" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_f"
                 style="@style/DefineNewVarButton"
                 android:text="f" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_p"
                 style="@style/DefineNewVarButton"
                 android:text="P" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_new_var_g"
                 style="@style/DefineNewVarButton"
                 android:text="G" />
@@ -166,19 +166,23 @@
         app:layout_constraintTop_toBottomOf="@id/custom_var_name_edittext">
 
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_insert_var_cancel"
+        style="@style/AppTheme.ButtonThemeDefault"
         android:layout_weight="1"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
+        android:layout_margin="5dp"
         android:text="@string/back" />
 
 
-     <Button
+     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_insert_custom_var_name"
+        style="@style/AppTheme.ButtonThemeDefault"
         android:layout_weight="1"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
-        android:text="@string/insert_variable" />
+        android:layout_margin="5dp"
+         android:text="@string/insert_variable" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
