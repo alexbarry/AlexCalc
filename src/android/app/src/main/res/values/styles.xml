@@ -1,8 +1,8 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppThemeBase" parent="Theme.AppCompat.DayNight.NoActionBar">
-
+    <!--<style name="AppThemeBase" parent="Theme.AppCompat.DayNight.NoActionBar">-->
+    <style name="AppThemeBase" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 
         <!--
         <item name="windowActionBar">true</item>
@@ -16,7 +16,14 @@
         <item name="colorAccent">@color/colorAccent</item>
         <!-- TODO I may update this to be a darker shade of grey -->
         <item name="android:textColor">@color/btn_text</item>
-        <item name="android:buttonStyle">@style/AppTheme.ButtonThemeDefault</item>
+        <!--<item name="buttonStyle">@style/AppTheme.ButtonThemeDefault</item>-->
+        <item name="buttonStyle">@style/AlexCalcButton</item>
+
+        <item name="alertDialogTheme">@style/MyMaterialAlertDialogBackground</item>
+        <item name="android:alertDialogTheme">@style/MyMaterialAlertDialogBackground</item>
+        <item name="android:dialogTheme">@style/MyMaterialAlertDialogBackground</item>
+
+
 
         <item name="btnTextColour">@color/btn_text</item>
         <item name="btnColourImportant">@color/btn_important</item>
@@ -28,9 +35,29 @@
         <item name="btnColourNum">@color/btn_num</item>
     </style>
 
+	<style name="MyMaterialAlertDialogBackground" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorPrimary">@color/btn_text</item>
+        <item name="colorOnSurface">@color/btn_text</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarNeutralButtonStyle">@style/NeutralButtonStyle</item>
+        <item name="android:backgroundTint">@color/windowBackground</item>
+	</style>
+
+	<style name="PositiveButtonStyle" parent="@style/Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/btn_text</item>
+	</style>
+	<style name="NegativeButtonStyle" parent="@style/Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/btn_text</item>
+	</style>
+	<style name="NeutralButtonStyle" parent="@style/Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/btn_text</item>
+	</style>
+
     <style name="AppTheme" parent="AppThemeBase">
         <item name="windowBackground">@color/windowBackground</item>
         <item name="android:windowBackground">?windowBackground</item>
+        <item name="buttonStyle">@style/AlexCalcButton</item>
     </style>
 
     <style name="Theme_VeryDark" parent="AppTheme">
@@ -65,19 +92,26 @@
         <item name="android:background">?windowBackground</item>
     </style>
 
+    <!--
     <style name="AppTheme.DialogTheme" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:background">?windowBackground</item>
+        <item name="android:textColorPrimary">@color/btn_text</item>
+        <item name="colorPrimary">@color/btn_text</item>
+        <item name="colorAccent">@color/btn_text</item>
     </style>
+    -->
 
     <!-- This theme includes UI buttons, like "cancel" or "recently used units"
          in the units/var popups -->
-    <style name="AppTheme.ButtonThemeBase" parent="Widget.AppCompat.Button">
+    <!--<style name="AppTheme.ButtonThemeBase" parent="Widget.AppCompat.Button">-->
+    <style name="AppTheme.ButtonThemeBase" parent="Widget.MaterialComponents.Button">
         <item name="android:textColor">?btnTextColour</item>
+        <item name="android:letterSpacing">0</item>
     </style>
 
     <!-- This theme is only for UI buttons -->
     <style name="AppTheme.ButtonThemeDefault" parent="AppTheme.ButtonThemeBase">
-        <item name="android:backgroundTint">@color/btn_default</item>
+        <item name="backgroundTint">@color/btn_default</item>
     </style>
 
     <!-- This theme is only for buttons that appear in the calculator button grid -->
@@ -94,33 +128,34 @@
         <item name="android:background">@color/btn_num</item>
         <item name="android:layout_margin">2dip</item>
         <item name="android:textAllCaps">false</item>
+        <item name="backgroundTint">@color/btn_default</item>
     </style>
 
     <style name="AlexCalcButtonImportant" parent="AlexCalcButton">
-        <item name="android:backgroundTint">?btnColourImportant</item>
+        <item name="backgroundTint">?btnColourImportant</item>
     </style>
 
     <style name="AlexCalcButtonMeta" parent="AlexCalcButton">
-        <item name="android:backgroundTint">?btnColourMeta</item>
+        <item name="backgroundTint">?btnColourMeta</item>
     </style>
 
     <style name="AlexCalcButtonFunc" parent="AlexCalcButton">
-        <item name="android:backgroundTint">?btnColourFunc</item>
+        <item name="backgroundTint">?btnColourFunc</item>
     </style>
 
     <style name="AlexCalcButtonOp" parent="AlexCalcButton">
-        <item name="android:backgroundTint">?btnColourOp</item>
+        <item name="backgroundTint">?btnColourOp</item>
     </style>
 
     <style name="AlexCalcButtonVar" parent="AlexCalcButton">
-        <item name="android:backgroundTint">?btnColourVar</item>
+        <item name="backgroundTint">?btnColourVar</item>
     </style>
 
     <style name="AlexCalcButtonNum" parent="AlexCalcButton">
-        <item name="android:backgroundTint">?btnColourNum</item>
+        <item name="backgroundTint">?btnColourNum</item>
     </style>
 
-    <style name="DefineNewVarButton">
+    <style name="DefineNewVarButton" parent="AppTheme.ButtonThemeDefault">
         <!-- layout_width of 0dp means the buttons will be equal size
              in the grid in a GridLayout. Otherwise, the column with
              the most text is the widest -->

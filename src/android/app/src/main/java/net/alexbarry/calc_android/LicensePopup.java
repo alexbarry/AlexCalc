@@ -1,6 +1,8 @@
 package net.alexbarry.calc_android;
 
-import android.app.AlertDialog;
+//import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
@@ -27,7 +29,7 @@ class LicensePopup {
 
 
     private AlertDialog build(Context context, ViewGroup root) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.MyMaterialAlertDialogBackground);
 
         View view = View.inflate(context, R.layout.license_picker, root);
         builder.setView(view);

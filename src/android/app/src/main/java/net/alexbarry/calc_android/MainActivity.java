@@ -1,6 +1,5 @@
 package net.alexbarry.calc_android;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,9 +7,11 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -25,7 +26,8 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
+//import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
+import com.mikepenz.aboutlibraries.LibsBuilder;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -59,9 +61,13 @@ public class MainActivity extends AppCompatActivity {
         public void show_android_licenses() {
             // https://developers.google.com/android/guides/opensource#java
             String title = getString(R.string.open_source_licenses_title);
+            /*
             OssLicensesMenuActivity.setActivityTitle(title);
             Intent showLicensesIntent = new Intent(MainActivity.this, OssLicensesMenuActivity.class);
             startActivity(showLicensesIntent);
+             */
+            LibsBuilder libsBuilder = new LibsBuilder();
+            libsBuilder.start(MainActivity.this);
         }
 
         @Override
@@ -78,10 +84,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
 
+        /*
+        updateTheme(this);
+        updateNightMode(this);
+         */
+        super.onCreate(savedInstanceState);
+
         updateTheme(this);
         updateNightMode(this);
 
-        super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
 
@@ -198,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showHelpPopup(Context context, ViewGroup root) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context, R.style.MyMaterialAlertDialogBackground);
 
         View view = View.inflate(context, R.layout.webview_wrapper_view, root);
         WebView webView = view.findViewById(R.id.web_view);

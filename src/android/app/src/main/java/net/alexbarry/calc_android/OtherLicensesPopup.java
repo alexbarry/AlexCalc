@@ -1,6 +1,5 @@
 package net.alexbarry.calc_android;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,13 +7,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
+import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 class OtherLicensesPopup {
 
     private Dialog dialog = null;
 
 
     private AlertDialog build(Context context, ViewGroup root) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
 
         View view = View.inflate(context, R.layout.webview_wrapper_view, root);
         WebView webView = view.findViewById(R.id.web_view);

@@ -21,14 +21,16 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        style="@style/AlexCalcButton"
         android:id="@+id/new_var_btn"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/define_new_variable"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        style="@style/AlexCalcButton"
         android:id="@+id/delete_vars_btn"
         android:layout_weight="1"
         android:layout_width="0dp"
@@ -355,13 +357,15 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/existing_var_selector_scroll">
-        <Button
+        <com.google.android.material.button.MaterialButton
+            style="@style/AlexCalcButton"
             android:id="@+id/existing_var_cancel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Cancel"/>
-        <Button
+        <com.google.android.material.button.MaterialButton
+            style="@style/AlexCalcButton"
             android:id="@+id/existing_var_insert"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

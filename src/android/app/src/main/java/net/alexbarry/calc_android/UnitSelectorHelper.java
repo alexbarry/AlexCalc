@@ -3,7 +3,6 @@ package net.alexbarry.calc_android;
 import static net.alexbarry.calc_android.Utils.strAryToStr;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.Editable;
@@ -21,7 +20,10 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.ContextThemeWrapper;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -219,7 +221,7 @@ public class UnitSelectorHelper {
         this.recently_used_dialog = init_recently_used_units(activity);
 
         //AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.FullScreenDialogTheme);
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.AppTheme_DialogTheme);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity, R.style.MyMaterialAlertDialogBackground);
 
         this.inflater = activity.getLayoutInflater();
         unitSelectorView = inflater.inflate(R.layout.unit_selector_fragment, null);
@@ -276,7 +278,7 @@ public class UnitSelectorHelper {
     }
 
     private AlertDialog init_recently_used_units(Activity activity) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity, R.style.AppTheme_DialogTheme);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity, R.style.MyMaterialAlertDialogBackground);
 
         LayoutInflater inflater = activity.getLayoutInflater();
         this.recently_used_units_view = inflater.inflate(R.layout.recently_used_units_fragment, null);
