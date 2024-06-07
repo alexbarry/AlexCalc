@@ -1,0 +1,1 @@
+Switched to material design, and switched to AboutLibraries instead of Google licenses plugin for showing open source licenses.
