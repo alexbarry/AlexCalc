@@ -833,6 +833,26 @@ function set_theme(ui, theme) {
 			document.body.classList.remove(old_theme);
 		}
 	}
+
+	let data_color_scheme_val = "light";
+	if (theme == "light") {
+		data_color_scheme_val = "light";
+	} else if (theme == "dark" || theme == "very_dark") {
+		data_color_scheme_val = "dark";
+	} else {
+		console.warn("Unhandled color scheme", theme);
+	}
+
+	const meta_color_scheme_elem = document.querySelector("meta[name=color-scheme]");
+
+	if (meta_color_scheme_elem) {
+		// Without this, it seems like the scrollbars, checkbox, and dropdown (select)
+		// can retain the user's global colour scheme preference,
+		// even if they specify that they want this page to be different.
+		meta_color_scheme_elem.setAttribute('content', data_color_scheme_val);
+	} else {
+		console.warn("html meta color-scheme not present");
+	}
 }
 
 function set_dark_mode_select(ui, theme) {
