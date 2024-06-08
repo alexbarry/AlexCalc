@@ -1,19 +1,9 @@
 # How to download javascript dependencies
 
-To get mathjax to be included in assets:
+Run:
 
-    npm install mathjax@3
-
-To include polyfill (needed for ES5 browsers to work with MathJax, I think):
-
-    npm install --save @babel/polyfill
-
-# ES5
-
-Before including polyfill, I saw this:
-
-    net.alexbarry.calc_android I/chromium: [INFO:CONSOLE(1)] "Uncaught TypeError: Object.assign is not a function", source: file:///android_asset/html/node_modules/mathjax/es5/tex-chtml-full.js (1)
-
+    cd app/src/main/assets/html/
+    npm install
 
 # Generate and Copy "other licenses"
 
