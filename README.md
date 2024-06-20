@@ -4,8 +4,16 @@ Try the web version here: https://alexbarry.github.io/AlexCalc/
 
 Available on:
 * **Web (desktop or mobile)**: https://alexbarry.github.io/AlexCalc/
-* **Android**: [Google Play](https://play.google.com/store/apps/details?id=net.alexbarry.calc_android)
+* **Android**: [Google Play](https://play.google.com/store/apps/details?id=net.alexbarry.calc_android), [F-Droid](https://f-droid.org/packages/net.alexbarry.calc_android/)
 * **iOS**: No native app yet, but for now here's [how to add a home screen shortcut to the browser version on iOS](https://alexbarry.github.io/AlexCalc/add_to_ios_home.html).
+
+[<img src="https://alexbarry.github.io/AlexCalc/graphics/GetItOnGooglePlay_Badge_Web_color_English.png"
+     alt="Get it on Google Play"
+     height="80">](https://play.google.com/store/apps/details?id=net.alexbarry.calc_android)
+
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/net.alexbarry.calc_android/)
 
 ## How to use
 
