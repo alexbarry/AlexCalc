@@ -23,14 +23,17 @@ class bcolors:
 	FAIL    = '\033[91m'
 	ENDC    = '\033[0m'
 
+def cos_grad(x):
+	return math.cos(x/200*math.pi)
+
 tests = [
 		( '3.14159',                     3.14159    ),
 		( '1+2*3',                       7          ),
 		( '3*(1+2)-4',                   5          ),
 		( '3  *  (1  +  2 ) - 4',        5          ),
-		( '2^3^4',                       2.41785e24 ),
+		( '2^3^4',                       (2**3**4)  ),
 		( '(2^3)^4',                     4096       ),
-		( '2^(3^4)',                     2.41785e24 ),
+		( '2^(3^4)',                     (2**(3**4))),
 		( '8^4',                         4096       ),
 		( '3 + 4 * 5',                   23         ),
 		( '3 * 4 + 5',                   17         ),
@@ -76,13 +79,13 @@ tests = [
 		( 'cos(pi/4)^(-2)',              2),
 		( 'sin(pi/4)^2',                 0.5),
 		( 'cos(pi/4)^2',                 0.5),
-		( 'sin(pi/3)^2',                 0.5),
+		( 'sin(pi/3)^2',                 math.sin(math.pi/3)**2),
 		( 'cos(pi/3)',                   0.5),
 		( 'cos(pi/6 + pi/6)',            0.5),
 		( 'cos(pi/6+pi/6)',              0.5),
 		( 'cos(pi/6 +pi/6)',             0.5),
 		( 'cos(pi/6+ pi/6)',             0.5),
-		( 'sin(pi/3)^2',                 0.75),
+		( 'sin(pi/3)^2',                 math.sin(math.pi/3)**2),
 		( 'sin( (pi*0.5 + pi/2)/(1 + 2))^2',                 0.75),
 		( 'sqrt((e/3+2*e/3)^(i*pi)+2)+3',    4.0),
 
@@ -130,43 +133,103 @@ tests = [
 		( 'getangle(sqrt(1angle90))',        45, 'degree'),
 		( 'getangle(sqrt(1angle-90))',      -45, 'degree'),
 		( 'getangle(sqrt((3+4j)*(3+4j)))',        math.atan2(4,3)),
-		( 'getangle(-sqrt((3+4j)*-(3+4j)))',      math.atan2(4,3)),
+		( 'getangle(-sqrt((3+4j)*-(3+4j)))',      math.atan2(-4,3)),
 		( 'getangle(sqrt((3+4j)*(3+4j)))',        math.atan2(4,3)),
+
+		( 'cos(200)', -1, 'gradian'),
+		( 'cos(400)',  1, 'gradian'),
+		( 'sin(100)',  1, 'gradian'),
+		( 'sin(-100)', -1, 'gradian'),
+		( 'asin(1)', 100, 'gradian'),
+		( 'acos(-1)', 200, 'gradian'),
+
+		( "200deg",        200.0,             'gradian'),
+		( "200deg0'",      200.0,             'gradian'),
+		( "200deg30'",     200.5,             'gradian'),
+		( "200deg60'",     201.0,             'gradian'),
+		( "200deg30'30''", 200 + 30/60 + 30/60/60, 'gradian'),
+		( '200deg30\'30"', 200 + 30/60 + 30/60/60, 'gradian'),
+		( '200deg30\'20"', 200 + 30/60 + 20/60/60, 'gradian'),
+		( '200deg30\'1"', 200.5 + 1/60/60, 'gradian'),
+
+		( 'cos(200)',         cos_grad(200), 'gradian'),
+		( 'cos(200deg)',      cos_grad(200), 'gradian'),
+		( 'cos(200deg0\')',   cos_grad(200), 'gradian'),
+		( "cos(200deg0'0'')", cos_grad(200), 'gradian'),
+		( 'cos(200deg0\'0")', cos_grad(200), 'gradian'),
+
+		( '30\'', 0.5, 'gradian'),
+		( '30\'', 0.5, 'degree'),
+
+		( "30''", 30/60/60, 'gradian'),
+		( "30''", 30/60/60, 'degree'),
+
+		( "30'' + 30''", 30/60/60 + 30/60/60, 'gradian'),
+		( "30'' + 30''", 30/60/60 + 30/60/60, 'degree'),
+
+		( '30"', 30/60/60, 'gradian'),
+		( '30"', 30/60/60, 'degree'),
+
+		( "30'15''", 30/60 + 15/60/60, 'gradian'),
+		( "30'15\"", 30/60 + 15/60/60, 'gradian'),
+
+		( "90deg+45deg", 90+45, 'gradian'),
+		( "90deg+45deg", 90+45, 'gradian'),
+
+		( "90deg + 45deg", 90+45, 'gradian'),
+		( "90deg + 45deg", 90+45, 'gradian'),
+
+		( "90 deg + 45 deg", 90+45, 'gradian'),
+		( "90 deg + 45 deg", 90+45, 'gradian'),
+
+		( "90deg30'+45deg10''", 90.5+45+10/60/60, 'gradian'),
+
+		( "0deg50''", 50/60/60, 'gradian'),
+		( "0deg50\"", 50/60/60, 'gradian'),
+		( "0deg50'", 50/60, 'gradian'),
+
+		( "0deg50'", 50/60, 'gradian'),
+		( "0deg50''", 50/60/60, 'gradian'),
+
+		( "50'", 50/60, 'gradian'),
+		( "50''", 50/60/60, 'gradian'),
+
+
 ]
 
 cursor = '\\text{[]}'
 
 latex_tests = [
-    ( '12345',              0,    ''         + cursor + '\\text{12345}'),
-    ( '12345',              1,    '\\text{1}' + cursor + '\\text{2345}'),
-    ( '12345',              2,    '\\text{12}' + cursor + '\\text{345}'),
-    ( '12345',              3,    '\\text{123}' + cursor + '\\text{45}'),
-    ( '12345',              4,    '\\text{1234}' + cursor + '\\text{5}'),
-    ( '12345',              5,    '\\text{12345}' + cursor + ''),
+    ( '12345',              0,    ''         + cursor + '12345'),
+    ( '12345',              1,    '1' + cursor + '2345'),
+    ( '12345',              2,    '12' + cursor + '345'),
+    ( '12345',              3,    '123' + cursor + '45'),
+    ( '12345',              4,    '1234' + cursor + '5'),
+    ( '12345',              5,    '12345' + cursor + ''),
 
-    ( '12 + 34',            0,    r'' + cursor + r'\text{12} + \text{34}'),
-    ( '12 + 34',            1,    r'\text{1}' + cursor + r'\text{2} + \text{34}'),
-    ( '12 + 34',            2,    r'\text{12}' + cursor + r' + \text{34}'),
-    ( '12 + 34',            3,    r'\text{12}' + cursor + r' + \text{34}'),
-    ( '12 + 34',            4,    r'\text{12} + ' + cursor + r'\text{34}'),
-    ( '12 + 34',            5,    r'\text{12} + ' + cursor + r'\text{34}'),
-    ( '12 + 34',            6,    r'\text{12} + \text{3}' + cursor + r'\text{4}'),
-    ( '12 + 34',            7,    r'\text{12} + \text{34}' + cursor),
+    ( '12 + 34',            0,    r'' + cursor + r'12 + 34'),
+    ( '12 + 34',            1,    r'1' + cursor + r'2 + 34'),
+    ( '12 + 34',            2,    r'12' + cursor + r' + 34'),
+    ( '12 + 34',            3,    r'12' + cursor + r' + 34'),
+    ( '12 + 34',            4,    r'12 + ' + cursor + r'34'),
+    ( '12 + 34',            5,    r'12 + ' + cursor + r'34'),
+    ( '12 + 34',            6,    r'12 + 3' + cursor + r'4'),
+    ( '12 + 34',            7,    r'12 + 34' + cursor),
 
-    ( 'x + (12 + 34)',            0,    r'' + cursor + r'x + \left(\text{12} + \text{34}\right)'),
-    ( 'x + (12 + 34)',            1,    r'x' + cursor + r' + \left(\text{12} + \text{34}\right)'),
-    ( 'x + (12 + 34)',            2,    r'x' + cursor + r' + \left(\text{12} + \text{34}\right)'),
-    ( 'x + (12 + 34)',            3,    r'x + ' + cursor + r'\left(\text{12} + \text{34}\right)'),
-    ( 'x + (12 + 34)',            4,    r'x + ' + cursor + r'\left(\text{12} + \text{34}\right)'),
-    ( 'x + (12 + 34)',            5,    r'x + \left(' + cursor + r'\text{12} + \text{34}\right)'),
-    ( 'x + (12 + 34)',            6,    r'x + \left(\text{1}' + cursor + r'\text{2} + \text{34}\right)'),
-    ( 'x + (12 + 34)',            7,    r'x + \left(\text{12}' + cursor + r' + \text{34}\right)'),
-    ( 'x + (12 + 34)',            8,    r'x + \left(\text{12}' + cursor + r' + \text{34}\right)'),
-    ( 'x + (12 + 34)',            9,    r'x + \left(\text{12} + ' + cursor + r'\text{34}\right)'),
-    ( 'x + (12 + 34)',           10,    r'x + \left(\text{12} + ' + cursor + r'\text{34}\right)'),
-    ( 'x + (12 + 34)',           11,    r'x + \left(\text{12} + \text{3}' + cursor + r'\text{4}\right)'),
-    ( 'x + (12 + 34)',           12,    r'x + \left(\text{12} + \text{34}' + cursor + r'\right)'),
-    ( 'x + (12 + 34)',           13,    r'x + \left(\text{12} + \text{34}\right)' + cursor),
+    ( 'x + (12 + 34)',            0,    r'' + cursor + r'x + \left(12 + 34\right)'),
+    ( 'x + (12 + 34)',            1,    r'x' + cursor + r' + \left(12 + 34\right)'),
+    ( 'x + (12 + 34)',            2,    r'x' + cursor + r' + \left(12 + 34\right)'),
+    ( 'x + (12 + 34)',            3,    r'x + ' + cursor + r'\left(12 + 34\right)'),
+    ( 'x + (12 + 34)',            4,    r'x + ' + cursor + r'\left(12 + 34\right)'),
+    ( 'x + (12 + 34)',            5,    r'x + \left(' + cursor + r'12 + 34\right)'),
+    ( 'x + (12 + 34)',            6,    r'x + \left(1' + cursor + r'2 + 34\right)'),
+    ( 'x + (12 + 34)',            7,    r'x + \left(12' + cursor + r' + 34\right)'),
+    ( 'x + (12 + 34)',            8,    r'x + \left(12' + cursor + r' + 34\right)'),
+    ( 'x + (12 + 34)',            9,    r'x + \left(12 + ' + cursor + r'34\right)'),
+    ( 'x + (12 + 34)',           10,    r'x + \left(12 + ' + cursor + r'34\right)'),
+    ( 'x + (12 + 34)',           11,    r'x + \left(12 + 3' + cursor + r'4\right)'),
+    ( 'x + (12 + 34)',           12,    r'x + \left(12 + 34' + cursor + r'\right)'),
+    ( 'x + (12 + 34)',           13,    r'x + \left(12 + 34\right)' + cursor),
 
     (  'pi',                      0,    r'' + cursor + r'\pi'),
     (  'pi',                      2,    r'\pi' + cursor + r''),
@@ -178,28 +241,28 @@ latex_tests = [
     (  'alex',                    4,    r'\text{alex}' + cursor + r''),
 
 
-    (  'sqrt(alex^(i*pi)+1)+3',   0,   cursor + r'\sqrt{\left(\text{alex}^{\left(i \cdot \pi\right)} + \text{1}\right)} + \text{3}'),
-    (  'sqrt(alex^(i*pi)+1)+3',   5,   r'\sqrt{\left(' + cursor + r'\text{alex}^{\left(i \cdot \pi\right)} + \text{1}\right)} + \text{3}'),
-    (  'sqrt(alex^(i*pi)+1)+3',   9,   r'\sqrt{\left(\text{alex}' + cursor + r'^{\left(i \cdot \pi\right)} + \text{1}\right)} + \text{3}'),
-    (  'sqrt(alex^(i*pi)+1)+3',  10,   r'\sqrt{\left(\text{alex}^{' + cursor + r'\left(i \cdot \pi\right)} + \text{1}\right)} + \text{3}'),
-    (  'sqrt(alex^(i*pi)+1)+3',  11,   r'\sqrt{\left(\text{alex}^{\left(' + cursor + r'i \cdot \pi\right)} + \text{1}\right)} + \text{3}'),
-    (  'sqrt(alex^(i*pi)+1)+3',  12,   r'\sqrt{\left(\text{alex}^{\left(i' + cursor + r' \cdot \pi\right)} + \text{1}\right)} + \text{3}'),
-    (  'sqrt(alex^(i*pi)+1)+3',  13,   r'\sqrt{\left(\text{alex}^{\left(i \cdot ' + cursor + r'\pi\right)} + \text{1}\right)} + \text{3}'),
-    (  'sqrt(alex^(i*pi)+1)+3',  15,   r'\sqrt{\left(\text{alex}^{\left(i \cdot \pi' + cursor + r'\right)} + \text{1}\right)} + \text{3}'),
-    (  'sqrt(alex^(i*pi)+1)+3',  16,   r'\sqrt{\left(\text{alex}^{\left(i \cdot \pi\right)}' + cursor + r' + \text{1}\right)} + \text{3}'),
-    (  'sqrt(alex^(i*pi)+1)+3',  17,   r'\sqrt{\left(\text{alex}^{\left(i \cdot \pi\right)} + ' + cursor + r'\text{1}\right)} + \text{3}'),
-    (  'sqrt(alex^(i*pi)+1)+3',  18,   r'\sqrt{\left(\text{alex}^{\left(i \cdot \pi\right)} + \text{1}' + cursor + r'\right)} + \text{3}'),
-    (  'sqrt(alex^(i*pi)+1)+3',  19,   r'\sqrt{\left(\text{alex}^{\left(i \cdot \pi\right)} + \text{1}\right)}' + cursor + r' + \text{3}'),
-    (  'sqrt(alex^(i*pi)+1)+3',  20,   r'\sqrt{\left(\text{alex}^{\left(i \cdot \pi\right)} + \text{1}\right)} + ' + cursor + r'\text{3}'),
-    (  'sqrt(alex^(i*pi)+1)+3',  21,   r'\sqrt{\left(\text{alex}^{\left(i \cdot \pi\right)} + \text{1}\right)} + \text{3}' + cursor + r''),
+    (  'sqrt(alex^(i*pi)+1)+3',   0,   cursor + r'\sqrt{\left(\text{alex}^{\left(i \cdot \pi\right)} + 1\right)} + 3'),
+    (  'sqrt(alex^(i*pi)+1)+3',   5,   r'\sqrt{\left(' + cursor + r'\text{alex}^{\left(i \cdot \pi\right)} + 1\right)} + 3'),
+    (  'sqrt(alex^(i*pi)+1)+3',   9,   r'\sqrt{\left(\text{alex}' + cursor + r'^{\left(i \cdot \pi\right)} + 1\right)} + 3'),
+    (  'sqrt(alex^(i*pi)+1)+3',  10,   r'\sqrt{\left(\text{alex}^{' + cursor + r'\left(i \cdot \pi\right)} + 1\right)} + 3'),
+    (  'sqrt(alex^(i*pi)+1)+3',  11,   r'\sqrt{\left(\text{alex}^{\left(' + cursor + r'i \cdot \pi\right)} + 1\right)} + 3'),
+    (  'sqrt(alex^(i*pi)+1)+3',  12,   r'\sqrt{\left(\text{alex}^{\left(i' + cursor + r' \cdot \pi\right)} + 1\right)} + 3'),
+    (  'sqrt(alex^(i*pi)+1)+3',  13,   r'\sqrt{\left(\text{alex}^{\left(i \cdot ' + cursor + r'\pi\right)} + 1\right)} + 3'),
+    (  'sqrt(alex^(i*pi)+1)+3',  15,   r'\sqrt{\left(\text{alex}^{\left(i \cdot \pi' + cursor + r'\right)} + 1\right)} + 3'),
+    (  'sqrt(alex^(i*pi)+1)+3',  16,   r'\sqrt{\left(\text{alex}^{\left(i \cdot \pi\right)}' + cursor + r' + 1\right)} + 3'),
+    (  'sqrt(alex^(i*pi)+1)+3',  17,   r'\sqrt{\left(\text{alex}^{\left(i \cdot \pi\right)} + ' + cursor + r'1\right)} + 3'),
+    (  'sqrt(alex^(i*pi)+1)+3',  18,   r'\sqrt{\left(\text{alex}^{\left(i \cdot \pi\right)} + 1' + cursor + r'\right)} + 3'),
+    (  'sqrt(alex^(i*pi)+1)+3',  19,   r'\sqrt{\left(\text{alex}^{\left(i \cdot \pi\right)} + 1\right)}' + cursor + r' + 3'),
+    (  'sqrt(alex^(i*pi)+1)+3',  20,   r'\sqrt{\left(\text{alex}^{\left(i \cdot \pi\right)} + 1\right)} + ' + cursor + r'3'),
+    (  'sqrt(alex^(i*pi)+1)+3',  21,   r'\sqrt{\left(\text{alex}^{\left(i \cdot \pi\right)} + 1\right)} + 3' + cursor + r''),
 
-    #( '12345 +(x/789)^2',   0,    ''         + cursor + r'\text{12345} + \left(\frac{x}{\text{789}}\right)^{\text{2}}'),
-    #( '12345 +(x/789)^2',   1,    r'\text{1}' + cursor + r'\text{2345} + \left(\frac{x}{\text{789}}\right)^{\text{2}}'),
-    #( '12345 +(x/789)^2',   2,    r'\text{12}' + cursor + r'\text{345} + \left(\frac{x}{\text{789}}\right)^{\text{2}}'),
-    #( '12345 +(x/789)^2',   3,    r'\text{123}' + cursor + r'\text{45} + \left(\frac{x}{\text{789}}\right)^{\text{2}}'),
-    #( '12345 +(x/789)^2',   4,    r'\text{1234}' + cursor + r'\text{5} + \left(\frac{x}{\text{789}}\right)^{\text{2}}'),
-    #( '12345 +(x/789)^2',   5,    r'\text{12345}' + cursor + r' + \left(\frac{x}{\text{789}}\right)^{\text{2}}'),
-    #( '12345 +(x/789)^2',   6,    r'\text{12345}' + cursor + r' + \left(\frac{x}{\text{789}}\right)^{\text{2}}'),
+    #( '12345 +(x/789)^2',   0,    ''         + cursor + r'12345 + \left(\frac{x}{789}\right)^{2}'),
+    #( '12345 +(x/789)^2',   1,    r'1' + cursor + r'2345 + \left(\frac{x}{789}\right)^{2}'),
+    #( '12345 +(x/789)^2',   2,    r'12' + cursor + r'345 + \left(\frac{x}{789}\right)^{2}'),
+    #( '12345 +(x/789)^2',   3,    r'123' + cursor + r'45 + \left(\frac{x}{789}\right)^{2}'),
+    #( '12345 +(x/789)^2',   4,    r'1234' + cursor + r'5 + \left(\frac{x}{789}\right)^{2}'),
+    #( '12345 +(x/789)^2',   5,    r'12345' + cursor + r' + \left(\frac{x}{789}\right)^{2}'),
+    #( '12345 +(x/789)^2',   6,    r'12345' + cursor + r' + \left(\frac{x}{789}\right)^{2}'),
 
     (  '1-(2+3)',  None,   r'1 - \left(2 + 3\right)'),
     (  '1+(2+3)',  None,   r'1 + 2 + 3'),
@@ -235,40 +298,40 @@ latex_tests = [
 	( '1 angle 180',               None, r'1 \measuredangle 180'),
 	( '1   angle 180',             None, r'1 \measuredangle 180'),
 
-	( '1angle180',                 0,    r'' + cursor + r'\text{1} \measuredangle \text{180}'),
-	( '1angle180',                 1,    r'\text{1}' + cursor + r' \measuredangle \text{180}'),
-	( '1angle180',                 6,    r'\text{1} \measuredangle ' + cursor + r'\text{180}'),
-	( '1angle180',                 7,    r'\text{1} \measuredangle \text{1}' + cursor + r'\text{80}'),
-	( '1angle180',                 8,    r'\text{1} \measuredangle \text{18}' + cursor + r'\text{0}'),
-	( '1angle180',                 9,    r'\text{1} \measuredangle \text{180}' + cursor ),
+	( '1angle180',                 0,    r'' + cursor + r'1 \measuredangle 180'),
+	( '1angle180',                 1,    r'1' + cursor + r' \measuredangle 180'),
+	( '1angle180',                 6,    r'1 \measuredangle ' + cursor + r'180'),
+	( '1angle180',                 7,    r'1 \measuredangle 1' + cursor + r'80'),
+	( '1angle180',                 8,    r'1 \measuredangle 18' + cursor + r'0'),
+	( '1angle180',                 9,    r'1 \measuredangle 180' + cursor ),
 
-	(  '1 km',                         0, r'' + cursor + r'\text{1}\,\text{km}'),
-	(  '1 km',                         1, r'\text{1}' + cursor + r'\,\text{km}'),
-	(  '1 km',                         2, r'\text{1}\,' + cursor + r'\text{km}'),
-	(  '1 km',                         3, r'\text{1}\,\text{k}' + cursor + r'\text{m}'),
-	(  '1 kPa',                        3, r'\text{1}\,\text{k}' + cursor + r'\text{Pa}'),
-	(  '1 zxy',                        3, r'\text{1}\,\text{z}' + cursor + r'\text{xy}'),
-	(  '1 km',                         4, r'\text{1}\,\text{km}' + cursor + r''),
+	(  '1 km',                         0, r'' + cursor + r'1\,\text{km}'),
+	(  '1 km',                         1, r'1' + cursor + r'\,\text{km}'),
+	(  '1 km',                         2, r'1\,' + cursor + r'\text{km}'),
+	(  '1 km',                         3, r'1\,\text{k}' + cursor + r'\text{m}'),
+	(  '1 kPa',                        3, r'1\,\text{k}' + cursor + r'\text{Pa}'),
+	(  '1 zxy',                        3, r'1\,\text{z}' + cursor + r'\text{xy}'),
+	(  '1 km',                         4, r'1\,\text{km}' + cursor + r''),
 
-	(  '1 km * 3 mi',                  0, r'' + cursor + r'\text{1}\,\text{km} \cdot \text{3}\,\text{mi}'),
-	(  '1 km^2 * 3 mi',                0, r'' + cursor + r'\text{1}\,\text{km}^\text{2} \cdot \text{3}\,\text{mi}'),
-	(  '1 m s^- kPa^-1',               0, r'' + cursor + r'\text{1}\,\text{m}\,\text{s}^\text{-}\,\text{kPa}^\text{-1}'),
-	(  '1 m s^-1 kPa^-1',              0, r'' + cursor + r'\text{1}\,\text{m}\,\text{s}^\text{-1}\,\text{kPa}^\text{-1}'),
-	(  '1 m s^-1 kPa^-1',              1, r'\text{1}' + cursor + r'\,\text{m}\,\text{s}^\text{-1}\,\text{kPa}^\text{-1}'),
-	(  '1 m s^-1 kPa^-1',              2, r'\text{1}\,' + cursor + r'\text{m}\,\text{s}^\text{-1}\,\text{kPa}^\text{-1}'),
-	(  '1 m s^-1 kPa^-1',              3, r'\text{1}\,\text{m}' + cursor + r'\,\text{s}^\text{-1}\,\text{kPa}^\text{-1}'),
-	(  '1 m s^-1 kPa^-1',              4, r'\text{1}\,\text{m}\,' + cursor + r'\text{s}^\text{-1}\,\text{kPa}^\text{-1}'),
-	(  '1 m s^-1 kPa^-1',              5, r'\text{1}\,\text{m}\,\text{s}' + cursor + r'^\text{-1}\,\text{kPa}^\text{-1}'),
-	(  '1 m s^-1 kPa^-1',              6, r'\text{1}\,\text{m}\,\text{s}^{' + cursor + r'\text{-1}}\,\text{kPa}^\text{-1}'),
-	(  '1 m s^-1 kPa^-1',              7, r'\text{1}\,\text{m}\,\text{s}^{\text{-}' + cursor + r'\text{1}}\,\text{kPa}^\text{-1}'),
-	(  '1 m s^-1 kPa^-1',              8, r'\text{1}\,\text{m}\,\text{s}^{\text{-1}' + cursor + r'}\,\text{kPa}^\text{-1}'),
-	(  '1 m s^-1 kPa^-1',              9, r'\text{1}\,\text{m}\,\text{s}^\text{-1}\,' + cursor + r'\text{kPa}^\text{-1}'),
-	(  '1 m s^-1 kPa^-1',             10, r'\text{1}\,\text{m}\,\text{s}^\text{-1}\,\text{k}' + cursor + r'\text{Pa}^\text{-1}'),
-	(  '1 m s^-1 kPa^-1',             11, r'\text{1}\,\text{m}\,\text{s}^\text{-1}\,\text{kP}' + cursor + r'\text{a}^\text{-1}'),
-	(  '1 m s^-1 kPa^-1',             12, r'\text{1}\,\text{m}\,\text{s}^\text{-1}\,\text{kPa}' + cursor + r'^\text{-1}'),
-	(  '1 m s^-1 kPa^-1',             13, r'\text{1}\,\text{m}\,\text{s}^\text{-1}\,\text{kPa}^{' + cursor + r'\text{-1}}'),
-	(  '1 m s^-1 kPa^-1',             14, r'\text{1}\,\text{m}\,\text{s}^\text{-1}\,\text{kPa}^{\text{-}' + cursor + r'\text{1}}'),
-	(  '1 m s^-1 kPa^-1',             15, r'\text{1}\,\text{m}\,\text{s}^\text{-1}\,\text{kPa}^{\text{-1}' + cursor + r'}'),
+	(  '1 km * 3 mi',                  0, r'' + cursor + r'1\,\text{km} \cdot 3\,\text{mi}'),
+	(  '1 km^2 * 3 mi',                0, r'' + cursor + r'1\,\text{km}^2 \cdot 3\,\text{mi}'),
+	(  '1 m s^- kPa^-1',               0, r'' + cursor + r'1\,\text{m}\,\text{s}^\text{-}\,\text{kPa}^{\text{-}1}'),
+	(  '1 m s^-1 kPa^-1',              0, r'' + cursor + r'1\,\text{m}\,\text{s}^{\text{-}1}\,\text{kPa}^{\text{-}1}'),
+	(  '1 m s^-1 kPa^-1',              1, r'1' + cursor + r'\,\text{m}\,\text{s}^{\text{-}1}\,\text{kPa}^{\text{-}1}'),
+	(  '1 m s^-1 kPa^-1',              2, r'1\,' + cursor + r'\text{m}\,\text{s}^{\text{-}1}\,\text{kPa}^{\text{-}1}'),
+	(  '1 m s^-1 kPa^-1',              3, r'1\,\text{m}' + cursor + r'\,\text{s}^{\text{-}1}\,\text{kPa}^{\text{-}1}'),
+	(  '1 m s^-1 kPa^-1',              4, r'1\,\text{m}\,' + cursor + r'\text{s}^{\text{-}1}\,\text{kPa}^{\text{-}1}'),
+	(  '1 m s^-1 kPa^-1',              5, r'1\,\text{m}\,\text{s}' + cursor + r'^{\text{-}1}\,\text{kPa}^{\text{-}1}'),
+	(  '1 m s^-1 kPa^-1',              6, r'1\,\text{m}\,\text{s}^{' + cursor + r'\text{-}1}\,\text{kPa}^{\text{-}1}'),
+	(  '1 m s^-1 kPa^-1',              7, r'1\,\text{m}\,\text{s}^{\text{-}' + cursor + r'1}\,\text{kPa}^{\text{-}1}'),
+	(  '1 m s^-1 kPa^-1',              8, r'1\,\text{m}\,\text{s}^{\text{-}1' + cursor + r'}\,\text{kPa}^{\text{-}1}'),
+	(  '1 m s^-1 kPa^-1',              9, r'1\,\text{m}\,\text{s}^{\text{-}1}\,' + cursor + r'\text{kPa}^{\text{-}1}'),
+	(  '1 m s^-1 kPa^-1',             10, r'1\,\text{m}\,\text{s}^{\text{-}1}\,\text{k}' + cursor + r'\text{Pa}^{\text{-}1}'),
+	(  '1 m s^-1 kPa^-1',             11, r'1\,\text{m}\,\text{s}^{\text{-}1}\,\text{kP}' + cursor + r'\text{a}^{\text{-}1}'),
+	(  '1 m s^-1 kPa^-1',             12, r'1\,\text{m}\,\text{s}^{\text{-}1}\,\text{kPa}' + cursor + r'^{\text{-}1}'),
+	(  '1 m s^-1 kPa^-1',             13, r'1\,\text{m}\,\text{s}^{\text{-}1}\,\text{kPa}^{' + cursor + r'\text{-}1}'),
+	(  '1 m s^-1 kPa^-1',             14, r'1\,\text{m}\,\text{s}^{\text{-}1}\,\text{kPa}^{\text{-}' + cursor + r'1}'),
+	(  '1 m s^-1 kPa^-1',             15, r'1\,\text{m}\,\text{s}^{\text{-}1}\,\text{kPa}^{\text{-}1' + cursor + r'}'),
 	# TODO keep going, progressing cursor through wip token with units
 
 	(  '1 s^-1 m',                  None, r'1\,\text{s}^{' + NEG_SYMB + r'1}\,\text{m}'),
@@ -277,7 +340,7 @@ latex_tests = [
 	(  '1 m s^-1',                  None, r'1\,\text{m}\,\text{s}^{' + NEG_SYMB + r'1}'),
 	(  '1 m s^-1 m',                None, r'1\,\text{m}\,\text{s}^{' + NEG_SYMB + r'1}\,\text{m}'),
 
-	(  '1km',                       0,    r'' + cursor + r'\text{1}\,\text{km}'),
+	(  '1km',                       0,    r'' + cursor + r'1\,\text{km}'),
 
 	# This one is a little ambiguous. Should the cursor go before or after the space?
 	# If you enter a digit, it will render before the space, and your cursor will then
@@ -285,9 +348,9 @@ latex_tests = [
 	# If you enter a character, it will render after the space, and your cursor
 	#     will then definitely be after the space
 	# Maybe there should be no space in this case.
-	(  '1km',                       1,    r'\text{1}' + cursor + r'\text{km}'),
-	(  '1km',                       2,    r'\text{1}\,\text{k}' + cursor + r'\text{m}'),
-	(  '1km',                       3,    r'\text{1}\,\text{km}' + cursor + r''),
+	(  '1km',                       1,    r'1' + cursor + r'\text{km}'),
+	(  '1km',                       2,    r'1\,\text{k}' + cursor + r'\text{m}'),
+	(  '1km',                       3,    r'1\,\text{km}' + cursor + r''),
 
         (  '(1 km)',                None,    r'1\,\text{km}'),
         (  '(1 km)^2',              None,    r'\left(1\,\text{km}\right)^2'),
@@ -328,20 +391,32 @@ def run_test(test, cmds):
 	cmd_str = '\n'.join(':%s' % x for x in cmds)
 	if cmd_str: cmd_str += '\n'
 	test_input = bytes( ":echo on\n" + cmd_str + test + '\n:alloc\n:exit\n', encoding='utf-8' )
-	output, output_err   = p.communicate( input=test_input, timeout=1 )
+	try:
+		output, output_err   = p.communicate( input=test_input, timeout=1 )
+	except subprocess.TimeoutExpired:
+		# NOTE: without this, if the process gets stuck in an infinite loop,
+		# it can consume all your ram and remain running even after the tests execute.
+		print('Killing process...')
+		p.kill()
+		raise
+	
 	output_err = output_err.decode('utf-8')
 	output = output.decode( 'utf-8' )
 	output = output.split( '\n' )
-	cmd_degree_expected_output = 'Trig input and calc output will now be in degrees'
+	cmd_degree_expected_output  = 'Trig input and calc output will now be in degrees'
+	cmd_gradian_expected_output = 'Trig input and calc output will now be in gradians'
 	for cmd in cmds:
 		output_line = output.pop(0)
 		if cmd == 'degree':
 			if output_line != cmd_degree_expected_output:
 				raise Exception('output_str from :degree did not match expected: %r' % output_line )
+		elif cmd == 'gradian':
+			if output_line != cmd_gradian_expected_output:
+				raise Exception('output_str from :gradian did not match expected: %r' % output_line )
 		else:
 			print('Unsure how to validate cmd %r' % cmd)
 	if len(output) < 2:
-		raise Exception('expected calc_output and mem_test_output, recvd: %r' % output )
+		raise Exception('expected calc_output and mem_test_output, recvd: %r; stderr: %r' % (output, output_err) )
 	calc_output = output[0]
 	memory_test_output = output[1]
 
@@ -415,10 +490,13 @@ mem_leak_tests = []
 print_all = False
 #print_all = True
 
+def calc_diff_frac(a,b):
+	if a == 0: return a == b
+	return abs(a - b)/a
+
 def within_frac(a,b, frac):
 	if isinstance(b,Exception): return False
-	if a == 0: return a == b
-	return (a - b)/a < frac
+	return calc_diff_frac(a,b) < frac
 
 print("Starting to run up to %d normal tests..." % len(tests))
 for test_idx, test_params in enumerate(tests):
@@ -437,11 +515,13 @@ for test_idx, test_params in enumerate(tests):
 	if mem_leak:
 		mem_leak_tests.append( (test, mem_leak) )
 	# if expected_answer == received_answer:
-	if within_frac(expected_answer, received_answer, 1e-9):
+	# Note that for something like 0.3333... only so many decimal places are provided,
+	# so don't expect more than 1e-7 where 7 is the number of decimal places plus one
+	if within_frac(expected_answer, received_answer, 1e-12):
 		if print_all: print( 'received answer %r' % received_answer, end =' ' ) 
 		if print_all: print( bcolors.OKGREEN + 'test passed' + bcolors.ENDC )
 	else:
-		if print_all: print( 'expected %r, received %r' % ( expected_answer, received_answer ), end=' '  ) 
+		if print_all: print( 'expected %r, received %r' % ( expected_answer, received_answer), end=' '  ) 
 		if print_all: print( bcolors.FAIL + 'test FAILED' + bcolors.ENDC )
 		print('stderr: ')
 		print(output_err)
@@ -460,7 +540,7 @@ for test_idx, (str_input, cursor_pos, expected_output) in enumerate(latex_tests)
 
 # ?? Why is this not part of the previous one?
 print("Checking for memory leaks in up to %d LaTeX tests..." % len(latex_tests))
-for str_input, cursor_pos, expected_output in latex_tests:
+for test_idx, (str_input, cursor_pos, expected_output) in enumerate(latex_tests):
 	try:
 		actual_output, mem_leak, output_err = run_latex_test(str_input, cursor_pos)
 	except Exception as e:
@@ -502,12 +582,14 @@ if failed_tests:
 		expected = str(expected)
 		received = str(received)
 		print('Test idx %3d failed' % test_idx)
+		off_by_frac = calc_diff_frac(float(expected), float(received))
 		if len(expected) < 20 and len(received) < 20:
-			print( '%-60s expected "%s", actual "%s"' % ( test, expected, received ) )
+			print( '%-60s expected "%s", actual "%s" (off by frac: %r)' % ( test, expected, received, off_by_frac ) )
 		else:
 			print( '%-60s' % test )
 			print( 'expected "%s"' % expected)
 			print( 'actual   "%s"' % received)
+			print( 'off by frac %r' % off_by_frac)
 			diff_pos = get_first_diff_pos(expected, received)
 			print( '          %s' % ( (diff_pos*' ') + '^') + '(pos=%d)' % diff_pos)
 

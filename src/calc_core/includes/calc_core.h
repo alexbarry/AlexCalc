@@ -12,10 +12,17 @@
 #include "calc_units.h"
 #include "calc_core_exceptions.h"
 
-#define MAX_DECIMAL_PLACES (9)
+#define MAX_DECIMAL_PLACES (20)
 
 
 extern const char VAR_NAME_ANS[];
+
+enum angle_mode_e {
+	ANGLE_MODE_RADIAN,
+	ANGLE_MODE_DEGREE,
+	ANGLE_MODE_GRADIAN,
+};
+typedef enum angle_mode_e angle_mode_t;
 
 class NodeOp;
 class CalcData;
@@ -73,6 +80,8 @@ class Node {
 		virtual bool         has_units(void) const;
 		virtual UnitInfoInputAry get_units(void) const;
 		virtual std::vector<Node*> get_children(void) const;
+		virtual int          get_cursor_adjustment(int cursor_pos) const;
+		virtual std::string  node_type_name(void) const { return "Node"; }
 };
 std::ostream& operator<<(std::ostream &out, const Node& n);
 
@@ -87,7 +96,7 @@ class NodeValue : public Node {
 		//val_t        eval(const CalcData *data);
 		// special function for NodeValue only, since they can return their value without a full calcData,
 		// unlike most nodes
-		virtual val_t        get_val(const CalcData *calcData, bool degrees) const = 0;
+		virtual val_t        get_val(const CalcData *calcData, angle_mode_t angle_mode) const = 0;
 		node_type    get_node_type(void);
 		NodeOp*      promote_to_op(void);
 
@@ -95,6 +104,7 @@ class NodeValue : public Node {
 		UnitInfoInputAry get_units(void) const;
 
 		std::vector<UnitInfoInput> input_units;
+		virtual std::string  node_type_name(void) const { return "NodeValue"; }
 };
 
 class NodeValueRect : public NodeValue {
@@ -102,7 +112,8 @@ class NodeValueRect : public NodeValue {
 		NodeValueRect(std::string val_str, bool is_imag);
 		virtual ~NodeValueRect(void) {};
 		virtual std::string to_string(void) const;
-		virtual val_t        get_val(const CalcData *calcData, bool degrees) const;
+		val_t        get_val(const CalcData *calcData, angle_mode_t angle_mode) const;
+		virtual std::string  node_type_name(void) const { return "NodeValueRect"; }
 
 
 	//private:
@@ -116,7 +127,8 @@ class NodeValuePolar : public NodeValue {
 		NodeValuePolar(std::string mag_str, std::string angle_str);
 		virtual ~NodeValuePolar(void) {};
 		virtual std::string to_string(void) const;
-		val_t get_val(const CalcData *calcData, bool degrees) const;
+		val_t        get_val(const CalcData *calcData, angle_mode_t angle_mode) const;
+		virtual std::string  node_type_name(void) const { return "NodeValuePolar"; }
 	//private:
 		std::string mag_str;
 		std::string angle_str;
@@ -130,6 +142,7 @@ class NodeVar : public Node {
 		val_t        eval(const CalcData *data);
 		node_type    get_node_type(void);
 		NodeOp*      promote_to_op(void);
+		virtual std::string  node_type_name(void) const { return "NodeVar"; }
 	
 		std::string var_name;
 };
@@ -143,6 +156,7 @@ class NodeFunc : public Node {
 		val_t        eval(const CalcData *data);
 		node_type    get_node_type(void);
 		NodeOp*      promote_to_op(void);
+		virtual std::string  node_type_name(void) const { return "NodeFunc"; }
 	
 		std::string func_name;
 		std::vector<Node*> args;
@@ -158,10 +172,19 @@ class NodeWipToken : public Node {
 		NodeOp*      promote_to_op(void);
 		bool has_units(void) const;
 		UnitInfoInputAry get_units(void) const;
+		int get_cursor_adjustment(int cursor_pos) const;
+		virtual std::string  node_type_name(void) const { return "NodeWipToken"; }
 	
 		std::string wip_token;
 		std::string wip_angle;
 		std::vector<UnitInfoInput> wip_units;
+	//private:
+		// When parts of a wip token are replaced, they are split
+		// and the originals are stored in `orig_str_pieces`, and the new ones are
+		// stored in `new_str_pieces`, where the indices must match.
+		// Currently the only use of this is replacing "deg" with "^\\circ"
+		std::vector<std::string> orig_str_pieces;
+		std::vector<std::string> new_str_pieces;
 };
 
 class NodeWipBrackets : public Node {
@@ -172,6 +195,7 @@ class NodeWipBrackets : public Node {
 		val_t        eval(const CalcData *data);
 		node_type    get_node_type(void);
 		NodeOp*      promote_to_op(void);
+		virtual std::string  node_type_name(void) const { return "NodeWipBrackets"; }
 	
 		Node* arg;
 		bool right_brack_present;
@@ -183,6 +207,8 @@ class NodeWipFuncCall : public Node {
 		~NodeWipFuncCall(void);
 		std::string to_string(void) const;
 		node_type get_node_type(void);
+		virtual std::string  node_type_name(void) const { return "NodeWipFuncCall"; }
+
 		NodeFunc* arg;
 		bool right_brack_present;
 };
@@ -203,6 +229,7 @@ class NodeOp : public Node {
 		NodeOp*      promote_to_op(void);
 		bool         needs_args(void);
 		std::vector<Node*> get_children(void) const;
+		virtual std::string  node_type_name(void) const { return "NodeOp"; }
 	
 		op_t  op;
 		std::vector<Node*> children;
@@ -221,6 +248,7 @@ class NodeApplyUnits : public Node {
 	std::string  to_string(void) const;
 	val_t        eval(const CalcData *data);
 	node_type    get_node_type(void);
+	virtual std::string  node_type_name(void) const { return "NodeApplyUnits"; }
 
 	Node *n;
 	UnitInfoInputAry unit_info;
@@ -239,7 +267,7 @@ class CalcData {
 		std::unordered_map<std::string, val_t>  vars;
 		std::unordered_map<std::string, UnitInfoParsed> units;
 		bool polar  = false;
-		bool degree = false;
+		angle_mode_t angle_mode = ANGLE_MODE_RADIAN;
 };
 
 class InputInfo {
@@ -264,7 +292,8 @@ class InputInfo {
 
 
 	bool polar(void) const;
-	bool degree(void) const;
+	//bool degree(void) const;
+	angle_mode_t angle_mode(void) const;
 };
 
 class OutputInfo {
@@ -370,5 +399,9 @@ std::string get_mag_no_exp_str(std::string val_str);
  *  to the right of it, converted to an integer)
  */
 int get_pow_exp_str(std::string val_str);
+
+
+calc_float_t convert_angle_val_inv(calc_float_t arg, angle_mode_t angle_mode);
+std::string angle_mode_to_str(angle_mode_t angle_mode);
 
 #endif

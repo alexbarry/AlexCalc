@@ -19,6 +19,8 @@
 // more or less
 #define LITERAL_ANGLES_ENABLED 0
 
+#define VALS_DEG_MIN_SECS_ENABLED 1
+
 // static const char ANGLE_OP_SYMBOL[] = "angle";
 #define ANGLE_OP_SYMBOL "angle"
 
@@ -56,6 +58,20 @@ class ValInfo {
 	ValInfo(void){};
 };
 
+#define FLOAT_PATTERN \
+	/* "-?" */ /* there's unary negative, separate from this */ \
+	"(?:" \
+	"[0-9]+" \
+	"(?:\\.[0-9]+)?"   /* optional decimal */ \
+	"(?:[eE]-?[0-9]+)?" /* optional exponent */ \
+	")"
+
+
+#define DEGREE_PATTERN "deg"
+#define MINUTE_PATTERN "'(?!')"
+#define SECOND_PATTERN "(?:(?:'')|(?:\"))"
+
+#define DEG_MIN_SEC_PATTERN "(?:" DEGREE_PATTERN "|" SECOND_PATTERN "|" MINUTE_PATTERN ")"
 
 bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, std::unique_ptr<ValInfo> *val_info_out, const parse_params_s *params)
 {
@@ -63,10 +79,31 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 	                                       "\\s*"
                                           "([ij])?" // optional imaginary unit at the beginning
 	                                       "("
-	                                           // "-?" // there's unary negative, separate from this
-	                                          "[0-9]+"
-	                                          "(\\.[0-9]+)?"   // optional decimal
-	                                          "([eE]-?[0-9]+)?"  // optional exponent
+	                                         "(?:"
+// This one needs to be first, otherwise "deg" is interpreted as a unit
+#if VALS_DEG_MIN_SECS_ENABLED
+	                                             "(?:"
+	                                             "(?:"
+	                                             //"(?=.)" // note that this is necessary to avoid matching an empty string,
+	                                                 "(?:" FLOAT_PATTERN "\\s*" DEG_MIN_SEC_PATTERN "){1,3}"
+	                                                 "\\s*"
+#if 0
+	                                                      // which results in an infinite loop.
+	                                                //"[a-zA-Z0-9-]"
+	                                                 "(?:" FLOAT_PATTERN "" DEGREE_PATTERN ")?"
+	                                                 "\\s*"
+	                                                 "(?:" "" FLOAT_PATTERN "" MINUTE_PATTERN ")?"
+	                                                 "\\s*"
+	                                                 "(?:" "" FLOAT_PATTERN "" SECOND_PATTERN ")?"
+	                                             // TODO can't use "end of line" here, because stuff may follow this token, like a plus sign and more numbers
+	                                             "$"
+#endif
+	                                             ")"
+	                                             ")"
+	                                             "|"
+#endif
+	                                             "(?:" FLOAT_PATTERN ")"
+	                                         ")"
 	                                       ")"
 	                                       "([ij])?" // optional imaginary unit at the end
 #if LITERAL_ANGLES_ENABLED
@@ -92,16 +129,23 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 		return false;
 	}
 
-	int         match_len   = result.str(0).size();
+	int match_len = result.str(0).size();
 
-	std::string img_unit_prefix = result.str(1);
-	std::string raw_val_str     = result.str(2);
-	// decimal
-	// exponent
-	std::string img_unit_suffix = result.str(5);
+	int group_idx = 1;
+	std::string img_unit_prefix = result.str(group_idx++);
+
+	std::string raw_val_str = result.str(group_idx++);
+	//std::string raw_val_str     = result.str(group_idx++);
+	std::string img_unit_suffix = result.str(group_idx++);
 #if LITERAL_ANGLES_ENABLED
-	std::string angle_suffix    = result.str(6);
+	std::string angle_suffix    = result.str(group_idx++);
 #endif
+
+	if (group_idx != result.size()) {
+		//std::cerr << "regex had " << result.size() << " matched groups, group_idx is " << group_idx << std::endl;
+		std::cerr << "regex had " << result.size() << " matched groups, group_idx is " << group_idx << std::endl;
+		throw new InvalidInputException("internal error: match groups and result size do not match", 0);
+	}
 
 	// if this is true, then the value does not have an angle
 	bool is_rect;
@@ -141,6 +185,7 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 	//std::string exponent        = result.str(4);
 
 	/* remove the match from str_input */
+	assert(match_len <= str_input->size());
 	str_input->erase( 0, match_len );
 	*input_pos += match_len;
 
@@ -157,6 +202,86 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 	//std::cout << "Converted val \"" << raw_val_str << "\" to re: " << val->re << ", im: " << val->im << std::endl;
 	return true;
 
+}
+
+static const std::regex val_deg_min_sec_regex(
+	                                             "(?:"
+	                                                 "(?:" "(" FLOAT_PATTERN ")\\s*" DEGREE_PATTERN ")?"
+	                                                 "\\s*"
+	                                                 // perhaps it shouldn't be possible to omit minutes and include seconds
+	                                                 "(?:" "(" FLOAT_PATTERN ")\\s*" MINUTE_PATTERN ")?"
+	                                                 "\\s*"
+	                                                 "(?:" "(" FLOAT_PATTERN ")\\s*" SECOND_PATTERN ")?"
+	                                             ")"
+);
+
+
+static bool is_whitespace_only(const char *s) {
+	while (*s == ' ' || *s == 1) {
+		s++;
+	}
+	//printf("s = %02x; *s == 0: %d\n", *s, *s == 0);
+	return *s == 0;
+}
+
+bool separate_deg_min_sec(std::string str, deg_min_sec_s *output) {
+
+	std::smatch result;
+	bool found = std::regex_search(str, result, val_deg_min_sec_regex);
+	if (!found) {
+		return false;
+	}
+
+	if (result.str(0).size() == 0) {
+		return false;
+	}
+
+	std::string deg_str = result.str(1);
+	std::string min_str = result.str(2);
+	std::string sec_str = result.str(3);
+
+	output->deg = deg_str;
+	output->min = min_str;
+	output->sec = sec_str;
+
+	return true;
+}
+
+calc_float_t parse_float_str(std::string str) {
+	char *ending;
+	calc_float_t val = std::strtod(str.c_str(), &ending);
+	if (is_whitespace_only(ending)) {
+		// good
+		// though it may be cleaner to have the parser remove trailing whitespace
+	} else {
+		//std::cerr << "ending is " << ending << ", expected NULL" << std::endl;
+		throw new InvalidInputException(std::string("Could not convert string to float: \"") + str + "\"", 0);
+	}
+	return val;
+}
+
+calc_float_t parse_float_w_optional_deg_str(std::string str) {
+	//std::cerr << __func__ << " called w str=" << str << std::endl;
+	deg_min_sec_s deg_min_sec;
+	if (separate_deg_min_sec(str, &deg_min_sec)) {
+		//std::cerr << "found deg/min/sec with deg=" << deg_min_sec.deg << ", min=" << deg_min_sec.min << ", sec=" << deg_min_sec.sec << std::endl;
+		calc_float_t val = 0;
+		if (deg_min_sec.deg.size() > 0) {
+			val += parse_float_str(deg_min_sec.deg);
+		}
+
+		if (deg_min_sec.min.size() > 0) {
+			val += parse_float_str(deg_min_sec.min)/60;
+		}
+
+		if (deg_min_sec.sec.size() > 0) {
+			val += parse_float_str(deg_min_sec.sec)/60/60;
+		}
+
+		return val;
+	} else {
+		return parse_float_str(str);
+	}
 }
 
 bool parse_unit(std::string *str_input, int *input_pos, std::vector<UnitInfoInput> *unit_out) {
@@ -309,12 +434,36 @@ std::vector<Node*> parse_func_args(std::string func_args_str, int start_pos, Inp
 	return args;
 }
 
+class wip_valvar_token_info {
+	public:
+	std::vector<std::string> orig_pieces;
+	std::vector<std::string> new_pieces;
+};
+
+// a more permissive version of the val regex, that allows
+// for partially written values
+#define WIP_TOKEN_REGEX  "^" \
+                           "\\s*" \
+                           "(" \
+                            "(?:" \
+                              "[ij]?" \
+                              "[0-9]+" \
+                              "\\.?[0-9]*" \
+                              "(?:[eE]-?[0-9]*)?" \
+                              "[ij]?" \
+                              "(?:(?:deg)|(?:(?:'')|(?:['\"])))?" \
+                            ")+" \
+                           ")"  \
+                           "(\\s*)" /* whitespace separating units */ \
+                                       
+
 bool parse_wip_valvar_token(std::string *str_input,
                             int *input_pos,
                             std::string *wip_token_out,
                             std::string *wip_angle_out,
                             std::vector<UnitInfoInput> *wip_units_out,
-                            WipValVarTokenCursorPos *cursor_pos_info_out) {
+                            WipValVarTokenCursorPos *cursor_pos_info_out,
+                            class wip_valvar_token_info *token_info_out) {
 
 
 // TODO share this with parse_unit
@@ -326,35 +475,8 @@ bool parse_wip_valvar_token(std::string *str_input,
                         
 
 
-	// a more permissive version of the val regex, that allows
-	// for partially written values
-	static const std::regex wip_token_regex( "^"
-	                                       "\\s*"
-	                                       "("
-	                                          "[ij]?"
-	                                          "[0-9]+"
-	                                          "\\.?[0-9]*"
-	                                          "(?:[eE]-?[0-9]*)?"
-	                                          "[ij]?"
-	                                       ")" 
-#if LITERAL_ANGLES_ENABLED
-	                                       "(" // optional angle at end if followed by "angle<angle>"
-	                                          ANGLE_OP_SYMBOL // literal "angle" symbol for angle
-	                                          "(" // actual numeric value that we want to capture for angle
-	                                             "(?:-)?" // optional negative sign
-	                                             "[0-9]*" // 
-	                                             "(?:\\.[0-9]*)?" // optional decimal after angle
-	                                          ")"
-	                                        ")?" 
-#endif
 
-	                                       "(\\s*)" // whitespace separating units
-#if 0
-	                                       "(" 
-												"(?:" UNIT_WIP_REGEX ")*"
-	                                       ")" 
-#endif
-	                                       );
+	static const std::regex wip_token_regex(WIP_TOKEN_REGEX);
 
 	static const std::regex wip_unit_regex(UNIT_WIP_REGEX);
 
@@ -381,6 +503,27 @@ bool parse_wip_valvar_token(std::string *str_input,
 	#error "add angle cursor pos info"
 #endif
 	std::string whitespace_between_val_and_unit = result.str(2);
+
+#if 1
+	// TODO replace with regex search, to match only whole word \<deg\>, so if it
+	// is part of a variable then it won't match
+	std::string find_str = "deg";
+	std::string repl_str = "^\\circ";
+	auto deg_idx = wip_token_str.find(find_str);
+	if (deg_idx != std::string::npos) {
+		wip_token_str.replace(deg_idx, find_str.size(), repl_str);
+		std::string l_part = wip_token_str.substr(0,deg_idx);
+		std::string r_part = wip_token_str.substr(deg_idx + find_str.size());
+		token_info_out->orig_pieces.push_back(l_part);
+		token_info_out->orig_pieces.push_back(find_str);
+		token_info_out->orig_pieces.push_back(r_part);
+
+		token_info_out->new_pieces.push_back(l_part);
+		token_info_out->new_pieces.push_back(repl_str);
+		token_info_out->new_pieces.push_back(r_part);
+	}
+#endif
+
 	//std::string wip_units_str = result.str(3);
 	cursor_pos_info_out->base_val_start_pos = *input_pos;
 	cursor_pos_info_out->base_val_end_pos   = *input_pos + wip_token_str.size() - 1;
@@ -441,8 +584,25 @@ bool parse_wip_valvar_token(std::string *str_input,
 	return true;
 }
 
+bool is_numeric_only(std::string arg) {
+	static const std::regex wip_token_regex(WIP_TOKEN_REGEX);
+	std::smatch result;
+
+	bool found = std::regex_search( arg,
+	                                result,
+	                                wip_token_regex );
+	return found;
+}
+
 
 void handle_cursor_node(int prev_pos, int current_pos, Node *node, InputInfo *info_out, const parse_params_s *params) {
+#if 0
+	std::string node_str_debug = "(node is null)";
+	if (node) {
+		node_str_debug = node->to_string();
+	}
+	std::cout << "[debug] " << __func__ << node_str_debug << std::endl;
+#endif
 	if (params->parse_wip) {
 		if (prev_pos <= params->cursor_pos &&
 		    //params->cursor_pos < current_pos) {
@@ -459,16 +619,39 @@ void handle_cursor_node(int prev_pos, int current_pos, Node *node, InputInfo *in
 	
 }
 
+static std::string replace_str(std::string s, std::string arg_find, std::string arg_replace) {
+	size_t idx = s.find(arg_find);
+	if (idx != std::string::npos) {
+		s.replace(idx, arg_find.length(), arg_replace);
+	}
+	return s;
+}
+
 bool parse_non_op( std::string *str_input, int *input_pos, Node** n_out, InputInfo *info_out, const parse_params_s *params) {
+	// NOTE: this is checked if it is null later.
+	// This is ugly and can cause nasty bugs if dereferenced when it doesn't point to a valid
+	// node. TODO refactor
+	*n_out = nullptr;
 	if (params->parse_wip) {
 		std::string wip_token, wip_angle;
 		//int prev_pos = *input_pos;
 		//bool found_cursor = false;
 		auto cursor_pos_info = std::unique_ptr<WipValVarTokenCursorPos>(new WipValVarTokenCursorPos());
 		std::vector<UnitInfoInput> wip_units;
-		bool found_val = parse_wip_valvar_token(str_input, input_pos, &wip_token, &wip_angle, &wip_units, cursor_pos_info.get());
+		class wip_valvar_token_info token_info;
+		bool found_val = parse_wip_valvar_token(str_input, input_pos, &wip_token, &wip_angle, &wip_units, cursor_pos_info.get(), &token_info);
 		if (found_val) {
-			*n_out = new NodeWipToken(wip_token, wip_angle, wip_units);
+			// TODO TODO TODO 2024-05-30 left off here...
+			// I think this is the last thing that needs to be fixed before it's done.
+			//
+			// TODO need to figure out how to replace "45deg..." with "45^\circ"
+			// I forget how the text cursor works...
+			//wip_token = replace_str(wip_token, "deg", "}^\\circ\\text{");
+			(void)replace_str;
+			NodeWipToken *node_wip_token = new NodeWipToken(wip_token, wip_angle, wip_units);
+			node_wip_token->orig_str_pieces = token_info.orig_pieces;
+			node_wip_token->new_str_pieces  = token_info.new_pieces;
+			*n_out = node_wip_token;
 			bool cursor_in_node = cursor_pos_info->contains_pos(params->cursor_pos);
 			if (cursor_in_node) {
 				info_out->cursor_node = *n_out;
@@ -953,7 +1136,7 @@ void calc_parse_throws(std::list<Node*> *node_list,
 			any_found = true;
 		}
 
-		Node *non_op_node;
+		Node *non_op_node = nullptr;
 		bool found_non_op = parse_non_op( &str_input, input_pos, &non_op_node, info_out, params );
 
 		if( found_non_op ) {

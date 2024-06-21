@@ -205,6 +205,13 @@ int alexcalc_json_str_output(const char *str_input, void *calc_ptr, char *str_ou
 		log(std::string("calc_err2: ") + e->msg);
 		delete e;
 		return 0;
+	} catch(...) {
+		std::cerr << "other exception type while parsing" << std::endl;
+		int rc = -6;
+		write_json_msg(str_output, str_output_len, rc, "unknown err");
+		log(std::string("calc_err6"));
+
+		return 0;
 	}
 
 
@@ -219,7 +226,7 @@ int alexcalc_json_str_output(const char *str_input, void *calc_ptr, char *str_ou
 	try {
 		output = input_info.eval(calcData);
 
-		std::cout << "Parsed \"" << str_input << "\" to: " << input_info.n->to_string()
+		std::cout << "[debug] Parsed \"" << str_input << "\" to: " << input_info.n->to_string()
 		          << ", evaluated to: " << output.to_string() << std::endl;
 	} catch( BaseCalcException * e ) {
 		std::cerr << "BaseCalcException when evaluating: " << e->msg << std::endl;
@@ -237,7 +244,7 @@ int alexcalc_json_str_output(const char *str_input, void *calc_ptr, char *str_ou
 		delete input_info.n;
 		return 0;
 	} catch (...) {
-		std::cerr << "other exception type" << std::endl;
+		std::cerr << "other exception type while evaluating" << std::endl;
 		int rc = -5;
 		write_json_msg(str_output, str_output_len, rc, "unknown err");
 		log(std::string("calc_err5"));
@@ -282,6 +289,7 @@ int alexcalc_to_latex_once(const char *str_input,
 	}
 
 	std::cout << "Parsed \"" << str_input << "\" to: " << input_info.n->to_string() << ", ";
+	std::cout << std::endl;
 
 	std::string latex = node_to_latex(&input_info);
 	delete input_info.n;
@@ -309,6 +317,14 @@ int alexcalc_to_latex(const char *str_input,
 	return rc;
 }
 
+static std::string angle_mode_to_json_enum(angle_mode_t angle_mode) {
+	switch(angle_mode) {
+		case ANGLE_MODE_RADIAN:  return "rad";
+		case ANGLE_MODE_DEGREE:  return "degree";
+		case ANGLE_MODE_GRADIAN: return "grad";
+	}
+}
+
 int alexcalc_calcdata_to_json(void *calc_ptr, char *str_output_arg, int str_output_len) noexcept {
 	struct calc_fmt_params params = get_default_params();
 	//const int decimal_places = 6;
@@ -331,20 +347,31 @@ int alexcalc_calcdata_to_json(void *calc_ptr, char *str_output_arg, int str_outp
 	output += "],";
 
 	output += std::string("\"polar\": ")  + (calcData->polar  ? "true" : "false") + ",";
-	output += std::string("\"degree\": ") + (calcData->degree ? "true" : "false");
+	//output += std::string("\"degree\": ") + (calcData->degree ? "true" : "false");
+	output += std::string("\"angle_mode\": ") + "\"" + angle_mode_to_json_enum(calcData->angle_mode) + "\"";
 
 	output += "}";
 	snprintf(str_output_arg, str_output_len, "%s", output.c_str());
 	return 0;
 }
 
-int alexcalc_data_state_set(void *calc_ptr, bool polar, bool degree) noexcept {
+int alexcalc_data_state_set(void *calc_ptr, bool polar, const char *angle_mode_str) noexcept {
 	CalcState *calcState = (CalcState*)calc_ptr;
 	CalcData *calcData = calcState->calcData;
 	if (calcData == nullptr) { return -1; }
 	calcData->polar  = polar;
-	calcData->degree = degree;
-	std::cout << "Setting calcData polar:" << calcData->polar << ", degree: " << calcData->degree << std::endl;
+	//calcData->angle_mode = angle_mode;
+	if (strcmp(angle_mode_str, "radian") == 0) {
+		calcData->angle_mode = ANGLE_MODE_RADIAN;
+	} else if (strcmp(angle_mode_str, "degree") == 0) {
+		calcData->angle_mode = ANGLE_MODE_DEGREE;
+	} else if (strcmp(angle_mode_str, "gradian") == 0) {
+		calcData->angle_mode = ANGLE_MODE_GRADIAN;
+	} else {
+		std::cerr << __func__ << ": unhandled angle_mode_str: \"" << angle_mode_str << "\"" << std::endl;
+		return -1;
+	}
+	std::cout << "Setting calcData polar:" << calcData->polar << ", angle_mode: " << angle_mode_to_str(calcData->angle_mode) << std::endl;
 	return 0;
 }
 

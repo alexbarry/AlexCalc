@@ -10,7 +10,7 @@ int alexcalc_to_latex(const char *str_input, const void *calcdata_ptr, char *str
 void *alexcalc_new_calcdata(void);
 void alexcalc_free_calcdata(void *arg);
 int alexcalc_calcdata_to_json(void *calcdata_ptr, char *str_output_arg, int str_output_len) noexcept;
-int alexcalc_data_state_set(void *calcdata_ptr, bool polar, bool degree) noexcept;
+int alexcalc_data_state_set(void *calc_ptr, bool polar, const char *angle_mode_str) noexcept;
 
 int alexcalc_get_unit_info_json(char *unit_info_str_out, int unit_info_str_len);
 
