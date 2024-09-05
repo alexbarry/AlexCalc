@@ -1013,6 +1013,10 @@ val_t NodeVar::eval(const CalcData *data) {
 	if (data->var_is_defined(this->var_name)) {
 		return data->get_var(this->var_name);
 	}
+	else if (data->const_var_is_defined(this->var_name))
+	{
+		return data->get_const_var(this->var_name);
+	}
 	throw new VariableNotDefinedException(this->var_name);
 }
 node_type NodeVar::get_node_type(void) { return NODE_VAL; } // TODO I think this is okay...
@@ -1376,11 +1380,34 @@ CalcData::~CalcData(void) { }
 bool  CalcData::var_is_defined(std::string name) const {
 	return this->vars.find(name) != this->vars.end();
 }
+bool	CalcData::const_var_is_defined(std::string name) const {
+	return this->const_vars.find(name) != this->const_vars.end();
+}
 val_t CalcData::get_var(std::string name) const {
 	return this->vars.at(name);
 }
+val_t CalcData::get_const_var(std::string name) const {
+	return this->const_vars.at(name);
+}
+
 void  CalcData::set_var(std::string name, val_t val) {
-	this->vars[name] = val;
+	if (!this->const_var_is_defined(name)) {
+		this->vars[name] = val;
+	}
+	else
+	{
+		//TODO: some error handling if this value already exists in constant list
+	}
+}
+
+void CalcData::set_const_var(std::string name, val_t val)	{
+	if (this->const_var_is_defined(name)) {
+		//TODO: some error handling if this value already exists in constant list
+	}
+	else
+	{
+		this->const_vars[name] = val;
+	}
 }
 
 void CalcData::print_vars(void) const {
@@ -1389,6 +1416,11 @@ void CalcData::print_vars(void) const {
 		const std::string name = it->first;
 		const val_t       val  = it->second;
 		//std::cout << "    " << name << ": {re: " << val.re << ", im: " << val.im << "}" << std::endl;
+		std::cout << "    " << name << ": " << val_to_string(&val, get_default_params(), nullptr) << std::endl;
+	}
+	for (auto it = this->const_vars.begin(); it != this->const_vars.end(); it++) {
+		const std::string name = it->first;
+		const val_t				val  = it->second;
 		std::cout << "    " << name << ": " << val_to_string(&val, get_default_params(), nullptr) << std::endl;
 	}
 }
@@ -1405,6 +1437,14 @@ void CalcData::delete_vars(void) {
 	if (has_ans) {
 		this->vars[VAR_NAME_ANS] = ans_val;
 	}
+}
+
+void CalcData::delete_const_vars(void) {
+	this->const_vars.clear();
+}
+
+void CalcData::delete_const_vars(std::string name) {
+	this->const_vars.erase(name);
 }
 
 void get_all_input_units(const Node *n, std::vector<UnitInfoInputAry> *all_input_units) {

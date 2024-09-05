@@ -227,15 +227,28 @@ class NodeApplyUnits : public Node {
 };
 
 class CalcData {
+	private:
+		static inline std::unordered_map<std::string, val_t> const_vars = std::unordered_map<std::string, val_t>();
+		//created a globally accessible list of defined constants. These should take precedent over regular vars
+		//inline needed to be able to initialize within class declaration
 	public:
 		CalcData(void);
 		virtual ~CalcData(void);
 		bool  var_is_defined(std::string name) const;
+		bool	const_var_is_defined(std::string name) const;
 		val_t get_var(std::string name) const;
+		val_t get_const_var(std::string name) const;
 		void  set_var(std::string name, val_t val);
+		void	set_const_var(std::string name, val_t val);
 		void  delete_vars(void);
+		void	delete_const_vars(void);
+		void	delete_const_vars(std::string name);
 		void print_vars(void) const;
 
+		
+		//You should really consider placing these in either protected or private class identifiers
+		//That way I know that only those decalared 'friend' to CalcData or inherited classes access this data
+		//and all important changes could be made in a single file rather than multiple
 		std::unordered_map<std::string, val_t>  vars;
 		std::unordered_map<std::string, UnitInfoParsed> units;
 		bool polar  = false;
