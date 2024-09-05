@@ -1013,6 +1013,10 @@ val_t NodeVar::eval(const CalcData *data) {
 	if (data->var_is_defined(this->var_name)) {
 		return data->get_var(this->var_name);
 	}
+	else if (data->const_var_is_defined(this->var_name))
+	{
+		return data->get_const_var(this->var_name);
+	}
 	throw new VariableNotDefinedException(this->var_name);
 }
 node_type NodeVar::get_node_type(void) { return NODE_VAL; } // TODO I think this is okay...
@@ -1382,6 +1386,10 @@ bool	CalcData::const_var_is_defined(std::string name) const {
 val_t CalcData::get_var(std::string name) const {
 	return this->vars.at(name);
 }
+val_t CalcData::get_const_var(std::string name) const {
+	return this->const_vars.at(name);
+}
+
 void  CalcData::set_var(std::string name, val_t val) {
 	if (!this->const_var_is_defined(name)) {
 		this->vars[name] = val;

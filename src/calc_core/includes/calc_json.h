@@ -25,6 +25,9 @@ int alexcalc_add_recently_used_unit(void *calc_ptr, const char *unit_str, int un
 int alexcalc_get_recently_used_units_json(void *calc_ptr, char *units_str_out, int units_str_out_len);
 int alexcalc_delete_recently_used_units(void *calc_ptr);
 int alexcalc_delete_vars(void *calc_ptr);
+int alexcalc_delete_const_vars(void* calc_ptr);
+//TODO: this one needs to be added as well
+//int alexcalc_delete_const_vars(char* str_input);
 }
 
 #endif

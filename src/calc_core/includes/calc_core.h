@@ -237,6 +237,7 @@ class CalcData {
 		bool  var_is_defined(std::string name) const;
 		bool	const_var_is_defined(std::string name) const;
 		val_t get_var(std::string name) const;
+		val_t get_const_var(std::string name) const;
 		void  set_var(std::string name, val_t val);
 		void	set_const_var(std::string name, val_t val);
 		void  delete_vars(void);

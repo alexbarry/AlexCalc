@@ -448,3 +448,15 @@ int alexcalc_delete_vars(void *calc_ptr) {
 	calcState->calcData->delete_vars();
 	return 0;
 }
+
+int alexcalc_delete_const_vars(void *calc_ptr) {
+	if (calc_ptr == nullptr) {
+		std::cerr << __func__ << ": null ptr" << std::endl;
+		return -1;
+	}
+	CalcState *calcState = (CalcState*)calc_ptr;
+	calcState->calcData->delete_const_vars();
+	return 0;
+}
+
+//TODO: implement delete_const_vars(std::string) here
