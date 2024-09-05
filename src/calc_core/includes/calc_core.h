@@ -228,7 +228,7 @@ class NodeApplyUnits : public Node {
 
 class CalcData {
 	private:
-		inline static std::unordered_map<std::string, val_t> const_vars = std::unordered_map<std::string, val_t>();
+		static inline std::unordered_map<std::string, val_t> const_vars = std::unordered_map<std::string, val_t>();
 		//created a globally accessible list of defined constants. These should take precedent over regular vars
 		//inline needed to be able to initialize within class declaration
 	public:
