@@ -20,6 +20,8 @@ void print_help(void) {
 	std::cout << "   :echo [on|off]      on prints every received line" << std::endl;
 	std::cout << "   :print_eof [on|off] on prints when EOF is received" << std::endl;
 	std::cout << "   :del_vars     deletes all vars" << std::endl;
+	std::cout << "   :del_const_vars     deletes all const vars" << std::endl;
+	std::cout << "   :del_const_vars [<name>]    deletes const var called: <name>" << std::endl;
 }
 
 int main(void) {
@@ -103,12 +105,9 @@ int main(void) {
 			} else if (cmd == "rad" || cmd == "radian") {
 				calcData.degree = false;
 				std::cout << "Trig input and calc output will now be in radians" << std::endl;
-			} else if (cmd == "polar") {
-				calcData.polar = true;
-				std::cout << "Calc output will now use polar notation for complex numbers" << std::endl;
-			} else if (cmd == "rect") {
-				calcData.polar = false;
-				std::cout << "Calc output will now use rect notation for complex numbers" << std::endl;
+			} else if (cmd == "polar" || cmd == "rect") {
+				(cmd == "polar") ? calcData.polar = true : calcData.polar = false;
+				std::cout << "Calc output will now use" << cmd << "notation for complex numbers" << std::endl; 
 			} else if (cmd == "unit") {
 				std::string unit_name = args;
 				if (calcData.units.find(unit_name) == calcData.units.end()) {
@@ -119,7 +118,17 @@ int main(void) {
 				}
 			} else if (cmd == "del_vars") {
 				calcData.delete_vars();
-			} else if (cmd == "echo") {
+			} else if (cmd == "del_const_vars") {
+				if (args.size() == 0)
+				{
+					calcData.delete_const_vars();
+				}
+				else
+				{
+					//TODO: args must be parsed if multiple values are passed
+					calcData.delete_const_vars(args);
+				}
+			}else if (cmd == "echo") {
 				if (args == "off") {
 					echo = false;
 				} else if (args == "on") {
