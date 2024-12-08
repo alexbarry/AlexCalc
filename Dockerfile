@@ -40,6 +40,7 @@ RUN cp -r out/* /usr/share/nginx/html/
 FROM scratch as export_output
 COPY --from=base /app/build/wasm/out/*.html   /
 COPY --from=base /app/build/wasm/out/*.png    /
+COPY --from=base /app/build/wasm/out/*.txt    /
 COPY --from=base /app/build/wasm/out/js       /js/
 COPY --from=base /app/build/wasm/out/css      /css/
 COPY --from=base /app/build/wasm/out/graphics /graphics/
