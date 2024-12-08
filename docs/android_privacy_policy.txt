@@ -1,0 +1,24 @@
+AlexCalc Android Privacy Policy
+=================================
+
+This application does not collect any sensitive user data. The application
+does not request any permissions, so it should not be capable of collecting
+anything sensitive (such as GPS position, microphone, contacts, etc).
+
+This application does not transmit anything over the internet. This application
+does not request the Android "INTERNET" permission, so it should not be capable
+of transmitting anything over the internet, even if it tried.
+
+The only information collected or stored by the application is:
+* a history of previous user inputs, so that they can be accessed for
+  convenience (e.g. if you input "1 + 2" and press enter, then you want to
+  access "1 + 2" again, you can press "up")
+* stored variables, including the last output (stored in variable "ans")
+* recently used units, so that they can be shown in the UI for convenience
+* the state of the radians/degrees, polar/rectangular format, and output format
+  preferences (e.g. number of desired decimal places,
+  normal/scientific/engineering notation, etc)
+
+This data is stored in an SQLite database within the app's private data.
+It is never transmitted over the internet or shared with any other
+application.
