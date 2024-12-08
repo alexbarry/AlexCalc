@@ -21,3 +21,4 @@ mv calc_wasm.wasm js/
 mkdir -p graphics
 cp "${SRC_DIR}/graphics/favicon.png" graphics/favicon.png
 cp "${SRC_DIR}/graphics/GetItOnGooglePlay_Badge_Web_color_English.png" graphics/
+cp "${SRC_DIR}/../docs/android_privacy_policy.txt" ./
