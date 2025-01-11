@@ -64,7 +64,7 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
                                           "([ij])?" // optional imaginary unit at the beginning
 	                                       "("
 	                                           // "-?" // there's unary negative, separate from this
-	                                          "[0-9]+"
+	                                          "[0-9]*"
 	                                          "(\\.[0-9]+)?"   // optional decimal
 	                                          "([eE]-?[0-9]+)?"  // optional exponent
 	                                       ")"
@@ -96,6 +96,12 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 
 	std::string img_unit_prefix = result.str(1);
 	std::string raw_val_str     = result.str(2);
+	if (raw_val_str.size() == 0) {
+		return false;
+	}
+	if (str_starts_with(raw_val_str, "e") || str_starts_with(raw_val_str, "E")) {
+		return false;
+	}
 	// decimal
 	// exponent
 	std::string img_unit_suffix = result.str(5);
@@ -332,7 +338,7 @@ bool parse_wip_valvar_token(std::string *str_input,
 	                                       "\\s*"
 	                                       "("
 	                                          "[ij]?"
-	                                          "[0-9]+"
+	                                          "[0-9]*"
 	                                          "\\.?[0-9]*"
 	                                          "(?:[eE]-?[0-9]*)?"
 	                                          "[ij]?"
@@ -371,6 +377,9 @@ bool parse_wip_valvar_token(std::string *str_input,
 
 	int         match_len     = result.str(0).size();
 	std::string wip_token_str = result.str(1);
+	if (wip_token_str.size() == 0 || wip_token_str == "i" || wip_token_str == "j") {
+		return false;
+	}
 #if LITERAL_ANGLES_ENABLED
 	std::string angle_suffix_whole = result.str(2);
 	std::string wip_angle_str = result.str(3);
