@@ -14,6 +14,11 @@
 #include "calc_units.h"
 #include "calc_core_exceptions.h"
 
+
+// If sin/cos/tan return values less in magnitude than this,
+// then round them to zero.
+const calc_float_t TRIG_NEGLIGIBLE_VAL = 1e-15;
+
 typedef val_t (*calc_func_t)(val_t, bool degree);
 
 // TODO split into separate file, "unit_input"?
@@ -149,6 +154,14 @@ void polar_to_rect(calc_float_t mag, calc_float_t angle, val_t *val_out) {
 	val_out->im = mag*std::sin(angle);
 }
 
+static calc_float_t round_to_zero_if_small(calc_float_t arg) {
+	if (std::abs(arg) < TRIG_NEGLIGIBLE_VAL) {
+		return 0.0;
+	} else {
+		return arg;
+	}
+}
+
 val_t builtin_log10(val_t arg, bool degree) {
 	static const std::string name = "log(x)";
 	if (units_non_zero(arg.unit_dim)) {
@@ -228,20 +241,27 @@ val_t builtin_sin(val_t arg, bool degree) {
 	if (degree) {
 		arg.re *= M_PI/180;
 	}
-	return re_func(std::sin, arg, "sin(x)");
+	val_t val = re_func(std::sin, arg, "sin(x)");
+	val.re = round_to_zero_if_small(val.re);
+	return val;
 }
 
 val_t builtin_cos(val_t arg, bool degree) {
 	if (degree) {
 		arg.re *= M_PI/180;
 	}
-	return re_func(std::cos, arg, "cos(x)");
+	val_t val = re_func(std::cos, arg, "cos(x)");
+	val.re = round_to_zero_if_small(val.re);
+	return val;
 }
 val_t builtin_tan(val_t arg, bool degree) {
 	if (degree) {
 		arg.re *= M_PI/180;
 	}
-	return re_func(std::tan, arg, "tan(x)");
+	val_t val = re_func(std::tan, arg, "tan(x)");
+	val.re = round_to_zero_if_small(val.re);
+	return val;
+	
 }
 
 val_t builtin_asin(val_t arg, bool degree) {
