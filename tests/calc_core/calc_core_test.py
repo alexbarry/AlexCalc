@@ -401,6 +401,22 @@ err_tests = [
 	'',
 ]
 
+# Calling these "unit tests" would be confusing, given that everything here is a "unit test"
+tests_for_units = [
+	( '1 cal',          4.184, 'J' ),
+
+	( '1 kcal',         4184,  'J' ),
+	( '1 Cal',          4184,  'J' ),
+	( '1 Calorie',      4184,  'J' ),
+	( '1 kilocalorie',  4184,  'J' ),
+
+	( '101.325 kPa to atm', 1, 'atm'),
+	( '101.325 kPa * 2 to atm', 2, 'atm'),
+
+	# TODO consider defaulting output to kPa when dimension is N/m
+	( '1 atm', 101325, 'Pa'),
+]
+
 def python_solve_test(test):
 	test = re.sub( r'\^', r'**', test )
 	return eval(test)
@@ -511,6 +527,18 @@ def run_err_test(test):
 
 	return True, calc_output
 
+def run_test_for_unit(test, expected_output_val, expected_output_units):
+	calc_output, memory_leak, output_err = run_test(test, parse_float=False)
+
+	mag_val, unit_val = calc_output.split(' ', maxsplit=1)
+	mag_val = float(mag_val)
+
+	test_passed = (expected_output_val == mag_val and expected_output_units == unit_val)
+	if not test_passed:
+		print('mag: %r, unit: %r' % (mag_val, unit_val))
+		print('expected_output: val %r, unit %r' % (expected_output_val, expected_output_units))
+
+	return test_passed, calc_output
 
 
 tests_run = []
@@ -592,6 +620,15 @@ for test_idx, str_input in enumerate(err_tests):
 	test_passed, actual_output = run_err_test(str_input)
 	if not test_passed:
 		failed_tests.append( ('(err_test) %r' % str_input, test_idx, '<expected an error>', actual_output))
+	tests_run.append( (test, test_idx))
+
+print('Checking that %d "tests_for_units" pass...' % len(tests_for_units))
+for test_idx, (str_input, expected_output_val, expected_output_unit) in enumerate(tests_for_units):
+	test_passed, actual_output = run_test_for_unit(str_input, expected_output_val, expected_output_unit)
+	if not test_passed:
+		expected_output = 'val: %r, unit: %r' % (expected_output_val, expected_output_unit)
+		failed_tests.append( ('(test for units) %r' % str_input, test_idx, expected_output, actual_output))
+	tests_run.append( (test, test_idx))
 
 rc = 0
 
