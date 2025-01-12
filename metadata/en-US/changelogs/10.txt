@@ -1,0 +1,5 @@
+* allow omitting leading decimal place, e.g. support `.6` instead of only `0.6`.
+* insert "ans" if binary operator is pressed as first button, allowing user to operate on previous result. (e.g. "1+1" <enter>, then "*3" <enter> will result in "ans*3")
+* above requires adding unary negative `(-)`, which is different from subtraction `-`. If you want to enter "-1" as your input, use unary negative. If you want to enter "<previous calculation result> - 1" as your input, use subtraction.
+* round output of trig functions if output is small (<1e-15). sin(pi) is now 0 instead of 1.224646799e-16
+* add kilocalrie and "big"/"food" Calorie units
