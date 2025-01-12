@@ -21,7 +21,9 @@ cp -r "${SRC_DIR}/html"/* ./
 
 ts_files="${SRC_DIR}/html/js"/*.ts
 echo "Transpiling $ts_files..."
-tsc $ts_files \
+tsc \
+	--strict --noImplicitAny --strictNullChecks \
+	$ts_files \
 	--module ES6 \
 	--target ES6  \
 	--outDir ./js/
