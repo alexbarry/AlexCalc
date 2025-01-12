@@ -1086,15 +1086,22 @@ function public_add_input_token(ui, token, prefix_mult, is_unit) {
 	update_input_textarea(ui);
 }
 
+// TODO just add typescript to catch all of these type issues
+// TODO confirm behaviour when pressing "insert unit"... should the popup go away? Did it before?
+
 // public API
-function public_add_unit_input_token(ui, token) {
+function public_add_unit_input_token(ui, unit_token_str) {
 	let prev_units = get_previous_input_token_units(ui);
 
+	const token = {
+		str: unit_token_str,
+		type: TokenType.OTHER,
+	};
 	public_add_input_token(ui, token, false, true);
 
 	// if [s^-2] is pressed after [m], then add only [m s^-2] instead
 	// of both [s^-2] and [m].
-	let referenced_unit = token;
+	let referenced_unit = unit_token_str;
 	if (prev_units.length > 0) {
 		prev_units.push(token);
 		referenced_unit = combine_unit_pieces(prev_units);
