@@ -58,6 +58,7 @@ function init_ui_state() {
 	};
 }
 
+// TODO should combine this with the other token I defined, which includes TokenType
 function InputToken(token_str, is_unit) {
 	if (is_unit == undefined) {
 		is_unit = false;
@@ -90,7 +91,12 @@ function get_trig_token(trig_base) {
 		if (ui.state.inv_state) {
 			inv_prefix = "a";
 		}
-		return inv_prefix + trig_base + hyp_suffix + "(";
+		const token_str = inv_prefix + trig_base + hyp_suffix + "(";
+
+		return {
+			str:  token_str,
+			type: TokenType.FUNC_CALL,
+		};
 	};
 }
 
@@ -134,37 +140,100 @@ function var_token_factory(var_btn_num) {
 	};
 }
 
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_log",    ret_token_factory_w_inv("log(", "10^"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_pow",    ret_token_factory("^"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_ln",     ret_token_factory_w_inv("ln(", "e^("));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_par_l",  ret_token_factory("("));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_delim",  ret_token_factory(","));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_par_r",  ret_token_factory(")"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_div",    ret_token_factory("/"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sqrt",   ret_token_factory_w_inv("sqrt(", "^2"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_e",      ret_token_factory_w_alt("e", "theta"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_7",      ret_token_factory("7"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_8",      ret_token_factory("8"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_9",      ret_token_factory("9"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_mult",   ret_token_factory("*"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_var1",   ret_token_factory_w_alt("x", "y"));
+const TokenType = {
+    DIGIT         : "token_type_digit",
+    VAR           : "token_type_var",
+    FUNC_CALL     : "token_type_func_call",
+    PAREN_OPEN    : "token_type_paren_open",
+    PAREN_CLOSE   : "token_type_paren_close",
+    OP            : "token_type_op",
+    OTHER         : "token_type_other",
+};
+
+const TOKEN_LOG10    = { str : "log(",          type : TokenType.FUNC_CALL };
+const TOKEN_10_POW   = { str : "10^(",          type : TokenType.FUNC_CALL };
+const TOKEN_POW      = { str : "^",             type : TokenType.OP };
+const TOKEN_LN       = { str : "ln(",           type : TokenType.FUNC_CALL };
+const TOKEN_E_POW    = { str : "e^(",           type : TokenType.FUNC_CALL };
+const TOKEN_PAR_L    = { str : "(",             type : TokenType.PAREN_OPEN };
+const TOKEN_DELIM    = { str : ",",             type : TokenType.OTHER };
+const TOKEN_PAR_R    = { str : ")",             type : TokenType.PAREN_CLOSE };
+const TOKEN_NEG      = { str : "-",             type : TokenType.DIGIT };
+const TOKEN_DIV      = { str : "/",             type : TokenType.OP };
+const TOKEN_SQRT     = { str : "sqrt(",         type : TokenType.FUNC_CALL };
+const TOKEN_POW_2    = { str : "^2",            type : TokenType.OTHER };
+const TOKEN_E        = { str : "e",             type : TokenType.VAR };
+const TOKEN_THETA    = { str : "theta",         type : TokenType.VAR };
+const TOKEN_7        = { str : "7",             type : TokenType.DIGIT };
+const TOKEN_8        = { str : "8",             type : TokenType.DIGIT };
+const TOKEN_9        = { str : "9",             type : TokenType.DIGIT };
+const TOKEN_MULT     = { str : "*",             type : TokenType.OP };
+const TOKEN_VAR_X    = { str : "x",             type : TokenType.VAR };
+const TOKEN_VAR_Y    = { str : "y",             type : TokenType.VAR };
+const TOKEN_4        = { str : "4",             type : TokenType.DIGIT };
+const TOKEN_5        = { str : "5",             type : TokenType.DIGIT };
+const TOKEN_6        = { str : "6",             type : TokenType.DIGIT };
+const TOKEN_SUB      = { str : "-",             type : TokenType.OP };
+const TOKEN_ANS      = { str : "ans",           type : TokenType.VAR };
+const TOKEN_PI       = { str : "pi",            type : TokenType.VAR };
+const TOKEN_Z        = { str : "z",             type : TokenType.VAR };
+const TOKEN_DEGREE   = { str : "o",             type : TokenType.OTHER };
+const TOKEN_1        = { str : "1",             type : TokenType.DIGIT };
+const TOKEN_2        = { str : "2",             type : TokenType.DIGIT };
+const TOKEN_3        = { str : "3",             type : TokenType.DIGIT };
+const TOKEN_0        = { str : "0",             type : TokenType.DIGIT };
+const TOKEN_ADD      = { str : "+",             type : TokenType.OP };
+const TOKEN_STO      = { str : "->",            type : TokenType.OP };
+const TOKEN_IMG_UNIT = { str : "i",             type : TokenType.DIGIT };
+const TOKEN_ANGLE    = { str : ANGLE_OP_SYMBOL, type : TokenType.OTHER };
+const TOKEN_DECIMAL  = { str : ".",             type : TokenType.DIGIT };
+const TOKEN_EXP      = { str : "E",             type : TokenType.DIGIT };
+const TOKEN_SIN      = { str : "sin(",          type : TokenType.FUNC_CALL };
+const TOKEN_COS      = { str : "cos(",          type : TokenType.FUNC_CALL };
+const TOKEN_TAN      = { str : "tan(",          type : TokenType.FUNC_CALL };
+const TOKEN_SINH     = { str : "sinh(",         type : TokenType.FUNC_CALL };
+const TOKEN_COSH     = { str : "cosh(",         type : TokenType.FUNC_CALL };
+const TOKEN_TANH     = { str : "tanh(",         type : TokenType.FUNC_CALL };
+const TOKEN_ASIN     = { str : "asin(",         type : TokenType.FUNC_CALL };
+const TOKEN_ACOS     = { str : "acos(",         type : TokenType.FUNC_CALL };
+const TOKEN_ATAN     = { str : "atan(",         type : TokenType.FUNC_CALL };
+const TOKEN_ASINH    = { str : "asinh(",        type : TokenType.FUNC_CALL };
+const TOKEN_ACOSH    = { str : "acosh(",        type : TokenType.FUNC_CALL };
+const TOKEN_ATANH    = { str : "atanh(",        type : TokenType.FUNC_CALL };
+
+
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_log",    ret_token_factory_w_inv(TOKEN_LOG10, TOKEN_10_POW));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_pow",    ret_token_factory(TOKEN_POW));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_ln",     ret_token_factory_w_inv(TOKEN_LN, TOKEN_E_POW));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_par_l",  ret_token_factory(TOKEN_PAR_L));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_delim",  ret_token_factory(TOKEN_DELIM));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_unary_neg",  ret_token_factory(TOKEN_NEG));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_par_r",  ret_token_factory(TOKEN_PAR_R));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_div",    ret_token_factory(TOKEN_DIV));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sqrt",   ret_token_factory_w_inv(TOKEN_SQRT, TOKEN_POW_2));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_e",      ret_token_factory_w_alt(TOKEN_E, TOKEN_THETA));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_7",      ret_token_factory(TOKEN_7));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_8",      ret_token_factory(TOKEN_8));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_9",      ret_token_factory(TOKEN_9));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_mult",   ret_token_factory(TOKEN_MULT));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_var1",   ret_token_factory_w_alt(TOKEN_VAR_X, TOKEN_VAR_Y));
 //BTN_ID_TO_GET_TOKEN_FUNC.set("btn_var2",   var_token_factory(2));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_4",      ret_token_factory("4"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_5",      ret_token_factory("5"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_6",      ret_token_factory("6"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sub",    ret_token_factory("-"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_ans",    ret_token_factory("ans"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_pi",     ret_token_factory_w_alt("pi", "z"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_degree", ret_token_factory("o"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_1",      ret_token_factory("1"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_2",      ret_token_factory("2"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_3",      ret_token_factory("3"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_add",    ret_token_factory("+"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sto",    ret_token_factory("->"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_i",      ret_token_factory_w_alt("i", ANGLE_OP_SYMBOL));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_0",      ret_token_factory("0"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_decimal",ret_token_factory("."));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_exp",    ret_token_factory("E"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_4",      ret_token_factory(TOKEN_4));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_5",      ret_token_factory(TOKEN_5));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_6",      ret_token_factory(TOKEN_6));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sub",    ret_token_factory(TOKEN_SUB));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_ans",    ret_token_factory(TOKEN_ANS));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_pi",     ret_token_factory_w_alt(TOKEN_PI, TOKEN_Z));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_degree", ret_token_factory(TOKEN_DEGREE));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_1",      ret_token_factory(TOKEN_1));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_2",      ret_token_factory(TOKEN_2));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_3",      ret_token_factory(TOKEN_3));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_add",    ret_token_factory(TOKEN_ADD));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sto",    ret_token_factory(TOKEN_STO));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_i",      ret_token_factory_w_alt(TOKEN_IMG_UNIT, TOKEN_ANGLE));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_0",      ret_token_factory(TOKEN_0));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_decimal",ret_token_factory(TOKEN_DECIMAL));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_exp",    ret_token_factory(TOKEN_EXP));
 
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sin",    get_trig_token("sin"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_cos",    get_trig_token("cos"));
@@ -647,8 +716,9 @@ function handle_new_var_btn_pressed(ui, btn) {
 	update_insert_var_btn_enabled_state(ui);
 }
 
-function insert_new_input_token(ui, token_str, needs_mult, token_is_unit) {
-	console.debug("insert_new_input_token ", token_str, "needs_mult = ", needs_mult, "token_is_unit =", token_is_unit);
+function insert_new_input_token(ui, token, needs_mult, token_is_unit) {
+	let token_str = token.str;
+	console.debug("insert_new_input_token ", token, "needs_mult = ", needs_mult, "token_is_unit =", token_is_unit);
 	let prev_token = null;
 	if (ui.state.input_tokens.length > 0) { 
 		let i = ui.state.cursor_idx - 1;
@@ -667,6 +737,15 @@ function insert_new_input_token(ui, token_str, needs_mult, token_is_unit) {
 
 	if (token_is_unit == undefined) {
 		token_is_unit = false;
+	}
+
+	// If the user enters a binary operator as the first token,
+	// then insert an "ans" before it, since they likely want to operate on the result
+	// of the previous expression.
+	// https://github.com/alexbarry/AlexCalc/issues/24
+	if (ui.state.input_tokens.length == 0 && token.type == TokenType.OP) {
+		ui.state.input_tokens.push(ans_token());
+		ui.state.cursor_idx++;
 	}
 
 	let token_obj = InputToken(token_str, token_is_unit)
@@ -723,6 +802,10 @@ function token_is_bin_op(token) {
 		if (bin_op == token) { return true; }
 	}
 	return false;
+}
+
+function ans_token() {
+	return InputToken("ans", false);
 }
 
 function token_is_num(token) {

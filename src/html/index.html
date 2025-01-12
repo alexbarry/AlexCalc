@@ -413,14 +413,14 @@
 			<!-- row 3 -->
 			<button id="btn_vars"		class="btn var">			var   	</button>
 			<button id="btn_ln"		    class="btn func">			\(\ln\) </button>
+			<button id="btn_sqrt"		class="btn func">			\(\sqrt{\,\,\,}\)	</button>
 			<button id="btn_par_l"		class="btn specop">			(		</button>
-			<button id="btn_delim"		class="btn specop">			,		</button>
 			<button id="btn_par_r"		class="btn specop">			)		</button>
 			<button id="btn_div"		class="btn op">				&#247;	</button>
 
 			<!-- row 4 -->
 			<button id="btn_units"		class="btn var">			units	</button>
-			<button id="btn_sqrt"		class="btn func">			\(\sqrt{\,\,\,}\)	</button>
+			<button id="btn_pi"	        class="btn var">		  \(\pi\)		</button>
 			<button id="btn_7"			class="btn num">			7		</button>
 			<button id="btn_8"			class="btn num">			8		</button>
 			<button id="btn_9"			class="btn num">			9		</button>
@@ -428,7 +428,7 @@
 
 			<!-- row 5 -->
 			<button id="btn_var1"		class="btn var">			\(x\)	</button>
-			<button id="btn_pi"	        class="btn var">		  \(\pi\)		</button>
+			<button id="btn_e"			class="btn var">			\(e\)	</button>
 			<button id="btn_4"			class="btn num">			4		</button>
 			<button id="btn_5"			class="btn num">			5		</button>
 			<button id="btn_6"			class="btn num">			6		</button>
@@ -439,7 +439,7 @@
 			<button id="btn_degree"		class="btn var" disabled>			&deg;   </button>
 			-->
 			<button id="btn_ans"		class="btn var">			ans 	</button>
-			<button id="btn_e"			class="btn var">			\(e\)	</button>
+			<button id="btn_unary_neg"	class="btn num">			(-)     </button>
 			<button id="btn_1"			class="btn num">			1		</button>
 			<button id="btn_2"			class="btn num">			2		</button>
 			<button id="btn_3"			class="btn num">			3		</button>
@@ -1138,7 +1138,7 @@
 				document.getElementById("btn_var1"),
 				document.getElementById("btn_pi"),
 				document.getElementById("btn_par_l"),
-				document.getElementById("btn_delim"),
+				//document.getElementById("btn_delim"),
 				document.getElementById("btn_par_r"),
 				document.getElementById("btn_div"),
 
@@ -1164,6 +1164,7 @@
 				document.getElementById("btn_sto"),
 				document.getElementById("btn_i"),
 				document.getElementById("btn_0"),
+				document.getElementById("btn_unary_neg"),
 				document.getElementById("btn_decimal"),
 				document.getElementById("btn_exp"),
 			],
