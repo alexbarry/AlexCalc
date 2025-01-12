@@ -54,6 +54,15 @@ public class CalcInputHelper {
             this.pos++;
         }
         InputToken inputToken = new InputToken(token, type, is_unit);
+
+        // https://github.com/alexbarry/AlexCalc/issues/24
+        // If the first button press is a binary operator, insert the "ans" variable before it.
+        // This way the user can continue operating on their previous calculation.
+        if (this.input_tokens.size() == 0 && type == TokenType.OP) {
+            InputToken ansInputToken = new InputToken("ans", TokenType.VAR, false);
+            this.input_tokens.add(this.pos, ansInputToken);
+            this.pos++;
+        }
         this.input_tokens.add(this.pos, inputToken);
         this.pos++;
     }

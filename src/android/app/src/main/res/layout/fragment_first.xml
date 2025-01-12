@@ -56,6 +56,7 @@
             android:layout_height="wrap_content"
 			android:columnCount="6">
 
+            <!-- Row 0 -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_clear"
 				style="@style/AlexCalcButtonImportant"
@@ -78,6 +79,7 @@
                 android:layout_column="4"
                 android:text="@string/arrow_up" />
 
+            <!-- Row 1 -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_inv"
 				style="@style/AlexCalcButtonMeta"
@@ -110,6 +112,7 @@
 				style="@style/AlexCalcButtonMeta"
                 android:text="@string/arrow_right" />
 
+            <!-- Row 2 -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_alt"
 				style="@style/AlexCalcButtonMeta"
@@ -140,6 +143,7 @@
 				style="@style/AlexCalcButtonOp"
                 android:text="@string/pow" />
 
+            <!-- Row 3 -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_var"
 				style="@style/AlexCalcButtonVar"
@@ -151,14 +155,14 @@
                 android:text="@string/ln" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_sqrt"
+                style="@style/AlexCalcButtonFunc"
+                android:text="@string/sqrt" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_lparen"
 				style="@style/AlexCalcButtonOp"
                 android:text="@string/lparen" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/button_delim"
-				style="@style/AlexCalcButtonOp"
-                android:text="@string/delim" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_rparen"
@@ -170,6 +174,7 @@
 				style="@style/AlexCalcButtonOp"
                 android:text="@string/div" />
 
+            <!-- Row 4 -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_units"
 				style="@style/AlexCalcButtonVar"
@@ -178,9 +183,9 @@
                 android:text="@string/units" />
 
 			<com.google.android.material.button.MaterialButton
-				android:id="@+id/button_sqrt"
-				style="@style/AlexCalcButtonFunc"
-				android:text="@string/sqrt" />
+				android:id="@+id/button_pi"
+				style="@style/AlexCalcButtonVar"
+				android:text="@string/pi" />
 
 			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_7"
@@ -202,6 +207,7 @@
 				style="@style/AlexCalcButtonOp"
 				android:text="@string/mult" />
 
+			<!-- Row 5 -->
 			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_var1"
 				style="@style/AlexCalcButtonVar"
@@ -210,9 +216,9 @@
 				android:text="@string/var_x" />
 
 			<com.google.android.material.button.MaterialButton
-				android:id="@+id/button_pi"
+				android:id="@+id/button_e"
 				style="@style/AlexCalcButtonVar"
-				android:text="@string/pi" />
+				android:text="@string/e" />
 
 			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_4"
@@ -234,6 +240,7 @@
 				style="@style/AlexCalcButtonOp"
 				android:text="@string/sub" />
 
+			<!-- Row 6 -->
 			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_ans"
 				style="@style/AlexCalcButtonVar"
@@ -242,9 +249,10 @@
 				android:text="@string/ans" />
 
 			<com.google.android.material.button.MaterialButton
-				android:id="@+id/button_e"
-				style="@style/AlexCalcButtonVar"
-				android:text="@string/e" />
+				android:id="@+id/button_neg"
+				style="@style/AlexCalcButtonNum"
+				android:text="@string/neg" />
+
 
 			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_1"
@@ -266,6 +274,7 @@
 				style="@style/AlexCalcButtonOp"
 				android:text="@string/add" />
 
+			<!-- Row 7 -->
 			<com.google.android.material.button.MaterialButton
 				android:id="@+id/button_sto"
 				style="@style/AlexCalcButtonOp"
