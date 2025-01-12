@@ -104,10 +104,13 @@ function get_trig_token(trig_base) {
 		}
 		const token_str = inv_prefix + trig_base + hyp_suffix + "(";
 
+		/*
 		return {
 			str:  token_str,
 			type: TokenType.FUNC_CALL,
 		};
+		*/
+		return token_str;
 	};
 }
 
@@ -161,6 +164,7 @@ const TokenType = {
     OTHER         : "token_type_other",
 };
 
+/*
 const TOKEN_LOG10    = { str : "log(",          type : TokenType.FUNC_CALL };
 const TOKEN_10_POW   = { str : "10^(",          type : TokenType.FUNC_CALL };
 const TOKEN_POW      = { str : "^",             type : TokenType.OP };
@@ -213,6 +217,7 @@ const TOKEN_ACOSH    = { str : "acosh(",        type : TokenType.FUNC_CALL };
 const TOKEN_ATANH    = { str : "atanh(",        type : TokenType.FUNC_CALL };
 
 
+
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_log",    ret_token_factory_w_inv(TOKEN_LOG10, TOKEN_10_POW));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_pow",    ret_token_factory(TOKEN_POW));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_ln",     ret_token_factory_w_inv(TOKEN_LN, TOKEN_E_POW));
@@ -246,6 +251,42 @@ BTN_ID_TO_GET_TOKEN_FUNC.set("btn_0",      ret_token_factory(TOKEN_0));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_decimal",ret_token_factory(TOKEN_DECIMAL));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_exp",    ret_token_factory(TOKEN_EXP));
 
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sin",    get_trig_token("sin"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_cos",    get_trig_token("cos"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_tan",    get_trig_token("tan"));
+*/
+
+
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_log",    ret_token_factory_w_inv("log(", "10^"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_pow",    ret_token_factory("^"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_ln",     ret_token_factory_w_inv("ln(", "e^("));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_par_l",  ret_token_factory("("));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_delim",  ret_token_factory(","));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_par_r",  ret_token_factory(")"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_div",    ret_token_factory("/"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sqrt",   ret_token_factory_w_inv("sqrt(", "^2"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_e",      ret_token_factory_w_alt("e", "theta"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_7",      ret_token_factory("7"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_8",      ret_token_factory("8"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_9",      ret_token_factory("9"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_mult",   ret_token_factory("*"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_var1",   ret_token_factory_w_alt("x", "y"))
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_4",      ret_token_factory("4"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_5",      ret_token_factory("5"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_6",      ret_token_factory("6"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sub",    ret_token_factory("-"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_ans",    ret_token_factory("ans"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_pi",     ret_token_factory_w_alt("pi", "z"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_degree", ret_token_factory("o"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_1",      ret_token_factory("1"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_2",      ret_token_factory("2"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_3",      ret_token_factory("3"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_add",    ret_token_factory("+"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sto",    ret_token_factory("->"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_i",      ret_token_factory_w_alt("i", ANGLE_OP_SYMBOL));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_0",      ret_token_factory("0"));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_decimal",ret_token_factory("."));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_exp",    ret_token_factory("E"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sin",    get_trig_token("sin"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_cos",    get_trig_token("cos"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_tan",    get_trig_token("tan"));
@@ -728,8 +769,9 @@ function handle_new_var_btn_pressed(ui, btn) {
 	update_insert_var_btn_enabled_state(ui);
 }
 
-function insert_new_input_token(ui, token, needs_mult?: boolean, token_is_unit?: boolean) {
-	let token_str = token.str;
+function insert_new_input_token(ui, token_str, needs_mult?: boolean, token_is_unit?: boolean) {
+	//let token_str = token.str;
+	const token = token_str;
 	console.debug("insert_new_input_token ", token, "needs_mult = ", needs_mult, "token_is_unit =", token_is_unit);
 	let prev_token = null;
 	if (ui.state.input_tokens.length > 0) { 
@@ -751,6 +793,7 @@ function insert_new_input_token(ui, token, needs_mult?: boolean, token_is_unit?:
 		token_is_unit = false;
 	}
 
+	/*
 	// If the user enters a binary operator as the first token,
 	// then insert an "ans" before it, since they likely want to operate on the result
 	// of the previous expression.
@@ -759,6 +802,7 @@ function insert_new_input_token(ui, token, needs_mult?: boolean, token_is_unit?:
 		ui.state.input_tokens.push(ans_token());
 		ui.state.cursor_idx++;
 	}
+	*/
 
 	let token_obj = InputToken(token_str, token_is_unit)
 
@@ -1114,10 +1158,13 @@ export function public_add_input_token(ui, token, prefix_mult, is_unit) {
 export function public_add_unit_input_token(ui, unit_token_str) {
 	let prev_units = get_previous_input_token_units(ui);
 
+	/*
 	const token = {
 		str: unit_token_str,
 		type: TokenType.OTHER,
 	};
+	*/
+	const token = unit_token_str;
 	public_add_input_token(ui, token, false, true);
 
 	// if [s^-2] is pressed after [m], then add only [m s^-2] instead
