@@ -21,7 +21,7 @@
 	<script type="text/javascript" src="js/dropdown_and_inc_widget.js"></script>
 	<!-- TODO figure out how to include this file from within calc_ui.js -->
 	<script type="text/javascript" src="js/calc_ui_unit_sel.js"></script>
-	<script type="text/javascript" src="js/calc_ui.js"></script>
+	<!--<script type="text/javascript" src="js/calc_ui.js"></script>-->
 	<!--<script type="text/javascript" src="js/calc_wasm.js"></script>-->
 	<!--<script type="text/javascript" src="js/calc_wasm_wrapper.js"></script>-->
 	<!-- Needed by MathJax (I think) -->
@@ -669,7 +669,8 @@
 	<div id="auto_dark_mode_detection" style="display: none; background-color: canvas; color-scheme: light;"></div>
 
 
-	<script>
+	<script type="module">
+		import { init_ui, add_variable_row_click_listener, remove_variable_row_click_listener, public_add_unit_input_token, public_add_input_token } from './js/calc_ui.js';
 		function abs(x) {
 			if (x < 0) { return -x; }
 			else { return x; }
@@ -946,7 +947,7 @@
 				let ui_refs = { elem: output_element, stylesheets: [latex_info.stylesheet] };
 				if (calc_output.rc == 0) {
 					let tex_output = "= " + calc_output.val_str;
-					latex_output_info = ui.generate_latex_node(tex_output);
+					let latex_output_info = ui.generate_latex_node(tex_output);
 
 					output_element.appendChild(latex_output_info.elem);
 					document.head.appendChild(latex_output_info.stylesheet);
@@ -1025,7 +1026,7 @@
 					tbody.removeChild(tbody.firstChild);
 				}
 
-				for (var_info of vars) {
+				for (const var_info of vars) {
 					let name = var_info[0];
 					let val  = var_info[1];
 					let row = document.createElement("tr");
@@ -1204,7 +1205,9 @@
 		//Module['onRuntimeInitialized'] = function() {
 		//	ui.on_wasm_load()
 		//}
+
+		window.alexcalc_ui = ui;
 	</script>
-	<script type="text/javascript" src="js/calc_worker_wrapper.js"></script>
+	<script type="text/javascript" defer src="js/calc_worker_wrapper.js"></script>
 
 </body></html>

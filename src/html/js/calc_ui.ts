@@ -1,3 +1,14 @@
+//import {CalcUi, ui, set_on_tex_ready, calc_ui_unit_sel_set_visible, init_unit_sel, alexcalc_unit_referenced} from './calc_types.js';
+import {CalcUi} from './calc_types.js';
+
+declare const ui: CalcUi;
+
+export declare function set_on_tex_ready(callback: (raw_input: string, tex: string) => void);
+export declare function calc_ui_unit_sel_set_visible(unit_sel, is_visible: boolean);
+export declare function init_unit_sel(unit_sel);
+export declare function alexcalc_unit_referenced(unit_str: string);
+
+
 const ANGLE_OP_SYMBOL = "angle"
 const ENABLE_HYPERBOLIC_TRIG = false;
 
@@ -59,7 +70,7 @@ function init_ui_state() {
 }
 
 // TODO should combine this with the other token I defined, which includes TokenType
-function InputToken(token_str, is_unit) {
+function InputToken(token_str: string, is_unit?: boolean) {
 	if (is_unit == undefined) {
 		is_unit = false;
 	}
@@ -380,6 +391,7 @@ function get_cursor_pos(ui) {
 		if (i >= ui.state.cursor_idx) {
 			break;
 		}
+		// TODO this is failing. Maybe revert to old code first (but using typescript), make sure it all builds, then add the "ans" stuff?
 		pos += ui.state.input_tokens[i].str.length;
 	}
 	return pos;
@@ -436,7 +448,7 @@ function handle_normal_btn(ui, e) {
 	btn_token_pressed(ui, token);
 }
 
-function btn_token_pressed(ui, token, needs_mult) {
+function btn_token_pressed(ui, token, needs_mult?: boolean) {
 	insert_new_input_token(ui, token, needs_mult);
 	ui.show_input_wip_display = true;
 	update_input_textarea(ui);
@@ -716,7 +728,7 @@ function handle_new_var_btn_pressed(ui, btn) {
 	update_insert_var_btn_enabled_state(ui);
 }
 
-function insert_new_input_token(ui, token, needs_mult, token_is_unit) {
+function insert_new_input_token(ui, token, needs_mult?: boolean, token_is_unit?: boolean) {
 	let token_str = token.str;
 	console.debug("insert_new_input_token ", token, "needs_mult = ", needs_mult, "token_is_unit =", token_is_unit);
 	let prev_token = null;
@@ -904,9 +916,18 @@ const SUPPORTED_THEMES = [
 	"very_dark",
 ];
 
+function ary_includes(ary: string[], val: string): boolean {
+	for (const ary_val of ary) {
+		if (ary_val == val) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function set_theme(ui, theme) {
 	console.debug("Setting theme to ", theme);
-	if (!SUPPORTED_THEMES.includes(theme)) {
+	if (!ary_includes(SUPPORTED_THEMES,theme)) {
 		console.error("unsupported theme", theme);
 		return;
 	}
@@ -1080,7 +1101,7 @@ function combine_unit_pieces(unit_strs) {
 
 // public API
 // should only be called by unit display
-function public_add_input_token(ui, token, prefix_mult, is_unit) {
+export function public_add_input_token(ui, token, prefix_mult, is_unit) {
 	insert_new_input_token(ui, token, prefix_mult, is_unit);
 	ui.show_input_wip_display = true;
 	update_input_textarea(ui);
@@ -1090,7 +1111,7 @@ function public_add_input_token(ui, token, prefix_mult, is_unit) {
 // TODO confirm behaviour when pressing "insert unit"... should the popup go away? Did it before?
 
 // public API
-function public_add_unit_input_token(ui, unit_token_str) {
+export function public_add_unit_input_token(ui, unit_token_str) {
 	let prev_units = get_previous_input_token_units(ui);
 
 	const token = {
@@ -1112,18 +1133,18 @@ function public_add_unit_input_token(ui, unit_token_str) {
 }
 
 // public API
-function add_variable_row_click_listener(ui, row, var_name) {
+export function add_variable_row_click_listener(ui, row, var_name) {
 	row.addEventListener('click', function (e) { handle_new_var_btn_pressed(ui, row) });
 	ui.state.new_var_btns_map.set(row, var_name);
 }
 
 // public API
-function remove_variable_row_click_listener(ui, row) {
+export function remove_variable_row_click_listener(ui, row) {
 	ui.state.new_var_btns_map.delete(row);
 }
 
 // public API
-function init_ui(ui) {
+export function init_ui(ui) {
 	try {
 		init_ui_throws(ui);
 	} catch (e) {
