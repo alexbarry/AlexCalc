@@ -8,6 +8,11 @@ export declare function calc_ui_unit_sel_set_visible(unit_sel: CalcUnitSel, is_v
 export declare function init_unit_sel(unit_sel: CalcUnitSel): void;
 export declare function alexcalc_unit_referenced(unit_str: string): void;
 
+interface Token {
+	str: string;
+	type: TokenType;
+}
+
 
 const ANGLE_OP_SYMBOL = "angle"
 const ENABLE_HYPERBOLIC_TRIG = false;
@@ -89,13 +94,13 @@ function get_calcstate(ui_state: CalcState): CalcParams {
 	         degree: ui_state.degree_state};
 }
 
-const BTN_ID_TO_GET_TOKEN_FUNC = new Map();
+const BTN_ID_TO_GET_TOKEN_FUNC: Map<string, (ui: CalcUi) => Token> = new Map();
 
-function ret_token_factory(token: string): (ui: CalcUi) => string {
+function ret_token_factory(token: Token): (ui: CalcUi) => Token {
 	return function(ui) { return token; }
 }
 
-function get_trig_token(trig_base: string): (ui: CalcUi) => string {
+function get_trig_token(trig_base: string): (ui: CalcUi) => Token {
 	return function(ui) {
 		let hyp_suffix = "";
 		let inv_prefix = "";
@@ -107,17 +112,14 @@ function get_trig_token(trig_base: string): (ui: CalcUi) => string {
 		}
 		const token_str = inv_prefix + trig_base + hyp_suffix + "(";
 
-		/*
 		return {
 			str:  token_str,
 			type: TokenType.FUNC_CALL,
 		};
-		*/
-		return token_str;
 	};
 }
 
-function ret_token_factory_w_inv(token: string, token_inv: string): (ui: CalcUi) => string {
+function ret_token_factory_w_inv(token: Token, token_inv: Token): (ui: CalcUi) => Token {
 	return function(ui) {
 		if (!ui.state.inv_state) {
 			return token;
@@ -127,7 +129,7 @@ function ret_token_factory_w_inv(token: string, token_inv: string): (ui: CalcUi)
 	}
 }
 
-function ret_token_factory_w_alt(token: string, token_alt: string): (ui: CalcUi) => string {
+function ret_token_factory_w_alt(token: Token, token_alt: Token): (ui: CalcUi) => Token {
 	return function(ui) {
 		if (!ui.state.alt_state) {
 			return token;
@@ -137,23 +139,23 @@ function ret_token_factory_w_alt(token: string, token_alt: string): (ui: CalcUi)
 	}
 }
 
-function var_token_factory(var_btn_num: number): (ui: CalcUi) => string {
+function var_token_factory(var_btn_num: number): (ui: CalcUi) => Token {
 	// TODO make this always point to some of the last used variables,
 	// defined in ui.state
 	return function (ui) {
 		if (!ui.state.alt_state) {
 			if (var_btn_num == 1) {
-				return "x";
+				return { str: "x", type: TokenType.VAR };
 			} else if (var_btn_num == 2) {
-				return "y";
+				return { str: "y", type: TokenType.VAR };
 			} else {
 				throw new Error(`unhandled var num button ${var_btn_num}`);
 			}
 		} else {
 			if (var_btn_num == 1) {
-				return "z";
+				return { str: "z", type: TokenType.VAR };
 			} else if (var_btn_num == 2) {
-				return "theta";
+				return { str: "theta", type: TokenType.VAR };
 			} else {
 				throw new Error(`unhandled var num button ${var_btn_num}`);
 			}
@@ -161,18 +163,16 @@ function var_token_factory(var_btn_num: number): (ui: CalcUi) => string {
 	};
 }
 
-// TODO make this an enum
-const TokenType = {
-    DIGIT         : "token_type_digit",
-    VAR           : "token_type_var",
-    FUNC_CALL     : "token_type_func_call",
-    PAREN_OPEN    : "token_type_paren_open",
-    PAREN_CLOSE   : "token_type_paren_close",
-    OP            : "token_type_op",
-    OTHER         : "token_type_other",
+enum TokenType {
+    DIGIT,
+    VAR,
+    FUNC_CALL,
+    PAREN_OPEN,
+    PAREN_CLOSE,
+    OP,
+    OTHER,
 };
 
-/*
 const TOKEN_LOG10    = { str : "log(",          type : TokenType.FUNC_CALL };
 const TOKEN_10_POW   = { str : "10^(",          type : TokenType.FUNC_CALL };
 const TOKEN_POW      = { str : "^",             type : TokenType.OP };
@@ -259,42 +259,6 @@ BTN_ID_TO_GET_TOKEN_FUNC.set("btn_0",      ret_token_factory(TOKEN_0));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_decimal",ret_token_factory(TOKEN_DECIMAL));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_exp",    ret_token_factory(TOKEN_EXP));
 
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sin",    get_trig_token("sin"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_cos",    get_trig_token("cos"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_tan",    get_trig_token("tan"));
-*/
-
-
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_log",    ret_token_factory_w_inv("log(", "10^"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_pow",    ret_token_factory("^"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_ln",     ret_token_factory_w_inv("ln(", "e^("));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_par_l",  ret_token_factory("("));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_delim",  ret_token_factory(","));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_par_r",  ret_token_factory(")"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_div",    ret_token_factory("/"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sqrt",   ret_token_factory_w_inv("sqrt(", "^2"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_e",      ret_token_factory_w_alt("e", "theta"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_7",      ret_token_factory("7"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_8",      ret_token_factory("8"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_9",      ret_token_factory("9"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_mult",   ret_token_factory("*"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_var1",   ret_token_factory_w_alt("x", "y"))
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_4",      ret_token_factory("4"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_5",      ret_token_factory("5"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_6",      ret_token_factory("6"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sub",    ret_token_factory("-"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_ans",    ret_token_factory("ans"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_pi",     ret_token_factory_w_alt("pi", "z"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_degree", ret_token_factory("o"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_1",      ret_token_factory("1"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_2",      ret_token_factory("2"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_3",      ret_token_factory("3"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_add",    ret_token_factory("+"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sto",    ret_token_factory("->"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_i",      ret_token_factory_w_alt("i", ANGLE_OP_SYMBOL));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_0",      ret_token_factory("0"));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_decimal",ret_token_factory("."));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_exp",    ret_token_factory("E"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sin",    get_trig_token("sin"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_cos",    get_trig_token("cos"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_tan",    get_trig_token("tan"));
@@ -498,11 +462,14 @@ function handle_normal_btn(ui: CalcUi, e: MouseEvent) {
 		return;
 	}
 	let token_func = BTN_ID_TO_GET_TOKEN_FUNC.get(id);
+	if (token_func === undefined) {
+		throw new Error(`token func undefined for ${id}`);
+	}
 	let token = token_func(ui);
 	btn_token_pressed(ui, token);
 }
 
-function btn_token_pressed(ui: CalcUi, token: string, needs_mult?: boolean) {
+function btn_token_pressed(ui: CalcUi, token: Token, needs_mult?: boolean) {
 	insert_new_input_token(ui, token, needs_mult);
 	ui.show_input_wip_display = true;
 	update_input_textarea(ui);
@@ -786,9 +753,8 @@ function handle_new_var_btn_pressed(ui: CalcUi, btn: HTMLElement) {
 	update_insert_var_btn_enabled_state(ui);
 }
 
-function insert_new_input_token(ui: CalcUi, token_str: string, needs_mult?: boolean, token_is_unit?: boolean) {
-	//let token_str = token.str;
-	const token = token_str;
+function insert_new_input_token(ui: CalcUi, token: Token, needs_mult?: boolean, token_is_unit?: boolean) {
+	let token_str = token.str;
 	console.debug("insert_new_input_token ", token, "needs_mult = ", needs_mult, "token_is_unit =", token_is_unit);
 	let prev_token = null;
 	if (ui.state.input_tokens.length > 0) { 
@@ -810,7 +776,6 @@ function insert_new_input_token(ui: CalcUi, token_str: string, needs_mult?: bool
 		token_is_unit = false;
 	}
 
-	/*
 	// If the user enters a binary operator as the first token,
 	// then insert an "ans" before it, since they likely want to operate on the result
 	// of the previous expression.
@@ -819,7 +784,6 @@ function insert_new_input_token(ui: CalcUi, token_str: string, needs_mult?: bool
 		ui.state.input_tokens.push(ans_token());
 		ui.state.cursor_idx++;
 	}
-	*/
 
 	let token_obj = InputToken(token_str, token_is_unit)
 
@@ -836,7 +800,7 @@ function handle_insert_var_btn_pressed(ui: CalcUi) {
 	}
 
 	if (var_name != null) {
-		let token = var_name;
+		let token = { str: var_name, type: TokenType.VAR };
 		insert_new_input_token(ui, token);
 		ui.show_input_wip_display = true;
 		update_input_textarea(ui);
@@ -1107,7 +1071,7 @@ function init_ui_throws(ui: CalcUi) {
 		if (!ui.state.alt_state) {
 			toggle_unit_display(ui, e);
 		} else {
-			const TO_UNITS_TOKEN = " to ";
+			const TO_UNITS_TOKEN = { str: " to ", type: TokenType.OTHER };
 			btn_token_pressed(ui, TO_UNITS_TOKEN, /* needs mult */ false);
 		}
 		handle_btn_pressed(ui);
@@ -1173,7 +1137,7 @@ function combine_unit_pieces(unit_strs: string[]): string {
 
 // public API
 // should only be called by unit display
-export function public_add_input_token(ui: CalcUi, token: string, prefix_mult: boolean, is_unit: boolean) {
+export function public_add_input_token(ui: CalcUi, token: Token, prefix_mult: boolean, is_unit: boolean) {
 	insert_new_input_token(ui, token, prefix_mult, is_unit);
 	ui.show_input_wip_display = true;
 	update_input_textarea(ui);
@@ -1186,20 +1150,17 @@ export function public_add_input_token(ui: CalcUi, token: string, prefix_mult: b
 export function public_add_unit_input_token(ui: CalcUi, unit_token_str: string) {
 	let prev_units = get_previous_input_token_units(ui);
 
-	/*
 	const token = {
 		str: unit_token_str,
 		type: TokenType.OTHER,
 	};
-	*/
-	const token = unit_token_str;
 	public_add_input_token(ui, token, false, true);
 
 	// if [s^-2] is pressed after [m], then add only [m s^-2] instead
 	// of both [s^-2] and [m].
 	let referenced_unit = unit_token_str;
 	if (prev_units.length > 0) {
-		prev_units.push(token);
+		prev_units.push(token.str);
 		referenced_unit = combine_unit_pieces(prev_units);
 		//update_recently_used_units(ui.unit_sel, [combined_unit_str]);
 	}
