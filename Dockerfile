@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
 	cmake \
 	python3 \
 	xz-utils \
+	npm \
 	git
 
 # Install Emscripten
@@ -25,6 +26,8 @@ ENV PATH="${PATH}:/app/emsdk"
 RUN /bin/bash -c "source ./emsdk_env.sh"
 ENV PATH="${PATH}:/app/emsdk/upstream/emscripten"
 RUN emcc --version
+
+RUN npm -g install typescript
 
 
 # Build AlexCalc
