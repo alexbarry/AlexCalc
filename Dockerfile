@@ -1,4 +1,4 @@
-FROM nginx:latest as base
+FROM nginx:latest AS base
 
 # Install OS dependencies
 RUN apt-get update && apt-get install -y \
@@ -40,7 +40,7 @@ RUN bash ./build.sh
 # TODO only copy html/css/js/wasm/png?
 RUN cp -r out/* /usr/share/nginx/html/
 
-FROM scratch as export_output
+FROM scratch AS export_output
 COPY --from=base /app/build/wasm/out/*.html   /
 COPY --from=base /app/build/wasm/out/*.png    /
 COPY --from=base /app/build/wasm/out/*.txt    /
@@ -48,5 +48,5 @@ COPY --from=base /app/build/wasm/out/js       /js/
 COPY --from=base /app/build/wasm/out/css      /css/
 COPY --from=base /app/build/wasm/out/graphics /graphics/
 
-FROM base as server
+FROM base AS server
 # Use base nginx entrypoint to host HTTP server
