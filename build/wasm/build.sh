@@ -8,9 +8,11 @@ cd "${DIR}"
 
 . ./setup_env.sh
 
+: "${ALEXCALC_BUILD_TYPE_LABEL:=}"
+
 mkdir -p out
 cd out
-emcmake cmake ../
+emcmake cmake -DBUILD_TYPE_LABEL="${ALEXCALC_BUILD_TYPE_LABEL}" ../
 cmake --build . $@
 
 SRC_DIR="../../../src"
