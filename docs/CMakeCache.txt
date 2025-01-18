@@ -14,6 +14,9 @@
 # EXTERNAL cache entries
 ########################
 
+//Specifies the type of build
+BUILD_TYPE_LABEL:STRING=
+
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=/usr/bin/addr2line
 
