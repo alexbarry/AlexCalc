@@ -1,5 +1,8 @@
 FROM nginx:latest AS base
 
+ARG ALEXCALC_BUILD_TYPE_LABEL
+ENV ALEXCALC_BUILD_TYPE_LABEL=${ALEXCALC_BUILD_TYPE_LABEL}
+
 # Install OS dependencies
 RUN apt-get update && apt-get install -y \
 	cmake \
