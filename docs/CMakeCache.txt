@@ -15,7 +15,7 @@
 ########################
 
 //Specifies the type of build
-BUILD_TYPE_LABEL:STRING=
+BUILD_TYPE_LABEL:STRING=github-pages
 
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=/usr/bin/addr2line
