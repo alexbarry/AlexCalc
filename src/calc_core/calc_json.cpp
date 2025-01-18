@@ -190,20 +190,18 @@ int alexcalc_json_str_output(const char *str_input, void *calc_ptr, char *str_ou
 
 	try { 
 		input_info = calc_parse( str_input, &parse_params, calcData );
-	} catch(InvalidInputException *e) {
-		std::cerr << "InvalidInputException when parsing: " << e->msg << std::endl;
-		std::string to_return = "InvalidInputException when parsing: " + e->msg;
+	} catch(const InvalidInputException &e) {
+		std::cerr << "InvalidInputException when parsing: " << e.msg << std::endl;
+		std::string to_return = "InvalidInputException when parsing: " + e.msg;
 		int rc = -1;
-		write_json_msg(str_output, str_output_len, rc, e->msg.c_str());
+		write_json_msg(str_output, str_output_len, rc, e.msg.c_str());
 		log(std::string("calc_err1: ") + to_return);
-		delete e;
 		return 0; 
-	} catch( BaseCalcException * e ) {
-		std::cerr << "BaseCalcException when parsing: " << e->msg << std::endl;
+	} catch(const BaseCalcException &e ) {
+		std::cerr << "BaseCalcException when parsing: " << e.msg << std::endl;
 		int rc = -2;
-		write_json_msg(str_output, str_output_len, rc, e->msg.c_str());
-		log(std::string("calc_err2: ") + e->msg);
-		delete e;
+		write_json_msg(str_output, str_output_len, rc, e.msg.c_str());
+		log(std::string("calc_err2: ") + e.msg);
 		return 0;
 	}
 
@@ -221,13 +219,12 @@ int alexcalc_json_str_output(const char *str_input, void *calc_ptr, char *str_ou
 
 		std::cout << "Parsed \"" << str_input << "\" to: " << input_info.n->to_string()
 		          << ", evaluated to: " << output.to_string() << std::endl;
-	} catch( BaseCalcException * e ) {
-		std::cerr << "BaseCalcException when evaluating: " << e->msg << std::endl;
+	} catch(const BaseCalcException &e ) {
+		std::cerr << "BaseCalcException when evaluating: " << e.msg << std::endl;
 		int rc = -3;
-		write_json_msg(str_output, str_output_len, rc, e->msg.c_str());
-		log(std::string("calc_err3: ") + e->msg.c_str());
+		write_json_msg(str_output, str_output_len, rc, e.msg.c_str());
+		log(std::string("calc_err3: ") + e.msg.c_str());
 		delete input_info.n;
-		delete e;
 		return 0;
 	} catch (std::exception& ex) {
 		std::cerr << "std::exception when evaluating" << std::endl;
@@ -275,9 +272,8 @@ int alexcalc_to_latex_once(const char *str_input,
 
 	try { 
 		input_info = calc_parse( str_input, &parse_params, calcData);
-	} catch( BaseCalcException * e ) {
-		std::cerr << "BaseCalcException when parsing: " << e->msg << std::endl;
-		delete e;
+	} catch(const BaseCalcException &e ) {
+		std::cerr << "BaseCalcException when parsing: " << e.msg << std::endl;
 		return -1;
 	}
 

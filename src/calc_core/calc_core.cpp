@@ -165,7 +165,7 @@ static calc_float_t round_to_zero_if_small(calc_float_t arg) {
 val_t builtin_log10(val_t arg, bool degree) {
 	static const std::string name = "log(x)";
 	if (units_non_zero(arg.unit_dim)) {
-		throw new InvalidInputException(std::string("func " + name + " called with units in argument"), 0);
+		throw InvalidInputException(std::string("func " + name + " called with units in argument"), 0);
 	}
 
 	(void)degree;
@@ -173,7 +173,7 @@ val_t builtin_log10(val_t arg, bool degree) {
 	rect_to_polar(arg, &mag, &angle);
 	/* TODO allow for a setting to enable this behavior or not
 	if (mag == 0) {
-		throw new InvalidInputException("can not evaluate log(0)");
+		throw InvalidInputException("can not evaluate log(0)");
 	}
 	*/
 	// TODO technically should the imginary part be converted
@@ -184,7 +184,7 @@ val_t builtin_log10(val_t arg, bool degree) {
 val_t builtin_ln(val_t arg, bool degree) {
 	static const std::string name = "ln(x)";
 	if (units_non_zero(arg.unit_dim)) {
-		throw new InvalidInputException(std::string("func " + name + " called with units in argument"), 0);
+		throw InvalidInputException(std::string("func " + name + " called with units in argument"), 0);
 	}
 
 	(void)degree;
@@ -192,7 +192,7 @@ val_t builtin_ln(val_t arg, bool degree) {
 	rect_to_polar(arg, &mag, &angle);
 	/* TODO allow for a setting to enable this behavior or not
 	if (mag == 0) {
-		throw new InvalidInputException("can not evaluate ln(0)");
+		throw InvalidInputException("can not evaluate ln(0)");
 	}
 	*/
 	return { .re = std::log(mag), .im = angle, .unit_dim = init_unit_dim() };
@@ -229,10 +229,10 @@ val_t builtin_sqrt(val_t arg, bool degree) {
 
 val_t re_func(calc_float_t (*func)(calc_float_t), val_t arg, std::string name) {
 	if (arg.im != 0) {
-		throw new InvalidInputException(std::string("func ") + name + " called with imaginary component", 0);
+		throw InvalidInputException(std::string("func ") + name + " called with imaginary component", 0);
 	}
 	if (units_non_zero(arg.unit_dim)) {
-		throw new InvalidInputException(std::string("func " + name + " called with units in argument"), 0);
+		throw InvalidInputException(std::string("func " + name + " called with units in argument"), 0);
 	}
 	return { .re = func(arg.re), .im = 0, .unit_dim = init_unit_dim() };
 }
@@ -291,7 +291,7 @@ val_t builtin_atan(val_t arg, bool degree) {
 val_t add_vals( std::vector<val_t> vals ) {
 
 	if( vals.size() == 0 ) {
-		throw new InvalidArgCountException( OP_ADD, vals.size() );
+		throw InvalidArgCountException( OP_ADD, vals.size() );
 	}
 
 	val_t result = {
@@ -303,7 +303,7 @@ val_t add_vals( std::vector<val_t> vals ) {
 	for( uint32_t i=0; i<vals.size(); i++ )
 	{
 		if (!units_dim_eq(result.unit_dim, vals[i].unit_dim)) {
-			throw new UnitMismatchException(OP_ADD, result.unit_dim, vals[i].unit_dim);
+			throw UnitMismatchException(OP_ADD, result.unit_dim, vals[i].unit_dim);
 		}
 		result.re += vals[i].re;
 		result.im += vals[i].im;
@@ -314,11 +314,11 @@ val_t add_vals( std::vector<val_t> vals ) {
 val_t sub_vals( std::vector<val_t> vals ) {
 
 	if( vals.size() != 2 ) {
-		throw new InvalidArgCountException( OP_SUB, vals.size() );
+		throw InvalidArgCountException( OP_SUB, vals.size() );
 	}
 
 	if (!units_dim_eq(vals[0].unit_dim, vals[1].unit_dim)) {
-			throw new UnitMismatchException(OP_SUB, vals[0].unit_dim, vals[1].unit_dim);
+			throw UnitMismatchException(OP_SUB, vals[0].unit_dim, vals[1].unit_dim);
 	}
 
 	val_t result = {
@@ -335,7 +335,7 @@ val_t sub_vals( std::vector<val_t> vals ) {
 val_t mult_vals( std::vector<val_t> vals ) {
 
 	if( vals.size() == 0 ) {
-		throw new InvalidArgCountException( OP_MULT, vals.size() );
+		throw InvalidArgCountException( OP_MULT, vals.size() );
 	}
 
 	// Optimize if only two args (only possible number right now), and
@@ -384,7 +384,7 @@ val_t mult_vals( std::vector<val_t> vals ) {
 val_t div_vals( std::vector<val_t> vals ) {
 
 	if( vals.size() != 2 ) {
-		throw new InvalidArgCountException( OP_DIV, vals.size() );
+		throw InvalidArgCountException( OP_DIV, vals.size() );
 	}
 
 	val_t result;
@@ -416,7 +416,7 @@ val_t div_vals( std::vector<val_t> vals ) {
 val_t pow_vals( std::vector<val_t> vals ) {
 
 	if( vals.size() != 2 ) {
-		throw new InvalidArgCountException( OP_POW, vals.size() );
+		throw InvalidArgCountException( OP_POW, vals.size() );
 	}
 
 	// base: A exp(j*theta)
@@ -471,17 +471,17 @@ val_t pow_vals( std::vector<val_t> vals ) {
 
 	if (!ignore_units) {
 		if (units_non_zero(arg_pow_unit_dim)) {
-			throw new UnitInvalidOperationException("can not use a value with units as an exponent");
+			throw UnitInvalidOperationException("can not use a value with units as an exponent");
 		} else if (!units_non_zero(base_unit_dim)) {
 			// then do nothing
 		} else if (vals[1].im != 0.0) {
-			throw new UnitInvalidOperationException("can not raise value with units to an exponent with an imaginary component");
+			throw UnitInvalidOperationException("can not raise value with units to an exponent with an imaginary component");
 			
 		} else {
 			int pow_int = (int)vals[1].re;
 			if (pow_int != vals[1].re) {
 				// TODO I guess you can... but only square root, cube root...?
-				throw new UnitInvalidOperationException("can not raise value with units to a non integer exponent");
+				throw UnitInvalidOperationException("can not raise value with units to a non integer exponent");
 			}
 			result.unit_dim = pow_unit_dim(base_unit_dim, pow_int);
 		}
@@ -493,11 +493,11 @@ val_t pow_vals( std::vector<val_t> vals ) {
 val_t angle_op_func_deg_arg(std::vector<val_t> vals, bool degrees) {
 
 	if (vals.size() != 2) {
-		throw new InvalidArgCountException( OP_ANGLE, vals.size() );
+		throw InvalidArgCountException( OP_ANGLE, vals.size() );
 	}
 
 	if (units_non_zero(vals[1].unit_dim)) {
-		throw new UnitInvalidOperationException("can not use a value with units as an angle (for a complex number)");
+		throw UnitInvalidOperationException("can not use a value with units as an angle (for a complex number)");
 	}
 
 	val_t base_cmplx  = vals.at(0);
@@ -506,7 +506,7 @@ val_t angle_op_func_deg_arg(std::vector<val_t> vals, bool degrees) {
 	// TODO round this down...
 #warning "need to round this down or will be really annoying if anyone actually tries to use this"
 	if (base_cmplx.im != 0 || angle_cmplx.im != 0) {
-		throw new InvalidInputException("base and angle must have no imaginary component", 0);
+		throw InvalidInputException("base and angle must have no imaginary component", 0);
 	}
 
 	calc_float_t mag   = base_cmplx.re;
@@ -530,7 +530,7 @@ val_t angle_op_func_degree(std::vector<val_t> vals) { return angle_op_func_deg_a
 val_t neg_vals( std::vector<val_t> vals ) {
 
 	if( vals.size() != 1 ) {
-		throw new InvalidArgCountException( OP_NEG, vals.size() );
+		throw InvalidArgCountException( OP_NEG, vals.size() );
 	}
 
 	if (vals[0].im == 0) {
@@ -624,7 +624,7 @@ precedence_t op_to_precedence( op_t op )
 		case OP_ANGLE: return PRECEDENCE_ANGLE;
 
 		default:
-			throw new OpNotFoundException( op );
+			throw OpNotFoundException( op );
 	}
 }
 
@@ -642,7 +642,7 @@ bool bracks_needed_if_eq_precedence(op_t op) {
 		case OP_SUB:
 			return true;
 	}
-	throw new OpNotFoundException(op);
+	throw OpNotFoundException(op);
 }
 
 bool is_op_left_associative( op_t op ) {
@@ -666,7 +666,7 @@ arg_count_t get_arg_count( op_t op, bool left ) {
 		return left ? 0 : 1;
 
 	default:
-		throw new OpNotFoundException( op );
+		throw OpNotFoundException( op );
 	}
 }
 
@@ -688,7 +688,7 @@ UnitInfoInputAry NodeValue::get_units(void) const {
 }
 		
 UnitInfoInputAry Node::get_units(void) const {
-	throw new BaseCalcException("Node::get_units called");
+	throw BaseCalcException("Node::get_units called");
 }
 
 
@@ -753,19 +753,19 @@ std::vector<Node*> NodeOp::get_children(void) const {
 
 std::string Node::to_string(void) const
 {
-	throw new BaseNodeRefException( "called to_string on base node" );
+	throw BaseNodeRefException( "called to_string on base node" );
 	//return "to_string not implemented on base node";
 }
 
 val_t Node::eval(const CalcData *data)
 {
 	(void)data;
-	throw new BaseNodeRefException( "called eval on base node" );
+	throw BaseNodeRefException( "called eval on base node" );
 }
 
 node_type Node::get_node_type(void)
 {
-	throw new BaseNodeRefException( "called get_node_type on base node" );
+	throw BaseNodeRefException( "called get_node_type on base node" );
 }
 
 
@@ -889,7 +889,7 @@ val_t NodeOp::eval(const CalcData *data)
 		case OP_POW:  func = pow_vals;  break;
 		case OP_ANGLE:func = data->degree ? angle_op_func_degree : angle_op_func_rad; break;
 	
-		default: throw new OpNotFoundException( this->op );
+		default: throw OpNotFoundException( this->op );
 	}
 
 	std::vector<val_t> vals( this->children.size() );
@@ -922,11 +922,11 @@ bool NodeOp::is_left_associative(void)
 }
 
 NodeOp*      Node::promote_to_op(void) {
-	throw new BaseCalcException( "called promote_to_op on base node" );
+	throw BaseCalcException( "called promote_to_op on base node" );
 }
 
 NodeOp*      NodeValue::promote_to_op(void) {
-	throw new BaseCalcException( "called promote_to_op on value node" );
+	throw BaseCalcException( "called promote_to_op on value node" );
 }
 
 NodeOp*      NodeOp::promote_to_op(void) {
@@ -1004,8 +1004,8 @@ int main(void)
 		try {
 			val_t result = tests[i]->eval();
 			std::cout << "= " << result;
-		} catch( BaseCalcException *e ) {
-			std::cout << "exception: " << e->msg;
+		} catch(const BaseCalcException &e ) {
+			std::cout << "exception: " << e.msg;
 		}
 		std::cout << std::endl;
 	}
@@ -1033,12 +1033,12 @@ val_t NodeVar::eval(const CalcData *data) {
 	if (data->var_is_defined(this->var_name)) {
 		return data->get_var(this->var_name);
 	}
-	throw new VariableNotDefinedException(this->var_name);
+	throw VariableNotDefinedException(this->var_name);
 }
 node_type NodeVar::get_node_type(void) { return NODE_VAL; } // TODO I think this is okay...
 
 NodeOp* NodeVar::promote_to_op(void) {
-	throw new BaseCalcException( "called promote_to_op on var node" );
+	throw BaseCalcException( "called promote_to_op on var node" );
 }
 
 
@@ -1066,12 +1066,12 @@ val_t NodeFunc::eval(const CalcData *data) {
 		calc_func_t func = CONSTANT_FUNCS.at(this->func_name);
 		return func(this->args.at(0)->eval(data), data->degree);
 	}
-	throw new FunctionNotDefinedException(this->func_name);
+	throw FunctionNotDefinedException(this->func_name);
 }
 node_type NodeFunc::get_node_type(void) { return NODE_VAL; } // TODO I think this is okay...
 
 NodeOp* NodeFunc::promote_to_op(void) {
-	throw new BaseCalcException( "called promote_to_op on func node" );
+	throw BaseCalcException( "called promote_to_op on func node" );
 }
 
 NodeWipToken::NodeWipToken(std::string wip_token, std::string wip_angle, std::vector<UnitInfoInput> wip_units) {
@@ -1091,7 +1091,7 @@ std::string NodeWipToken::to_string(void) const {
 }
 
 val_t NodeWipToken::eval(const CalcData *data) {
-	throw new BaseCalcException("tried to evaluate wip token");
+	throw BaseCalcException("tried to evaluate wip token");
 }
 node_type NodeWipToken::get_node_type(void) { return NODE_VAL; }
 
@@ -1106,7 +1106,7 @@ UnitInfoInputAry NodeWipToken::get_units(void) const {
 }
 
 NodeOp* NodeWipToken::promote_to_op(void) {
-	throw new BaseCalcException( "called promote_to_op on wip token node" );
+	throw BaseCalcException( "called promote_to_op on wip token node" );
 }
 
 NodeWipBrackets::NodeWipBrackets(Node *arg, bool right_brack_present) {
@@ -1130,12 +1130,12 @@ val_t NodeWipBrackets::eval(const CalcData *data) {
 	(void)data;
 	// could just evaluate child node, but these shouldn't be in anything that
 	// gets evaluated
-	throw new BaseCalcException("tried to evaluate wip brackets");
+	throw BaseCalcException("tried to evaluate wip brackets");
 }
 node_type NodeWipBrackets::get_node_type(void) { return NODE_VAL; }
 
 NodeOp* NodeWipBrackets::promote_to_op(void) {
-	throw new BaseCalcException( "called promote_to_op on wip bracket node" );
+	throw BaseCalcException( "called promote_to_op on wip bracket node" );
 }
 
 
@@ -1189,7 +1189,7 @@ val_t NodeApplyUnits::eval(const CalcData *data) {
 		// TODO I suppose you could, and just multiply them.
 		// Maybe this should be a preference. I can't see why anyone
 		// would want to do this though.
-		throw new InvalidInputException("can not apply units to value with units already set", 0);
+		throw InvalidInputException("can not apply units to value with units already set", 0);
 	}
 
 	unit_t units_to_apply = eval_units(data, unit_info.units);
@@ -1470,8 +1470,8 @@ OutputInfo InputInfo::eval(CalcData *calcData) {
 
 	if (this->has_sto) {
 		if (CONSTANTS.find(this->sto_var_name) != CONSTANTS.end()) {
-			throw new InvalidInputException(std::string("\"") +
-			              this->sto_var_name + "\" is a constant and can not be overwritten", 0);
+			throw InvalidInputException(std::string("\"") +
+			          this->sto_var_name + "\" is a constant and can not be overwritten", 0);
 		}
 
 		calcData->set_var(this->sto_var_name, output.val);
@@ -1483,10 +1483,10 @@ OutputInfo InputInfo::eval(CalcData *calcData) {
 		output.unit = unit;
 
 		if ( !units_dim_eq(output.val.unit_dim, unit.dim)) {
-			throw new InvalidInputException(std::string("output has units \"") + 
-			                                unit_dim_to_string(output.unit.dim) +
-			                                "\", can not convert to unit \"" +
-			                                unit_dim_to_string(output.val.unit_dim), 0);
+			throw InvalidInputException(std::string("output has units \"") + 
+			                            unit_dim_to_string(output.unit.dim) +
+			                            "\", can not convert to unit \"" +
+			                            unit_dim_to_string(output.val.unit_dim), 0);
 		}
 	}
 
@@ -1531,7 +1531,7 @@ unit_t eval_units(const CalcData *calcData, std::vector<UnitInfoInput> input_uni
 	unit_t output = init_unit();
 	for (const auto &unit_info : input_units) {
 		if (calcData->units.find(unit_info.base) == calcData->units.end()) {
-			throw new UnitNotDefinedException(unit_info.base);
+			throw UnitNotDefinedException(unit_info.base);
 		}
 		unit_t unit = calcData->units.at(unit_info.base).unit;
 		unit = pow_unit(unit, unit_info.pow);

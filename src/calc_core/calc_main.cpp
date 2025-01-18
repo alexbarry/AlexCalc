@@ -158,9 +158,8 @@ int main(void) {
 		try { 
 			input_info = calc_parse( str_input, &parse_params, &calcData );
 			n.reset(input_info.n);
-		} catch( BaseCalcException * e ) {
-			std::cout << "BaseCalcException when parsing: " << e->msg << std::endl;
-			delete e;
+		} catch( const BaseCalcException &e ) {
+			std::cout << "BaseCalcException when parsing: " << e.msg << std::endl;
 			continue;
 		}
 
@@ -171,9 +170,8 @@ int main(void) {
 			try {
 				std::string latex = node_to_latex(&input_info);
 				std::cout << latex << std::endl;
-			} catch (const BaseCalcException *e) {
-				std::cout << "BaseCalcException when evaluating: " << e->msg << std::endl;
-				delete e;
+			} catch (const BaseCalcException &e) {
+				std::cout << "BaseCalcException when evaluating: " << e.msg << std::endl;
 			}
 			continue;
 		}
@@ -191,9 +189,8 @@ int main(void) {
 				std::cout << " " << unit_info_input_vec_to_string(&output.output_unit_str);
 			}
 			std::cout << std::endl;
-		} catch( const BaseCalcException *e ) {
-			std::cout << "BaseCalcException when evaluating: " << e->msg << std::endl;
-			delete e;
+		} catch( const BaseCalcException &e ) {
+			std::cout << "BaseCalcException when evaluating: " << e.msg << std::endl;
 			continue;
 		}
 	}

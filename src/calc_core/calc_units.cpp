@@ -77,7 +77,7 @@ unit_dim_t sqrt_unit(const unit_dim_t &arg) {
 	     arg.K   % 2 != 0 ||
 	     arg.mol % 2 != 0 ||
 	     arg.cd  % 2 != 0) {
-		throw new UnitInvalidOperationException("can not take sqrt of unit " + unit_dim_to_string(arg));
+		throw UnitInvalidOperationException("can not take sqrt of unit " + unit_dim_to_string(arg));
 	}
 	unit_dim_t dim = {
 		.s   = arg.s/2,
@@ -256,7 +256,7 @@ std::unique_ptr<UnitInfoParsed> unit_dim_to_string_nice_lookup(const unit_dim_t 
 		UnitInfoParsed nice_unit_val  = iter.second;
 
 		if (nice_unit_val.unit.mag != 1.0) {
-			throw new BaseCalcException("si unit lookup table has unit with mag " + std::to_string(nice_unit_val.unit.mag));
+			throw BaseCalcException("si unit lookup table has unit with mag " + std::to_string(nice_unit_val.unit.mag));
 		}
 
 		if (units_dim_eq(unit_dim, nice_unit_val.unit.dim)) {

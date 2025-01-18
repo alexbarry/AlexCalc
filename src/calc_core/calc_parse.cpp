@@ -285,7 +285,7 @@ bool parse_func_call(std::string *str_input,
 	try {
 		close_bracket_pos = get_closing_brack_pos( *str_input );
 		found_close_brack = true;
-	} catch( NoClosingBracketsException * ex ) {
+	} catch(const NoClosingBracketsException &ex ) {
 		found_close_brack = false;
 		close_bracket_pos = str_input->size();
 	}
@@ -608,7 +608,7 @@ NodeOp * op_str_to_node( std::string   op_str,
 	else {
 		std::string msg = "unexpected op_str ";
 		msg = msg + "'" + op_str + "'";
-		throw new BaseCalcException( msg ); /* TODO replace with internal calc exception */
+		throw BaseCalcException( msg ); /* TODO replace with internal calc exception */
 	}
 }
 
@@ -650,7 +650,7 @@ int get_closing_brack_pos( const std::string str_input ) {
 					ex_msg.append( to_string(str_input[i]) );
 					ex_msg.append( "'" );
 
-					throw new InvalidInputException( ex_msg, i );
+					throw InvalidInputException( ex_msg, i );
 				}
 				//bracket_depths[bracket_index] -= 1;
 
@@ -664,7 +664,7 @@ int get_closing_brack_pos( const std::string str_input ) {
 		}
 	}
 
-	throw new NoClosingBracketsException();
+	throw NoClosingBracketsException();
 }
 
 
@@ -724,7 +724,7 @@ bool remove_brackets( std::string *str_input,
 	try {
 		close_bracket_pos = get_closing_brack_pos( *str_input );
 		*right_brack_present_out = true;
-	} catch( NoClosingBracketsException * ex ) {
+	} catch(const NoClosingBracketsException &ex) {
 		//std::cout << "no closing brackets found" << std::endl;
 		// TODO append a warning or something here
 		close_bracket_pos = str_input->size();
@@ -861,7 +861,7 @@ bool collapse_throws( std::list<Node*> *node_list,
 	if( op_l_arg_c == 0 && l_arg_list.size() != 0 ) {
 		std::string msg = "op_l_arg_c is 0 and l_arg_list is ";
 		msg.append( node_list_to_str( l_arg_list ) );
-		throw new BaseCalcException( msg );
+		throw BaseCalcException( msg );
 		
 	}
 
@@ -870,7 +870,7 @@ bool collapse_throws( std::list<Node*> *node_list,
 	if( op_l_arg_c != 0 && l_arg_list.size() != 1 ) {
 		std::string msg = "could not collapse l_arg_list to one node: ";
 		msg.append( node_list_to_str(l_arg_list) );
-		throw new BaseCalcException( msg );
+		throw BaseCalcException( msg );
 	}
 
 	while (collapse( &r_arg_list ));
@@ -878,7 +878,7 @@ bool collapse_throws( std::list<Node*> *node_list,
 	if( r_arg_list.size() != 1 ) {
 		std::string msg = "could not collapse r_arg_list to one node: ";
 		msg.append( node_list_to_str(r_arg_list) );
-		throw new BaseCalcException( msg );
+		throw BaseCalcException( msg );
 	}
 
 	if( op_l_arg_c != 0 ) {
@@ -1022,7 +1022,7 @@ void calc_parse_throws(std::list<Node*> *node_list,
 		std::string msg = "str_input not fully parsed: '";
 		msg.append( str_input );
 		msg.append( "'" );
-		throw new BaseCalcException( msg );
+		throw BaseCalcException( msg );
 	}
 
 	bool completed;
@@ -1039,7 +1039,7 @@ void calc_parse_throws(std::list<Node*> *node_list,
 
 	if( node_list->size() != 1 ) {
 		std::string ex_msg = "node_list size is " + to_string( node_list->size() );
-		throw new BaseCalcException( ex_msg );
+		throw BaseCalcException( ex_msg );
 	}
 
 }
@@ -1080,7 +1080,7 @@ bool check_nodes_have_args(Node *n) {
 		return n_apply_units->n != nullptr;
 	} else {
 		std::cerr << "Unhandled node type in " << __func__ << ": " << n << std::endl;
-		throw new BaseCalcException("Unhandled node type in check_nodes_have_args()");
+		throw BaseCalcException("Unhandled node type in check_nodes_have_args()");
 		return true;
 	}
 }
@@ -1107,12 +1107,12 @@ void calc_parse_no_sto(std::string str_input, int *input_pos, const parse_params
 	std::list<Node*> node_list;
 	try {
 		calc_parse_throws(&node_list, str_input, input_pos, info_out, params);
-		if (node_list.size() != 1) { throw new InvalidInputException("node_list_size is " + to_string(node_list.size()), 0); }
+		if (node_list.size() != 1) { throw InvalidInputException("node_list_size is " + to_string(node_list.size()), 0); }
 
 		// This should never happen. Currently it's happening on "e^-", I'm not sure why.
 		// it should fail in the parsing stage.
 		// but better to error here than when it gets evaluated
-		if (!check_nodes_have_args(node_list.front())) { throw new InvalidInputException("not all nodes have enough arguments", 0); }
+		if (!check_nodes_have_args(node_list.front())) { throw InvalidInputException("not all nodes have enough arguments", 0); }
 	} catch (...) {
 		for (Node * n: node_list) {
 			delete n;
@@ -1202,7 +1202,7 @@ bool calc_check_for_to_unit(const std::string &str_input,
 		int dummy = 0;
 		bool found = parse_unit(&to_units_str, &dummy, to_units);
 		if (!found) {
-			throw new InvalidInputException("could not parse unit desired for output", 0);
+			throw InvalidInputException("could not parse unit desired for output", 0);
 		}
 	}
 
@@ -1252,7 +1252,7 @@ InputInfo calc_parse( std::string str_input,
 		char msg[256];
 		snprintf(msg, sizeof(msg), "input_pos=%d, str_input.size=%lu", input_pos, str_input.size());
 		delete info.n;
-		throw new BaseCalcException(msg);
+		throw BaseCalcException(msg);
 	}
 	return info;
 }
