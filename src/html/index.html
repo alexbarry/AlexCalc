@@ -640,6 +640,7 @@
 		</p>
 		<p><strong>Terms of use</strong>: <span style="font-family:monospace">THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<span><p>
 
+		<p>Version information: <span id="version_info_span">(not updated yet)</span></p>
 		<p><a class="licenses" href="licenses.html">Licenses</a></p>
 		<p><a id="close_about_popup_link" href="#">Close the "About" popup</a></p>
 	</div>
@@ -1207,6 +1208,8 @@
 		//}
 
 		window.alexcalc_ui = ui;
+
+		document.getElementById("version_info_span").innerText = alexcalc_info_func();
 	</script>
 	<script type="text/javascript" defer src="js/calc_worker_wrapper.js"></script>
 
