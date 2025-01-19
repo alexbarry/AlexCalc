@@ -1,0 +1,35 @@
+on:
+  pull_request:
+    types:
+        - opened
+        - synchronize
+        - reopened
+
+jobs:
+
+
+  deploy:
+    # why can't this by nginx, like my docker images?
+    runs-on: ubuntu-22.04
+
+    permissions:
+      contents: write
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup docker buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Build AlexCalc static HTML via docker
+      run: |
+        docker build \
+        --build-arg ALEXCALC_BUILD_TYPE_LABEL=github-pages \
+        -t alexcalc_html \
+        -f Dockerfile \
+        --target=export_output  \
+        --output=./public \
+        .
+
