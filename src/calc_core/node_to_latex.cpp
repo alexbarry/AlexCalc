@@ -615,7 +615,7 @@ std::string input_units_to_latex(const CalcData *calcData,
 	if (cursor_info != nullptr && input_units->size() != cursor_info->unit_info.size()) {
 		std::string msg = "input_units.size = " + std::to_string(input_units->size()) + ", "
 		                  "cursor_info.units.size = " + std::to_string(cursor_info->unit_info.size());
-		throw new BaseCalcException(msg);
+		throw BaseCalcException(msg);
 	}
 	for (int i=0; i<input_units->size(); i++) {
 		const UnitInfoInput &input_unit = input_units->at(i);
@@ -801,10 +801,10 @@ std::string func_call_to_latex(NodeFunc *func_node, const InputInfo *info, bool 
 
 std::string insert_cursor(std::string str, int cursor_pos) {
 	if (cursor_pos < 0) {
-		throw new BaseCalcException(std::string("cursor pos < 0 in ") + __func__);
+		throw BaseCalcException(std::string("cursor pos < 0 in ") + __func__);
 	}
 	if (cursor_pos > str.size()) {
-		throw new BaseCalcException(std::string("cursor pos > len in ") + __func__);
+		throw BaseCalcException(std::string("cursor pos > len in ") + __func__);
 	}
 
 	if (cursor_pos == str.size()) {
@@ -836,7 +836,7 @@ std::string wip_token_to_latex(const NodeWipToken *wip_token, const InputInfo *i
 	if (info->cursor_node == wip_token) {
 		cursor_info = dynamic_cast<WipValVarTokenCursorPos*>(info->cursor_pos_info.get());
 		if (cursor_info == nullptr) {
-			throw new BaseCalcException("cursor_info is not correct instance when cursor_node is set to this token");
+			throw BaseCalcException("cursor_info is not correct instance when cursor_node is set to this token");
 		}
 	}
 	bool inserted_cursor = false;

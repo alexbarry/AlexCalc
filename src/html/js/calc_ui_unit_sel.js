@@ -809,6 +809,19 @@ const UNIT_INFO_TREE_ALL =
           "si_prefixable": false
         },
         {
+          "nice_name": "kilocalorie",
+          "unit_names": [
+            [
+              {
+                "name": "kcal",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": false
+        },
+
+        {
           "nice_name": "British thermal unit",
           "unit_names": [
             [

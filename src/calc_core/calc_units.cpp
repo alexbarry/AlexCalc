@@ -77,7 +77,7 @@ unit_dim_t sqrt_unit(const unit_dim_t &arg) {
 	     arg.K   % 2 != 0 ||
 	     arg.mol % 2 != 0 ||
 	     arg.cd  % 2 != 0) {
-		throw new UnitInvalidOperationException("can not take sqrt of unit " + unit_dim_to_string(arg));
+		throw UnitInvalidOperationException("can not take sqrt of unit " + unit_dim_to_string(arg));
 	}
 	unit_dim_t dim = {
 		.s   = arg.s/2,
@@ -256,7 +256,7 @@ std::unique_ptr<UnitInfoParsed> unit_dim_to_string_nice_lookup(const unit_dim_t 
 		UnitInfoParsed nice_unit_val  = iter.second;
 
 		if (nice_unit_val.unit.mag != 1.0) {
-			throw new BaseCalcException("si unit lookup table has unit with mag " + std::to_string(nice_unit_val.unit.mag));
+			throw BaseCalcException("si unit lookup table has unit with mag " + std::to_string(nice_unit_val.unit.mag));
 		}
 
 		if (units_dim_eq(unit_dim, nice_unit_val.unit.dim)) {
@@ -470,6 +470,17 @@ void add_non_standard_units(std::unordered_map<std::string, UnitInfoParsed> &uni
 
 	units["btu"]    = UnitInfoParsed("", "btu", 1, mult_units(1.055, units.at("kJ").unit));
 	units["cal"]    = UnitInfoParsed("", "cal", 1, mult_units(4.184, units.at("J").unit));
+	units["calorie"]  = EXISTING_UNIT("calorie", "cal");
+	units["calories"] = EXISTING_UNIT("calories", "cal");
+	units["kcal"]   = UnitInfoParsed("", "kcal", 1, mult_units(1000, units.at("cal").unit));
+	units["kilocalorie"]  = EXISTING_UNIT("kilocalorie",      "kcal");
+	units["kilocalories"] = EXISTING_UNIT("kilocalories",      "kcal");
+
+	// "Food calories" have a capital C and are 1 kcal.
+	// https://en.wikipedia.org/wiki/Calorie
+	units["Cal"]       = EXISTING_UNIT("Cal",      "kcal");
+	units["Calorie"]   = EXISTING_UNIT("Calorie",  "kcal");
+	units["Calories"]  = EXISTING_UNIT("Calories", "kcal");
 	units["hp"]     = UnitInfoParsed("", "hp", 1, mult_units(745.7, units.at("W").unit));
 	units["slug"]   = UnitInfoParsed("", "slug", 1, mult_units(14.59390, units.at("kg").unit));
 	units["lbf"]    = UnitInfoParsed("", "lbf", 1, mult_units(4.448222, units.at("N").unit));

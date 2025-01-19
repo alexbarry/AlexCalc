@@ -1,3 +1,9 @@
+const ui = window.alexcalc_ui;
+
+if (!ui) {
+	throw new Error("ui is undefined");
+}
+
 // I'm not sure how to design this yet.
 // either:
 //    * simply define a "on tex ready" callback, and maybe a "on tex + val ready" callback, or

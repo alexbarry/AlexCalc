@@ -84,6 +84,7 @@ public class CalcButtonsHelper {
         SUB,
         ANS,
         E,
+        NEG,
         NUM1,
         NUM2,
         NUM3,
@@ -141,7 +142,7 @@ public class CalcButtonsHelper {
         button_id_to_android_layout_elem_id.put(ButtonId.VAR,           R.id.button_var);
         button_id_to_android_layout_elem_id.put(ButtonId.LN,            R.id.button_ln);
         button_id_to_android_layout_elem_id.put(ButtonId.LPAREN,        R.id.button_lparen);
-        button_id_to_android_layout_elem_id.put(ButtonId.DELIM,         R.id.button_delim);
+        //button_id_to_android_layout_elem_id.put(ButtonId.DELIM,         R.id.button_delim);
         button_id_to_android_layout_elem_id.put(ButtonId.RPAREN,        R.id.button_rparen);
         button_id_to_android_layout_elem_id.put(ButtonId.DIV,           R.id.button_div);
         button_id_to_android_layout_elem_id.put(ButtonId.UNITS,         R.id.button_units);
@@ -158,6 +159,7 @@ public class CalcButtonsHelper {
         button_id_to_android_layout_elem_id.put(ButtonId.SUB,           R.id.button_sub);
         button_id_to_android_layout_elem_id.put(ButtonId.ANS,           R.id.button_ans);
         button_id_to_android_layout_elem_id.put(ButtonId.E,             R.id.button_e);
+        button_id_to_android_layout_elem_id.put(ButtonId.NEG,           R.id.button_neg);
         button_id_to_android_layout_elem_id.put(ButtonId.NUM1,          R.id.button_1);
         button_id_to_android_layout_elem_id.put(ButtonId.NUM2,          R.id.button_2);
         button_id_to_android_layout_elem_id.put(ButtonId.NUM3,          R.id.button_3);
@@ -210,6 +212,7 @@ public class CalcButtonsHelper {
         button_id_to_token_func.put(ButtonId.ADD,           getTokenStateless(new TokenInfo(TokenType.OP,"+")));
         button_id_to_token_func.put(ButtonId.STO,           getTokenStateless(new TokenInfo(TokenType.OTHER,"->")));
 
+        button_id_to_token_func.put(ButtonId.NEG,           getTokenStateless(new TokenInfo(TokenType.DIGIT,"-")));
         button_id_to_token_func.put(ButtonId.NUM0,          getTokenStateless(new TokenInfo(TokenType.DIGIT,"0")));
         button_id_to_token_func.put(ButtonId.NUM1,          getTokenStateless(new TokenInfo(TokenType.DIGIT,"1")));
         button_id_to_token_func.put(ButtonId.NUM2,          getTokenStateless(new TokenInfo(TokenType.DIGIT,"2")));

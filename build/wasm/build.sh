@@ -8,14 +8,28 @@ cd "${DIR}"
 
 . ./setup_env.sh
 
+: "${ALEXCALC_BUILD_TYPE_LABEL:=}"
+
 mkdir -p out
 cd out
-emcmake cmake ../
+emcmake cmake -DBUILD_TYPE_LABEL="${ALEXCALC_BUILD_TYPE_LABEL}" ../
 cmake --build . $@
 
 SRC_DIR="../../../src"
 rm -f bin/index.html
+
+# TODO only copy specific file types
 cp -r "${SRC_DIR}/html"/* ./
+
+ts_files="${SRC_DIR}/html/js"/*.ts
+echo "Transpiling $ts_files..."
+tsc \
+	--strict --noImplicitAny --strictNullChecks \
+	$ts_files \
+	--module ES6 \
+	--target ES6  \
+	--outDir ./js/
+
 mv calc_wasm.js   js/
 mv calc_wasm.wasm js/
 mkdir -p graphics

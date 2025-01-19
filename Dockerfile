@@ -1,10 +1,14 @@
-FROM nginx:latest as base
+FROM nginx:latest AS base
+
+ARG ALEXCALC_BUILD_TYPE_LABEL
+ENV ALEXCALC_BUILD_TYPE_LABEL=${ALEXCALC_BUILD_TYPE_LABEL}
 
 # Install OS dependencies
 RUN apt-get update && apt-get install -y \
 	cmake \
 	python3 \
 	xz-utils \
+	npm \
 	git
 
 # Install Emscripten
@@ -26,6 +30,8 @@ RUN /bin/bash -c "source ./emsdk_env.sh"
 ENV PATH="${PATH}:/app/emsdk/upstream/emscripten"
 RUN emcc --version
 
+RUN npm -g install typescript
+
 
 # Build AlexCalc
 WORKDIR /app
@@ -37,7 +43,7 @@ RUN bash ./build.sh
 # TODO only copy html/css/js/wasm/png?
 RUN cp -r out/* /usr/share/nginx/html/
 
-FROM scratch as export_output
+FROM scratch AS export_output
 COPY --from=base /app/build/wasm/out/*.html   /
 COPY --from=base /app/build/wasm/out/*.png    /
 COPY --from=base /app/build/wasm/out/*.txt    /
@@ -45,5 +51,5 @@ COPY --from=base /app/build/wasm/out/js       /js/
 COPY --from=base /app/build/wasm/out/css      /css/
 COPY --from=base /app/build/wasm/out/graphics /graphics/
 
-FROM base as server
+FROM base AS server
 # Use base nginx entrypoint to host HTTP server

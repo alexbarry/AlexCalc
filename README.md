@@ -20,7 +20,46 @@ Available on:
 * **Complex numbers**: enter rectangular form (`3 + 4i`) or polar (`5 angle 30`). The **angle** button replaces the **i** button when **alt** is pressed. If typing, `j` can be used in place of `i` ([more info](https://en.wikipedia.org/wiki/Imaginary_unit)).
 * **Variables**: store variables by typing an expression, then pressing the "store" button in the bottom left (or typing the `->` operator), and then entering a variable name (e.g. `1.23e5 -> x`). Then simply reference this variable name in other expressions (e.g. `x^2 - 4*x -> y`)
 * **Units**: select or type a desired unit, e.g. `1 kg` or `3 m s^-2`. The default output is in SI units, but arbitrary unit conversion can be accomplished with the ` to ` operator (e.g. `1 kg to lb`) which can be typed directly or by pressing the **alt** then "**to units**" button (which appears in place of the **units** button when **alt** is pressed). Note that the division slash (`/`) **can not be used** within units, e.g. "1 metre per second" can only be defined as `1 m s^-1`, and **not** `1 m/s` because that means "1 metre divided by variable s". This is unfortunate, but I'm not sure if there is any way to resolve the ambiguity. (Of course you are free to do `1 m / 1 s`)
-* **Negative numbers**: the "subtraction" button can also serve as a negative sign.
+* **Negative numbers**: There is a subtraction button (`-`) near the other operators, and a negative (`(-)`) button. In most cases you can use either one for either subtraction or a negative sign, unless it is the first button pressed. When it is the first button pressed, the subtraction button will automatically add `ans` before the subtraction, to operate on the result of the previous expression. When typing, you can use `-` for either purpose.
+
+## How to build
+
+### Web
+
+You can build the web app via docker, which will place the output in `./public`:
+
+```
+sudo docker build -t alexcalc_html \
+	-f Dockerfile \
+	--target=export_output  \
+	--output=./public \
+	.
+sudo chown "${USER}" ./public
+```
+
+There may be a more convenient way to use Docker.
+
+### Web (install dependencies manually incremental builds)
+
+I find that Docker takes a while, so I simply run:
+
+	build/wasm/build.sh -- -j32
+
+But this requires installing the various dependencies: CMake, emscripten, typescript.
+
+### Android
+
+```
+cd src/android/
+./gradlew build
+```
+
+Outputs will be here and in surrounding folders for different build variants:
+
+```
+src/android/app/build/outputs/apk/universal/debug/app-universal-debug.apk
+```
+
 
 ## Discussion
 

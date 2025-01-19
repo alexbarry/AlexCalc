@@ -264,6 +264,7 @@ UnitGroup get_energy_and_electricity_units(void) {
 	group.add_unit(UnitDescription::si_prefixable("Joule (Energy)",  {"J"}));
 	group.add_unit(UnitDescription::si_prefixable("electron Volt",   {"eV"}));
 	group.add_unit(UnitDescription::no_prefix("calorie",         {"cal"}));
+	group.add_unit(UnitDescription::no_prefix("kilocalorie",     {"kcal"}));
 	group.add_unit(UnitDescription::no_prefix("British thermal unit", {"btu"}));
 	group.add_unit(UnitDescription::si_prefixable("Watt (Power)",    {"W"}));
 	group.add_unit(UnitDescription::no_prefix("horsepower",      {"hp"}));

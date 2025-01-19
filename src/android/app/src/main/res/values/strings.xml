@@ -38,6 +38,7 @@
 	<string name="units">units</string>
 	<string name="to_units">to units</string>
 	<string name="sqrt">sqrt</string>
+	<string name="neg">(-)</string>
 	<string name="num1">1</string>
 	<string name="num2">2</string>
 	<string name="num3">3</string>

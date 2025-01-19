@@ -24,6 +24,12 @@ class bcolors:
 	ENDC    = '\033[0m'
 
 tests = [
+		( '0.6',                           0.6),
+		( '.6',                            0.6),
+
+		( '.6 + .4',                       1.0),
+
+
 		( '3.14159',                     3.14159    ),
 		( '1+2*3',                       7          ),
 		( '3*(1+2)-4',                   5          ),
@@ -132,6 +138,56 @@ tests = [
 		( 'getangle(sqrt((3+4j)*(3+4j)))',        math.atan2(4,3)),
 		( 'getangle(-sqrt((3+4j)*-(3+4j)))',      math.atan2(4,3)),
 		( 'getangle(sqrt((3+4j)*(3+4j)))',        math.atan2(4,3)),
+
+		( 'sin(0)', 0),
+		( 'sin(pi/6)', 1/2),
+		( 'sin(pi/4)', 1/math.sqrt(2)),
+		( 'sin(pi/3)', math.sqrt(3)/2),
+		( 'sin(pi/2)', 1),
+		( 'sin(pi)', 0),
+
+		( 'cos(pi)', -1),
+		( 'tan(pi)', 0),
+
+		( 'sin(0)', 0,                              'degree'),
+		( 'sin(30)', 1/2,                           'degree'),
+		( 'sin(45)', 1/math.sqrt(2),                'degree'),
+		( 'sin(60)', math.sqrt(3)/2,                'degree'),
+		( 'sin(90)', 1,                             'degree'),
+		( 'sin(180)', 0,                            'degree'),
+
+		( 'cos(180)', -1,                           'degree'),
+		( 'tan(180)', 0,                            'degree'),
+
+		( '1e-15 + 1e-18', 1.001e-15),
+		( '2e-15 + 8e-18', 2.008e-15),
+		( '2e-105 + 8e-108', 2.008e-105),
+		( '-2e-105 + -8e-108', -2.008e-105),
+		( '-2e-105 - 8e-108', -2.008e-105),
+
+		( '4e-100 * 3e-50', 12e-150),
+		( '-4e-100 * 3e-50', -12e-150),
+		( '4e-100 * -3e-50', -12e-150),
+		( '-4e-100 * -3e-50', 12e-150),
+
+		( '2e-20 ^ 2', 2e-20**2),
+		( '2e-20   ^   2', 2e-20**2),
+		( '2e-20^ 2', 2e-20**2),
+		( '2e-20 ^2', 2e-20**2),
+		( '2e-20^2', 2e-20**2),
+
+		( '2e-20 ^ -2', 2e-20**-2),
+		( '2e-20^-2', 2e-20**-2),
+		( '2e-20 ^-2', 2e-20**-2),
+		( '2e-20^ -2', 2e-20**-2),
+
+		( 'sqrt(1e-100)', 1e-200),
+
+		( '3e-100 * (1.5e-50 + 1.5e-50)', 9e-200),
+		( 'sqrt(3e-100 * (1.5e-50 + 1.5e-50))', 3e-100),
+		( 'sqrt(2e-100)', math.sqrt(2e-100)),
+
+
 ]
 
 cursor = '\\text{[]}'
@@ -312,6 +368,53 @@ latex_tests = [
         (  '1e3j',                  None,    r'\left(j1 \cdot 10^3\right)'),
         (  '1e-3j',                 None,    r'\left(j1 \cdot 10^{' + NEG_SYMB + r'3}\right)'),
         (  '4.56e-3j',              None,    r'\left(j4.56 \cdot 10^{' + NEG_SYMB + r'3}\right)'),
+
+	( '0',    None, '0' ),
+	( '0.6',  None, '0.6' ),
+	( '0.65',  None, '0.65' ),
+
+	( '3',  None, '3' ),
+	( '3.1',  None, '3.1' ),
+
+	( '0',    1, r'\text{0}' + cursor ),
+	( '0.',   2, r'\text{0.}'  + cursor),
+	( '0.6',  3, r'\text{0.6}'  + cursor),
+
+	( '.6',   0, cursor + r'\text{.6}' ),
+	( '.6',   1, r'\text{.}' + cursor + r'\text{6}' ),
+	( '.61',   2, r'\text{.6}' + cursor + r'\text{1}' ),
+
+	( '0.6',   0, cursor + r'\text{0.6}' ),
+	( '0.6',   1, r'\text{0}' + cursor + r'\text{.6}' ),
+	( '0.6',   2, r'\text{0.}' + cursor + r'\text{6}' ),
+	( '0.6',   3, r'\text{0.6}' + cursor),
+
+]
+
+err_tests = [
+	'.6.4',
+	'.6 .4',
+	'.6e.4',
+	'e6',
+	'6e',
+
+	'',
+]
+
+# Calling these "unit tests" would be confusing, given that everything here is a "unit test"
+tests_for_units = [
+	( '1 cal',          4.184, 'J' ),
+
+	( '1 kcal',         4184,  'J' ),
+	( '1 Cal',          4184,  'J' ),
+	( '1 Calorie',      4184,  'J' ),
+	( '1 kilocalorie',  4184,  'J' ),
+
+	( '101.325 kPa to atm', 1, 'atm'),
+	( '101.325 kPa * 2 to atm', 2, 'atm'),
+
+	# TODO consider defaulting output to kPa when dimension is N/m
+	( '1 atm', 101325, 'Pa'),
 ]
 
 def python_solve_test(test):
@@ -319,7 +422,8 @@ def python_solve_test(test):
 	return eval(test)
 	
 
-def run_test(test, cmds):
+def run_test(test, cmds=None, parse_float=True):
+	if not cmds: cmds = []
 	#py_answer = python_solve_test( test )
 
 	p = subprocess.Popen( calc_bin_file, stdin=subprocess.PIPE,
@@ -328,7 +432,14 @@ def run_test(test, cmds):
 	cmd_str = '\n'.join(':%s' % x for x in cmds)
 	if cmd_str: cmd_str += '\n'
 	test_input = bytes( ":echo on\n" + cmd_str + test + '\n:alloc\n:exit\n', encoding='utf-8' )
-	output, output_err   = p.communicate( input=test_input, timeout=1 )
+	try:
+		output, output_err   = p.communicate( input=test_input, timeout=1 )
+	except subprocess.TimeoutExpired:
+		print('Test %r caused timeout, killing process' % test)
+		# If a timeout happens, the process may be stuck in an infinite loop.
+		p.kill()
+		raise
+
 	output_err = output_err.decode('utf-8')
 	output = output.decode( 'utf-8' )
 	output = output.split( '\n' )
@@ -345,11 +456,12 @@ def run_test(test, cmds):
 	calc_output = output[0]
 	memory_test_output = output[1]
 
-	try:
-		calc_output = float(calc_output)
-	except ValueError as e:
-		#calc_output = repr(e)
-		calc_output = e
+	if parse_float:
+		try:
+			calc_output = float(calc_output)
+		except ValueError as e:
+			#calc_output = repr(e)
+			calc_output = e
 	
 	if memory_test_output == 'There are 0 nodes allocated from prior calls':
 		memory_leak = None
@@ -406,6 +518,27 @@ def run_latex_test(test, cursor_pos):
 	
 	return calc_output, memory_leak, output_err
 
+def run_err_test(test):
+	calc_output, memory_leak, output_err = run_test(test, parse_float=False)
+	#print('%r, %r, %r, %r' % (test, calc_output, memory_leak, output_err))
+	# TODO this is ugly, but I guess I polluted stderr with debugging information?
+	if 'exception' not in calc_output.lower():
+		return False, calc_output
+
+	return True, calc_output
+
+def run_test_for_unit(test, expected_output_val, expected_output_units):
+	calc_output, memory_leak, output_err = run_test(test, parse_float=False)
+
+	mag_val, unit_val = calc_output.split(' ', maxsplit=1)
+	mag_val = float(mag_val)
+
+	test_passed = (expected_output_val == mag_val and expected_output_units == unit_val)
+	if not test_passed:
+		print('mag: %r, unit: %r' % (mag_val, unit_val))
+		print('expected_output: val %r, unit %r' % (expected_output_val, expected_output_units))
+
+	return test_passed, calc_output
 
 
 tests_run = []
@@ -479,6 +612,22 @@ for str_input, cursor_pos, expected_output in latex_tests:
 		print('stderr: ')
 		print(output_err)
 		failed_tests.append(( '(cursor_pos:%s) %r' % (cursor_pos, str_input), test_idx, expected_output, actual_output))
+	tests_run.append( (test, test_idx))
+
+#err_tests = []
+print('Checking that %d "err_tests" fail...' % len(err_tests))
+for test_idx, str_input in enumerate(err_tests):
+	test_passed, actual_output = run_err_test(str_input)
+	if not test_passed:
+		failed_tests.append( ('(err_test) %r' % str_input, test_idx, '<expected an error>', actual_output))
+	tests_run.append( (test, test_idx))
+
+print('Checking that %d "tests_for_units" pass...' % len(tests_for_units))
+for test_idx, (str_input, expected_output_val, expected_output_unit) in enumerate(tests_for_units):
+	test_passed, actual_output = run_test_for_unit(str_input, expected_output_val, expected_output_unit)
+	if not test_passed:
+		expected_output = 'val: %r, unit: %r' % (expected_output_val, expected_output_unit)
+		failed_tests.append( ('(test for units) %r' % str_input, test_idx, expected_output, actual_output))
 	tests_run.append( (test, test_idx))
 
 rc = 0
