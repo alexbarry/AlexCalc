@@ -24,11 +24,15 @@ typedef val_t (*calc_func_t)(val_t, bool degree);
 // TODO split into separate file, "unit_input"?
 unit_t eval_units(const CalcData *calcData, std::vector<UnitInfoInput> input_units);
 
-const char alexcalc_info[] = "\nAlexCalc created by Alex Barry (alexbarry.dev2@gmail.com). See https://github.com/alexbarry/AlexCalc . " ALEXCALC_BUILD_INFO;
+#define ALEXCALC_HELLO_INFO ("\nAlexCalc created by Alex Barry (alexbarry.dev2@gmail.com). See https://github.com/alexbarry/AlexCalc . " ALEXCALC_BUILD_INFO)
+
+const char alexcalc_hello_info[] = ALEXCALC_HELLO_INFO;
+const char alexcalc_build_info[] = ALEXCALC_BUILD_INFO;
 
 extern "C"
 const char *alexcalc_info_func(void) {
-	return alexcalc_info;
+	(void)alexcalc_hello_info;
+	return alexcalc_build_info;
 }
 
 const char VAR_NAME_ANS[] = "ans";

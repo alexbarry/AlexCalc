@@ -802,6 +802,10 @@
 				ui.wasm_loaded = true;
 				//document.getElementById("wasm_loading_msg").innerHTML = "Calc binary ready!";
 				ui.generate_output_msg("Calc binary ready!", false);
+				alexcalc_get_info_promise().then( (info) => {
+					console.log("get_info_promise: ", info);
+					document.getElementById("version_info_span").innerText = info;
+				});
 			},
 
 			// TODO I don't like how this subtlely calls into calc_worker_wrapper.js,
@@ -1215,8 +1219,6 @@
 		//}
 
 		window.alexcalc_ui = ui;
-
-		document.getElementById("version_info_span").innerText = alexcalc_info_func();
 	</script>
 	<script type="text/javascript" defer src="js/calc_worker_wrapper.js"></script>
 

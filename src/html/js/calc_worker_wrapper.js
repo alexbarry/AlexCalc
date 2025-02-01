@@ -63,6 +63,18 @@ function alexcalc_unit_referenced(unit_str) {
 	update_display_worker.postMessage({msg_type:"unit_referenced", unit_str: unit_str});
 }
 
+function alexcalc_async_get_info(callback) {
+	let callback_key = Date.now() + ", " + Math.random();
+	_calc_worker_state.callbacks[callback_key] = callback;
+	update_display_worker.postMessage({msg_type: "get_info", callback_key: callback_key });
+}
+
+function alexcalc_get_info_promise() {
+	return new Promise((resolve) => {
+		alexcalc_async_get_info(resolve);
+	});
+}
+
 update_display_worker.onmessage = function(e) {
 	console.debug("recvd ", e);
 	let data = e.data;
@@ -96,6 +108,12 @@ update_display_worker.onmessage = function(e) {
 	} else if (data.msg_type == "recently_used_units_update") {
 		console.debug("Updating recently used units: ", data.units);
 		update_recently_used_units(ui.unit_sel, data.units);
+	} else if (data.msg_type == "get_info") {
+		let callback = _calc_worker_state.callbacks[data.callback_key];
+		delete _calc_worker_state.callbacks[data.callback_key];
+		if (callback != null) {
+			callback(data.info);
+		}
 	} else {
 		console.error("unexpected msg_type: ", data.msg_type, data );
 	}
