@@ -25,7 +25,7 @@
 	<!--<script type="text/javascript" src="js/calc_wasm.js"></script>-->
 	<!--<script type="text/javascript" src="js/calc_wasm_wrapper.js"></script>-->
 	<!-- Needed by MathJax (I think) -->
-	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<!--<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>-->
 	<!-- For LaTeX support -->
 	<!--<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>-->
 
@@ -56,6 +56,12 @@
 
 		height: calc(100% - 2*5px); /* 5px is margin of div.main */
 		width:  100%;
+	}
+
+	.logo {
+		width: 48px;
+		height: 48px;
+		position: absolute;
 	}
 
 
@@ -359,6 +365,7 @@
 	<div id="output_text_window" class="output_txt_cls">
 		<div id="output_text">
 
+		<img class="logo" src="https://alexbarry.net/calc/favicon.png" alt="AlexCalc logo"/>
 		<h1>AlexCalc</h1>
 		<p id="wasm_loading_msg">Calc binary is loading, please wait...</p>
 		<p id="calc_terms_notice_small">By using this application you agree with its terms of use, available in the <a href="#" id="about_popup_link_terms_notice">about section</a>.</p>
@@ -640,6 +647,7 @@
 		</p>
 		<p><strong>Terms of use</strong>: <span style="font-family:monospace">THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.<span><p>
 
+		<p>Version information: <span id="version_info_span">(not updated yet)</span></p>
 		<p><a class="licenses" href="licenses.html">Licenses</a></p>
 		<p><a id="close_about_popup_link" href="#">Close the "About" popup</a></p>
 	</div>
@@ -794,6 +802,10 @@
 				ui.wasm_loaded = true;
 				//document.getElementById("wasm_loading_msg").innerHTML = "Calc binary ready!";
 				ui.generate_output_msg("Calc binary ready!", false);
+				alexcalc_get_info_promise().then( (info) => {
+					console.log("get_info_promise: ", info);
+					document.getElementById("version_info_span").innerText = info;
+				});
 			},
 
 			// TODO I don't like how this subtlely calls into calc_worker_wrapper.js,
