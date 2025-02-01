@@ -138,6 +138,13 @@ onmessage = function(e) {
 		alexcalc_add_recently_used_unit(calcdata_ptr, unit_str);
 		let units_info   = alexcalc_get_recently_used_units_json(calcdata_ptr);
 		send_recent_units_update(units_info.units);
+	} else if (data.msg_type == "get_info") {
+		const info_str = alexcalc_info_func();
+		output_data = {
+			msg_type: data.msg_type,
+			callback_key: data.callback_key,
+			info:     info_str,
+		};
 	} else {
 		console.error("unhandled msg_type ", data.msg_type);
 	}
