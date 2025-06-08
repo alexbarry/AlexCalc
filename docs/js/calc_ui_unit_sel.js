@@ -447,6 +447,12 @@ const UNIT_INFO_TREE_ALL =
           "unit_names": [
             [
               {
+                "name": "h",
+                "pow": 1
+              }
+            ],
+            [
+              {
                 "name": "hr",
                 "pow": 1
               }
@@ -839,6 +845,18 @@ const UNIT_INFO_TREE_ALL =
             [
               {
                 "name": "W",
+                "pow": 1
+              }
+            ]
+          ],
+          "si_prefixable": true
+        },
+        {
+          "nice_name": "Watt hour (Energy)",
+          "unit_names": [
+            [
+              {
+                "name": "Wh",
                 "pow": 1
               }
             ]

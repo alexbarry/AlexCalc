@@ -1,0 +1,23 @@
+body.colourful-muted div.main { background-color: #f6f7ec; }
+
+body.colourful-muted .output_txt_cls { background-color: #fffe; }
+
+body.colourful-muted button.num				{ background-color:#f9fee6; }
+body.colourful-muted button.num:hover		{ background-color:#f9fee6aa; }
+
+body.colourful-muted button.op               { background-color:#fee5c588; }
+body.colourful-muted button.op:hover			{ background-color:#fee5c5; }
+body.colourful-muted button.specop			{ background-color:#fee5c588; }
+body.colourful-muted button.specop:hover		{ background-color:#fee5c5; }
+
+body.colourful-muted button.func             { background-color:#e1edf2; }
+body.colourful-muted button.func:hover       { background-color:#e1edf2aa; }
+
+body.colourful-muted button.var              { background-color:#d6f2f9; }
+body.colourful-muted button.var:hover        { background-color:#d6f2f9; }
+
+body.colourful-muted button.meta				{ background-color:#f2bdc288; }
+body.colourful-muted button.meta:hover		{ background-color:#f2bdc2; }
+
+body.colourful-muted button.btn_important	    { background-color:#f2bdc2; }
+body.colourful-muted button.btn_important:hover	{ background-color:#f25a68; }

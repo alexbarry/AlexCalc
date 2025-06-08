@@ -18,6 +18,15 @@
 	<link rel="stylesheet" type="text/css" href="css/calc_style_dark.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<link rel="stylesheet" type="text/css" href="css/calc_style.css">
+	<link rel="stylesheet" type="text/css" href="css/colourful1.css">
+	<link rel="stylesheet" type="text/css" href="css/colourful-muted.css">
+	<link rel="stylesheet" type="text/css" href="css/blue1.css">
+	<link rel="stylesheet" type="text/css" href="css/blue2.css">
+	<link rel="stylesheet" type="text/css" href="css/blue-w-orange.css">
+	<link rel="stylesheet" type="text/css" href="css/monochrome1.css">
+	<link rel="stylesheet" type="text/css" href="css/monochrome1-w-red.css">
+	<link rel="stylesheet" type="text/css" href="css/dated_yet_pricey.css">
+	<link rel="stylesheet" type="text/css" href="css/custom-colours.css">
 	<script type="text/javascript" src="js/dropdown_and_inc_widget.js"></script>
 	<!-- TODO figure out how to include this file from within calc_ui.js -->
 	<script type="text/javascript" src="js/calc_ui_unit_sel.js"></script>
@@ -29,7 +38,11 @@
 	<!-- For LaTeX support -->
 	<!--<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>-->
 
-	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"></script>
+
+	<!-- Loading this script here doesn't always seem to initialize it correctly.
+	     Instead a <script/> element is created in javascript, which seems to work.
+	     More context: https://github.com/alexbarry/AlexCalc/issues/31 -->
+	<!-- <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"></script> -->
 	<title>AlexCalc</title>
 
 	<style>
@@ -343,6 +356,24 @@
 		padding-left:5px;
 		display: inline-block;
 	}
+	.colour_adjuster_pane {
+		z-index:10;
+		width: 345px;
+		transition: right 0.3s ease-in-out;
+	}
+	#btn_show_colour_adjuster_pane {
+		background-color:#ccc;
+		position:absolute;
+		width:25px;
+		left:-25px;
+	}
+	#custom_colour_output {
+		text-align:left;
+	}
+	.pane_hidden {
+		position:absolute;
+		right: -335px;
+	}
 	</style>
 </head>
 <body>
@@ -355,12 +386,73 @@
 				<option value="light">Light mode</option>
 				<option value="dark">Dark mode</option>
 				<option value="very_dark">Very dark mode</option>
+				<option value="blue-w-orange">blue-w-orange</option>
+				<option value="colourful1">colourful1</option>
+				<option value="colourful-muted">colourful-muted</option>
+				<option value="blue1">blue1</option>
+				<option value="blue2">blue2</option>
+				<option value="monochrome1">monochrome1</option>
+				<option value="monochrome1-w-red">monochrome1-w-red</option>
+				<option value="dated-yet-pricey">dated-yet-pricey</option>
+				<option value="custom-colours">custom-colours</option>
 			</select>
 			<br/>
 			<label for="checkbox_show_raw">Show raw</label>
 			<input type="checkbox" id="checkbox_show_raw">
 		</div>
-		</div>
+	</div>
+
+	<div id="colour_adjuster_pane" class="colour_adjuster_pane pane_hidden">
+		<button id="btn_show_colour_adjuster_pane">+</button>
+		<label for="color_sel_bg_main">Background</label>
+		<input type="color" id="color_sel_bg_main">
+		<br/>
+
+		<label for="color_sel_output_txt">Output Panel Background</label>
+		<input type="color" id="color_sel_output_txt">
+		<br/>
+
+		<label for="color_sel_btn_important">Important Buttons</label>
+		<input type="color" id="color_sel_btn_important">
+		<input type="color" id="color_sel_btn_important_fg">
+		<br/>
+
+		<label for="color_sel_btn_meta">Meta Buttons</label>
+		<input type="color" id="color_sel_btn_meta">
+		<input type="color" id="color_sel_btn_meta_fg">
+		<br/>
+
+		<label for="color_sel_btn_var">Variable Buttons</label>
+		<input type="color" id="color_sel_btn_var">
+		<input type="color" id="color_sel_btn_var_fg">
+		<br/>
+
+		<label for="color_sel_btn_func">Function Buttons</label>
+		<input type="color" id="color_sel_btn_func">
+		<input type="color" id="color_sel_btn_func_fg">
+		<br/>
+
+
+		<label for="color_sel_btn_op">Operator Buttons</label>
+		<input type="color" id="color_sel_btn_op">
+		<input type="color" id="color_sel_btn_op_fg">
+		<br/>
+
+		<label for="color_sel_btn_specop">Special Operator Buttons</label>
+		<input type="color" id="color_sel_btn_specop">
+		<input type="color" id="color_sel_btn_specop_fg">
+		<br/>
+
+		<label for="color_sel_btn_num">Number Buttons</label>
+		<input type="color" id="color_sel_btn_num">
+		<input type="color" id="color_sel_btn_num_fg">
+		<br/>
+
+		<button id="btn_load_existing_colours">Load currently visible colours</button>
+
+		<pre id="custom_colour_output">
+		</pre>
+	</div>
 
 	<div id="output_text_window" class="output_txt_cls">
 		<div id="output_text">
@@ -678,7 +770,8 @@
 
 
 	<script type="module">
-		import { init_ui, add_variable_row_click_listener, remove_variable_row_click_listener, public_add_unit_input_token } from './js/calc_ui.js';
+		import { init_ui, add_variable_row_click_listener, remove_variable_row_click_listener, public_add_unit_input_token, set_theme } from './js/calc_ui.js';
+		import { set_callback_switch_to_custom_colours } from './js/colour_sel_ui.js';
 		function abs(x) {
 			if (x < 0) { return -x; }
 			else { return x; }
@@ -692,6 +785,18 @@
 				fontCache: 'global',
 			}
 		};
+
+		// When loading the script as a script element in head,
+		// sometimes on browser restart this script doesn't seem to initialize
+		// correctly.
+		// I wasn't able to reproduce this in a minimal example.
+		// For now, this workaround seems to fix it.
+		// More context: https://github.com/alexbarry/AlexCalc/issues/31
+		let script = document.createElement('script');
+		script.id = 'MathJax-script';
+		script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js';
+		script.async = false;
+		document.head.appendChild(script);
 
 		//let promise = Promise.resolve();
 		//function mathjax_typeset(code) {
@@ -918,7 +1023,10 @@
 			 *   - "stylesheets": a list of corresponding stylesheets.
 			 *
 			 */
-			output_display_refs: [],
+			output_display_refs: [
+				{ elem: document.getElementById("wasm_loading_msg"),        stylesheets: [] },
+				{ elem: document.getElementById("calc_terms_notice_small"), stylesheets: [] },
+			],
 
 			// returns an object that will be passed to it again for clean up
 			// if this line of the output display is removed.
@@ -997,6 +1105,7 @@
 				output_element.innerHTML = msg; // TODO HTML escape this
 				ui.output_text.appendChild(output_element);
 				ui.output_disp_scroll_to_bottom();
+				ui.output_display_refs.push({ elem: output_element, stylesheets: [] });
 			},
 
 			output_disp_scroll_to_bottom: function() {
@@ -1219,6 +1328,15 @@
 		//}
 
 		window.alexcalc_ui = ui;
+
+		function switch_to_custom_colours() {
+			set_theme(ui, 'custom-colours');
+			document.getElementById('dark_mode_select').value = 'custom-colours';
+		}
+
+		set_callback_switch_to_custom_colours( () => {
+			switch_to_custom_colours();
+		});
 	</script>
 	<script type="text/javascript" defer src="js/calc_worker_wrapper.js"></script>
 

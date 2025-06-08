@@ -35,7 +35,6 @@ button.op               { background-color:#AAF; }
 button.op:hover			{ background-color:#88C; }
 button.specop			{ background-color:#AAF; }
 button.specop:hover		{ background-color:#88C; }
-button.num				{ background-color:lightgrey; }
 button.num				{ background-color:#DDD; }
 button.num:hover		{ background-color:#BBB; }
 
@@ -131,3 +130,18 @@ a.license_url {
 	overflow:auto;
 }
 
+
+.colour_adjuster_pane {
+	position:absolute;
+	right:0;
+	text-align:right;
+	background-color:#4448;
+}
+
+#custom_colour_output {
+	color: #000;
+	margin: 4px;
+	padding: 4px;
+	background-color: #fff8;
+	border: 1px dashed grey;
+}

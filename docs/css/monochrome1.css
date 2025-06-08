@@ -1,0 +1,32 @@
+body.monochrome1 div.main { background-color: #e1e1e1; }
+
+body.monochrome1 .output_txt_cls { background-color: #fffe; }
+
+body.monochrome1 button.num				{ background-color:#d8d8df; }
+body.monochrome1 button.num:hover		{ background-color:#d8d8dfaa; }
+
+body.monochrome1 button.op               { background-color:#f0f0f0; }
+body.monochrome1 button.op:hover			{ background-color:#f0f0f088; }
+body.monochrome1 button.specop			{ background-color:#ccc; }
+body.monochrome1 button.specop:hover		{ background-color:#ccc8; }
+
+body.monochrome1 button.func             { background-color:#aaa8; }
+body.monochrome1 button.func:hover       { background-color:#aaa8; }
+
+body.monochrome1 button.var              { background-color:#aaa; }
+body.monochrome1 button.var:hover        { background-color:#aaa8; }
+
+body.monochrome1 button.meta				{
+	background-color:#666;
+	color:#fff;
+}
+body.monochrome1 button.meta:hover		{ background-color:#4448; }
+
+body.monochrome1 button.btn_important {
+	background-color:#282828;
+	color:#fff;
+}
+body.monochrome1 button.btn_important:hover	{
+	background-color:#28282888;
+	color:#fff;
+}

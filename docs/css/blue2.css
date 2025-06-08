@@ -1,0 +1,31 @@
+body.blue2 div.main { background-color: #9b9ec3; }
+
+body.blue2 .output_txt_cls { background-color: #fffe; }
+
+body.blue2 button.num				{ background-color:#d8d8df; }
+body.blue2 button.num:hover		{ background-color:#d8d8dfaa; }
+
+body.blue2 button.op               { background-color:#cfcfe8; }
+body.blue2 button.op:hover			{ background-color:#cfcfe8aa; }
+body.blue2 button.specop			{ background-color:#cfcfe8; }
+body.blue2 button.specop:hover		{ background-color:#cfcfe8aa; }
+
+body.blue2 button.func             { background-color:#b6b6f0; }
+body.blue2 button.func:hover       { background-color:#b6b6f0aa; }
+
+body.blue2 button.var              { background-color:#a3a2f8; }
+body.blue2 button.var:hover        { background-color:#a3a2f8aa; }
+
+body.blue2 button.meta				{
+	background-color:#6665dd;
+	color:#fff;
+}
+body.blue2 button.meta:hover		{ background-color:#6665ddaa; }
+
+body.blue2 button.btn_important {
+	background-color:#0d49ff;
+	color:#fff;
+}
+body.blue2 button.btn_important:hover	{
+	background-color:#0d49ffaa;
+}

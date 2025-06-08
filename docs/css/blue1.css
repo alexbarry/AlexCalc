@@ -1,0 +1,23 @@
+body.blue1 div.main { background-color: #DBE8FF; }
+
+body.blue1 .output_txt_cls { background-color: #fffe; }
+
+body.blue1 button.num				{ background-color:#c7d3ff; }
+body.blue1 button.num:hover		{ background-color:#c7d3ffaa; }
+
+body.blue1 button.op               { background-color:#a0a9ff; }
+body.blue1 button.op:hover			{ background-color:#a0a9ffaa; }
+body.blue1 button.specop			{ background-color:#a0a9ff; }
+body.blue1 button.specop:hover		{ background-color:#a0a9ffaa; }
+
+body.blue1 button.func             { background-color:#b6c0ff; }
+body.blue1 button.func:hover       { background-color:#b6c0ffaa; }
+
+body.blue1 button.var              { background-color:#eefeff; }
+body.blue1 button.var:hover        { background-color:#eefeffaa; }
+
+body.blue1 button.meta				{ background-color:#DBE8FF; }
+body.blue1 button.meta:hover		{ background-color:#DBE8FFaa; }
+
+body.blue1 button.btn_important	    { background-color:#BFBBCE; }
+body.blue1 button.btn_important:hover	{ background-color:#BFBBCEaa; }

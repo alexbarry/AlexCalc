@@ -1,0 +1,30 @@
+body.blue-w-orange div.main { background-color: #e1d8cc; }
+
+body.blue-w-orange .output_txt_cls { background-color: #fffe; }
+
+body.blue-w-orange button.num				{ background-color:#d8d8df; }
+body.blue-w-orange button.num:hover		{ background-color:#d8d8dfaa; }
+
+body.blue-w-orange button.op               { background-color:#85e8ff6b; }
+body.blue-w-orange button.op:hover			{ background-color:#85e8ffff; }
+body.blue-w-orange button.specop			{ background-color:#85e8ff6b; }
+body.blue-w-orange button.specop:hover		{ background-color:#85e8ffff; }
+
+body.blue-w-orange button.func             { background-color:#85e8ff6b; }
+body.blue-w-orange button.func:hover       { background-color:#85e8ffff; }
+
+body.blue-w-orange button.var              { background-color:#85e8ff6b; }
+body.blue-w-orange button.var:hover        { background-color:#85e8ffff; }
+
+body.blue-w-orange button.meta				{
+	background-color:#0d49ff;
+	color:#fff;
+}
+body.blue-w-orange button.meta:hover		{ background-color:#0d49ffaa; }
+
+body.blue-w-orange button.btn_important {
+	background-color:#ff7039;
+}
+body.blue-w-orange button.btn_important:hover	{
+	background-color:#ff7039aa;
+}

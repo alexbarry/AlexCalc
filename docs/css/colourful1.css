@@ -1,0 +1,28 @@
+body.colourful1 div.main { background-color: #B8DFD2; }
+
+body.colourful1 .output_txt_cls { background-color: #fffe; }
+
+body.colourful1 button.num				{ background-color:#fffe; }
+body.colourful1 button.num:hover		{ background-color:#ffff; }
+
+body.colourful1 button.op               { background-color:#00009945; }
+body.colourful1 button.op:hover			{ background-color:#000099aa; }
+body.colourful1 button.specop			{ background-color:#00009945; }
+body.colourful1 button.specop:hover		{ background-color:#000099aa; }
+
+body.colourful1 button.func             { background-color:#3F823F75; }
+body.colourful1 button.func:hover       { background-color:#3F823Fbb; }
+
+body.colourful1 button.var              { background-color:#00909b69; }
+body.colourful1 button.var:hover        { background-color:#00909baa; }
+
+body.colourful1 button.meta				{ background-color:#ffd18c; }
+body.colourful1 button.meta:hover		{ background-color:#ffd18c88; }
+
+body.colourful1 button.btn_important	    { background-color:#FAA; }
+body.colourful1 button.btn_important:hover	{ background-color:#C88; }
+
+
+body.colourful1 button.func             { background-color:#3F823F75; }
+body.colourful1 button.func:hover       { background-color:#3F823Fbb; }
+

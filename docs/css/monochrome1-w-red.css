@@ -1,0 +1,32 @@
+body.monochrome1-w-red div.main { background-color: #e1e1e1; }
+
+body.monochrome1-w-red .output_txt_cls { background-color: #fffe; }
+
+body.monochrome1-w-red button.num				{ background-color:#d8d8df; }
+body.monochrome1-w-red button.num:hover		{ background-color:#d8d8dfaa; }
+
+body.monochrome1-w-red button.op               { background-color:#f0f0f0; }
+body.monochrome1-w-red button.op:hover			{ background-color:#f0f0f088; }
+body.monochrome1-w-red button.specop			{ background-color:#ccc; }
+body.monochrome1-w-red button.specop:hover		{ background-color:#ccc8; }
+
+body.monochrome1-w-red button.func             { background-color:#aaa8; }
+body.monochrome1-w-red button.func:hover       { background-color:#aaa8; }
+
+body.monochrome1-w-red button.var              { background-color:#aaa; }
+body.monochrome1-w-red button.var:hover        { background-color:#aaa8; }
+
+body.monochrome1-w-red button.meta				{
+	background-color:#666;
+	color:#fff;
+}
+body.monochrome1-w-red button.meta:hover		{ background-color:#4448; }
+
+body.monochrome1-w-red button.btn_important {
+	background-color:#a60000;
+	color:#fff;
+}
+body.monochrome1-w-red button.btn_important:hover	{
+	background-color:#a6000088;
+	color:#000;
+}

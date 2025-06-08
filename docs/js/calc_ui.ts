@@ -1,7 +1,10 @@
 //import {CalcUi, ui, set_on_tex_ready, calc_ui_unit_sel_set_visible, init_unit_sel, alexcalc_unit_referenced} from './calc_types.js';
 import {CalcUi, CalcUnitSel, CalcParams, InputTokenT, CalcData, CalcState, CalcOutput} from './calc_types.js';
+import { set_colour_adjuster_pane_visible } from './colour_sel_ui.js';
 
 declare const ui: CalcUi;
+
+const LOCAL_STORAGE_ID_THEME_SEL = "colour_theme_sel"
 
 export declare function set_on_tex_ready(callback: (raw_input: string, tex: string) => void): void;
 export declare function calc_ui_unit_sel_set_visible(unit_sel: CalcUnitSel, is_visible: boolean): void;
@@ -139,6 +142,16 @@ function ret_token_factory_w_alt(token: Token, token_alt: Token): (ui: CalcUi) =
 	}
 }
 
+function sqrt_btn_token_factory(): (ui: CalcUi) => Token {
+	return function (ui) {
+		if (!ui.state.alt_state) {
+			return ret_token_factory_w_inv(TOKEN_SQRT, TOKEN_POW_2)(ui);
+		} else {
+			return ret_token_factory_w_inv(TOKEN_CBRT, TOKEN_POW_3)(ui);
+		}
+	}
+}
+
 function var_token_factory(var_btn_num: number): (ui: CalcUi) => Token {
 	// TODO make this always point to some of the last used variables,
 	// defined in ui.state
@@ -184,7 +197,9 @@ const TOKEN_PAR_R    = { str : ")",             type : TokenType.PAREN_CLOSE };
 const TOKEN_NEG      = { str : "-",             type : TokenType.DIGIT };
 const TOKEN_DIV      = { str : "/",             type : TokenType.OP };
 const TOKEN_SQRT     = { str : "sqrt(",         type : TokenType.FUNC_CALL };
+const TOKEN_CBRT     = { str : "cbrt(",         type : TokenType.FUNC_CALL };
 const TOKEN_POW_2    = { str : "^2",            type : TokenType.OTHER };
+const TOKEN_POW_3    = { str : "^3",            type : TokenType.OTHER };
 const TOKEN_E        = { str : "e",             type : TokenType.VAR };
 const TOKEN_THETA    = { str : "theta",         type : TokenType.VAR };
 const TOKEN_7        = { str : "7",             type : TokenType.DIGIT };
@@ -234,7 +249,7 @@ BTN_ID_TO_GET_TOKEN_FUNC.set("btn_delim",  ret_token_factory(TOKEN_DELIM));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_unary_neg",  ret_token_factory(TOKEN_NEG));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_par_r",  ret_token_factory(TOKEN_PAR_R));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_div",    ret_token_factory(TOKEN_DIV));
-BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sqrt",   ret_token_factory_w_inv(TOKEN_SQRT, TOKEN_POW_2));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sqrt",   sqrt_btn_token_factory());
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_e",      ret_token_factory_w_alt(TOKEN_E, TOKEN_THETA));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_7",      ret_token_factory(TOKEN_7));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_8",      ret_token_factory(TOKEN_8));
@@ -331,13 +346,26 @@ function update_other_btns(ui: CalcUi) {
 	}
 
 	if (!ui.state.inv_state) {
+		if (!ui.state.alt_state) {
+			ui.btn_sqrt.innerHTML = "sqrt(";
+		} else {
+			ui.btn_sqrt.innerHTML = "cbrt(";
+		}
+	} else {
+		if (!ui.state.alt_state) {
+			ui.btn_sqrt.innerHTML = "x<sup>2</sup>";
+		} else {
+			ui.btn_sqrt.innerHTML = "x<sup>3</sup>";
+		}
+	}
+
+
+	if (!ui.state.inv_state) {
 		ui.btn_log.innerHTML  = "log<sub>10</sub>";
 		ui.btn_ln.innerHTML   = "ln";
-		ui.btn_sqrt.innerHTML = "sqrt(";
 	} else {
 		ui.btn_log.innerHTML  = "10<sup>x</sup>";
 		ui.btn_ln.innerHTML   = "e<sup>x</sup>";
-		ui.btn_sqrt.innerHTML = "x<sup>2</sup>";
 	}
 
 	if (!ui.state.polar_state) {
@@ -939,6 +967,15 @@ const SUPPORTED_THEMES = [
 	"light",
 	"dark",
 	"very_dark",
+	"blue-w-orange",
+	"colourful1",
+	"colourful-muted",
+	"blue1",
+	"blue2",
+	"monochrome1",
+	"monochrome1-w-red",
+	"dated-yet-pricey",
+	"custom-colours",
 ];
 
 function ary_includes(ary: string[], val: string): boolean {
@@ -950,12 +987,17 @@ function ary_includes(ary: string[], val: string): boolean {
 	return false;
 }
 
-function set_theme(ui: CalcUi, theme: string) {
+export function set_theme(ui: CalcUi, theme: string, is_init?: boolean) {
 	console.debug("Setting theme to ", theme);
 	if (!ary_includes(SUPPORTED_THEMES,theme)) {
 		console.error("unsupported theme", theme);
 		return;
 	}
+
+	if (!is_init && theme == "custom-colours") {
+		set_colour_adjuster_pane_visible(true);
+	}
+
 	document.body.classList.add(theme);
 	for (let old_theme of SUPPORTED_THEMES) {
 		if (old_theme != theme) {
@@ -968,7 +1010,7 @@ function set_theme(ui: CalcUi, theme: string) {
 		data_color_scheme_val = "light";
 	} else if (theme == "dark" || theme == "very_dark") {
 		data_color_scheme_val = "dark";
-	} else {
+	} else if (SUPPORTED_THEMES.indexOf(theme) === -1) {
 		console.warn("Unhandled color scheme", theme);
 	}
 
@@ -1027,25 +1069,33 @@ function init_ui_throws(ui: CalcUi) {
 	ui.checkbox_show_raw.checked = ui.state.show_raw_calc_io
 	ui.checkbox_show_raw.addEventListener('click', function (e: Event) { toggle_show_raw(ui) });
 
-	let darkMatch;
-	if (window.matchMedia) {
-		darkMatch = window.matchMedia("(prefers-color-scheme: dark)");
+	const stored_user_theme_sel = window.localStorage[LOCAL_STORAGE_ID_THEME_SEL];
+
+	if (stored_user_theme_sel) {
+		ui.selected_theme = stored_user_theme_sel;
+	} else {
+		let darkMatch;
+		if (window.matchMedia) {
+			darkMatch = window.matchMedia("(prefers-color-scheme: dark)");
+		}
+
+		if (darkMatch && darkMatch.matches) {
+			ui.selected_theme = "dark";
+		} else if (check_forced_dark_mode()) {
+			console.log("User has #force-dark-mode enabled, but not ('prefers-color-scheme: dark)!!!");
+			ui.selected_theme = "dark";
+		}
+		console.debug("OS default for dark mode is: ", ui.selected_theme);
 	}
 
-	if (darkMatch && darkMatch.matches) {
-		ui.selected_theme = "dark";
-	} else if (check_forced_dark_mode()) {
-		console.log("User has #force-dark-mode enabled, but not ('prefers-color-scheme: dark)!!!");
-		ui.selected_theme = "dark";
-	}
-
-	
-	console.debug("OS default for dark mode is: ", ui.selected_theme);
 	set_dark_mode_select(ui, ui.selected_theme);
-	set_theme(ui, ui.selected_theme);
+
+	set_theme(ui, ui.selected_theme, true);
 	ui.dark_mode_select.addEventListener('change', function (e: Event) {
 		const e_target = e.target as HTMLInputElement;
-		set_theme(ui, e_target.value);
+		const selected_theme = e_target.value;
+		window.localStorage[LOCAL_STORAGE_ID_THEME_SEL] = selected_theme;
+		set_theme(ui, selected_theme);
 	});
 
 	for (let info of ui_btn_handlers) {
