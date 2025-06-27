@@ -88,6 +88,7 @@ export interface CalcUi {
 
 	new_var_btns: { id: string; var_name: string }[];
 
+	btn_ncr_npr: HTMLElement;
 	btn_sin: HTMLElement;
 	btn_cos: HTMLElement;
 	btn_tan: HTMLElement;

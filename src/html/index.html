@@ -489,7 +489,7 @@
 			<button id="btn_clear"		class="btn btn_important" style="z-index: 1; width:195%">			clear</button>
 			<div class="btn unused"></div> <!-- spacer for btn_clear -->
 			<button id="btn_bksp"		class="btn btn_important">			bksp</button>
-			<div class="btn unused"></div>
+			<button id="btn_ncr_npr"	class="btn op">			<sup>n</sup>C<sub>r</sub></button>
 			<button id="btn_up"		class="btn meta"> &uarr; </button>
 			<div class="btn unused"></div>
 
@@ -1231,6 +1231,8 @@
 			btn_units:  document.getElementById("btn_units"),
 			btn_enter: document.getElementById("btn_enter"),
 
+			btn_ncr_npr:    document.getElementById("btn_ncr_npr"),
+
 			btn_sin:   document.getElementById("btn_sin"),
 			btn_cos:   document.getElementById("btn_cos"),
 			btn_tan:   document.getElementById("btn_tan"),
@@ -1248,6 +1250,8 @@
 			btn_unit_display_cancel: document.getElementById("btn_unit_display_cancel"),
 
 			normal_btns: [
+				document.getElementById("btn_ncr_npr"),
+
 				document.getElementById("btn_log"),
 				document.getElementById("btn_ln"),
 

@@ -22,6 +22,9 @@
 // static const char ANGLE_OP_SYMBOL[] = "angle";
 #define ANGLE_OP_SYMBOL "angle"
 
+#define OP_NCR_TOKEN "nCr"
+#define OP_NPR_TOKEN "nPr"
+
 bool str_starts_with(const std::string &str, const std::string &prefix) {
 	return str.size() >= prefix.size() &&
 	       str.substr(0,prefix.size()).compare(prefix) == 0;
@@ -168,6 +171,8 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 bool parse_unit(std::string *str_input, int *input_pos, std::vector<UnitInfoInput> *unit_out) {
 	static const std::regex unit_regex( "^"
 	                                    "\\s*"
+	                                    "(?!" OP_NCR_TOKEN ")"
+	                                    "(?!" OP_NPR_TOKEN ")"
 	                                    "(?:"
 	                                      "([a-zA-Z][a-zA-Z0-9]*)"
 	                                      "(?:\\^(-?[0-9]+))?"
@@ -326,7 +331,10 @@ bool parse_wip_valvar_token(std::string *str_input,
 // TODO share this with parse_unit
 // Note that the first group must be checked to see if it starts with ANGLE_OP_SYMBOL,
 // otherwise "angle" or "angle90" will be recognized as a unit
-#define UNIT_WIP_REGEX 	"^([a-zA-Z][a-zA-Z0-9]*)"     \
+#define UNIT_WIP_REGEX 	"^" \
+                         "(?!" OP_NCR_TOKEN ")" \
+                         "(?!" OP_NPR_TOKEN ")" \
+                         "([a-zA-Z][a-zA-Z0-9]*)"     \
 	                     "(\\^(-?[0-9]*))?" \
 	                     "\\s*"         \
                         
@@ -561,6 +569,8 @@ bool parse_op_str( std::string *str_input, int *input_pos, std::string * op_str 
 	                                      "("
 	                                         "[+-/*^]"
 	                                         "|" ANGLE_OP_SYMBOL // "\\b"
+	                                         "|" OP_NCR_TOKEN
+	                                         "|" OP_NPR_TOKEN
 	                                      ")" );
 	std::smatch result;
 
@@ -605,6 +615,8 @@ NodeOp * op_str_to_node( std::string   op_str,
 		else                          { return new NodeOp( OP_NEG ); }
 	} 
 	else if (/*op_str == "L" || */op_str == ANGLE_OP_SYMBOL) { return new NodeOp(OP_ANGLE); }
+	else if (op_str == OP_NCR_TOKEN) { return new NodeOp(OP_NCR); }
+	else if (op_str == OP_NPR_TOKEN) { return new NodeOp(OP_NPR); }
 	else {
 		std::string msg = "unexpected op_str ";
 		msg = msg + "'" + op_str + "'";

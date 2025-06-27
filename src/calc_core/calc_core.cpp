@@ -581,6 +581,76 @@ val_t neg_vals( std::vector<val_t> vals ) {
 
 }
 
+bool is_int(calc_float_t val) {
+	return std::floor(val) == val;
+}
+
+calc_float_t factorial(calc_float_t n) {
+ 	if (n < 0) {
+		throw InvalidInputException("Can not take factorial of negative number", 0);
+	}
+
+	if (!is_int(n)) {
+		throw InvalidInputException("Can not take factorial of non integer", 0);
+	}
+
+	// TODO 
+	long long result = 1;
+	for (int i=2; i<=n; i++) {
+		result *= i;
+	}
+
+	return result;
+}
+
+void validate_real_and_no_units(val_t val) {
+	if (val.im != 0) {
+		throw InvalidInputException("Can not take factorial of an imaginary number", 0);
+	}
+
+	if (units_non_zero(val.unit_dim)) {
+		throw InvalidInputException("Can not take factorial of a number with a unit", 0);
+	}
+}
+
+val_t factorial(val_t val) {
+	validate_real_and_no_units(val);
+
+	return { .re = factorial(val.re), .im = 0, .unit_dim = init_unit_dim() };
+}
+
+val_t ncr_vals(std::vector<val_t> vals) {
+	if (vals.size() != 2) {
+		throw InvalidArgCountException(OP_NCR, vals.size());
+	}
+
+
+	val_t val_n = vals[0];
+	val_t val_r = vals[1];
+
+	validate_real_and_no_units(val_n);
+	validate_real_and_no_units(val_r);
+
+	calc_float_t result = factorial(val_n.re) / ( factorial(val_r.re) * factorial(val_n.re - val_r.re) );
+	return { .re = result, .im = 0, .unit_dim = init_unit_dim() };
+
+}
+
+val_t npr_vals(std::vector<val_t> vals) {
+	if (vals.size() != 2) {
+		throw InvalidArgCountException(OP_NPR, vals.size());
+	}
+
+	val_t val_n = vals[0];
+	val_t val_r = vals[1];
+
+	validate_real_and_no_units(val_n);
+	validate_real_and_no_units(val_r);
+
+	calc_float_t result = factorial(val_n.re) / ( factorial(val_n.re - val_r.re) );
+	return { .re = result, .im = 0, .unit_dim = init_unit_dim() };
+}
+
 
 val_t builtin_get_real(val_t arg, bool degrees) {
 	(void)degrees;
@@ -645,6 +715,9 @@ precedence_t op_to_precedence( op_t op )
 
 		case OP_ANGLE: return PRECEDENCE_ANGLE;
 
+		case OP_NPR:
+		case OP_NCR: return PRECEDENCE_NPR_NCR;
+
 		default:
 			throw OpNotFoundException( op );
 	}
@@ -658,6 +731,11 @@ bool bracks_needed_if_eq_precedence(op_t op) {
 		case OP_NEG:
 		case OP_ANGLE:
 		case OP_POW: // TODO this one might need it because it's right associative?
+
+		// TODO not sure about these ones
+		case OP_NCR:
+		case OP_NPR:
+
 		case OP_NONE:
 			return false;
 
@@ -683,6 +761,8 @@ arg_count_t get_arg_count( op_t op, bool left ) {
 	case OP_DIV:
 	case OP_POW:
 	case OP_ANGLE:
+	case OP_NPR:
+	case OP_NCR:
 		return left ? 1 : 1;
 	case OP_NEG:
 		return left ? 0 : 1;
@@ -910,6 +990,8 @@ val_t NodeOp::eval(const CalcData *data)
 		case OP_NEG:  func = neg_vals;  break;
 		case OP_POW:  func = pow_vals;  break;
 		case OP_ANGLE:func = data->degree ? angle_op_func_degree : angle_op_func_rad; break;
+		case OP_NCR:  func = ncr_vals;  break;
+		case OP_NPR:  func = npr_vals;  break;
 	
 		default: throw OpNotFoundException( this->op );
 	}

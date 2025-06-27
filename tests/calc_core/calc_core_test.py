@@ -200,6 +200,17 @@ tests = [
 		( '1 h / 1 s', 60*60),
 		( '1 h / 1 hr', 1),
 		( '1 day / 1 h', 24),
+
+		( '4 nCr 2',  6 ),
+		( '5 nCr 2', 10 ),
+		( '5 nCr 3', 10 ),
+
+		( '4 nPr 2', 12 ),
+		( '5 nPr 2', 20 ),
+		( '5 nPr 3', 60 ),
+
+		# TODO why doesn't this work?
+		( '(3+1) nCr 2', 6 ),
 ]
 
 cursor = '\\text{[]}'
@@ -400,6 +411,14 @@ latex_tests = [
 	( '0.6',   1, r'\text{0}' + cursor + r'\text{.6}' ),
 	( '0.6',   2, r'\text{0.}' + cursor + r'\text{6}' ),
 	( '0.6',   3, r'\text{0.6}' + cursor),
+
+	# TODO remove the redundant brackets, this is only applicable for integers anyway
+	( '5 nCr 3', None, '{}^{5}C_{3}'),
+	( '5 nPr 3', None, '{}^{5}P_{3}'),
+	( '5 nPr 3', 0, r'{}^{' + cursor + r'\text{5}}P_{\text{3}}'),
+	( '5 nPr 3', 1, r'{}^{\text{5}' + cursor + r'}P_{\text{3}}'),
+	( '5 nPr 3', 6, r'{}^{\text{5}}P_{' + cursor + r'\text{3}}'),
+	( '5 nPr 3', 7, r'{}^{\text{5}}P_{\text{3}' + cursor + r'}'),
 
 ]
 

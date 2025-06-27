@@ -259,6 +259,14 @@ std::string op_node_to_latex(NodeOp *n, const struct calc_fmt_params &params, co
 			return output;
 			break;
 		}
+
+		case OP_NCR: {
+			//return std::string("\\binom{") + raw_node_to_latex(n->children.at(0), info) + "}{" + raw_node_to_latex(n->children.at(1), info) + "}";
+			return std::string("{}^{") + raw_node_to_latex(n->children.at(0), info) + "}C_{" + raw_node_to_latex(n->children.at(1), info) + "}";
+		}
+		case OP_NPR: {
+			return std::string("{}^{") + raw_node_to_latex(n->children.at(0), info) + "}P_{" + raw_node_to_latex(n->children.at(1), info) + "}";
+		}
 #if 0
 		case OP_STO:  return prefix + raw_node_to_latex(n->children.at(0)) + suffix + "\\rightarrow" +
 		                     "{" + raw_node_to_latex(n->children.at(1)) + "}";

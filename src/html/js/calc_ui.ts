@@ -20,6 +20,9 @@ interface Token {
 const ANGLE_OP_SYMBOL = "angle"
 const ENABLE_HYPERBOLIC_TRIG = false;
 
+const TOKEN_NCR_STR = ' nCr ';
+const TOKEN_NPR_STR = ' nPr ';
+
 function init_ui_state() {
 	return {
 		/** "inverse" button, switches buttons e.g sine to arcsine */
@@ -239,6 +242,9 @@ const TOKEN_ASINH    = { str : "asinh(",        type : TokenType.FUNC_CALL };
 const TOKEN_ACOSH    = { str : "acosh(",        type : TokenType.FUNC_CALL };
 const TOKEN_ATANH    = { str : "atanh(",        type : TokenType.FUNC_CALL };
 
+const TOKEN_NCR      = { str : TOKEN_NCR_STR,           type : TokenType.OP };
+const TOKEN_NPR      = { str : TOKEN_NPR_STR,           type : TokenType.OP };
+
 
 
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_log",    ret_token_factory_w_inv(TOKEN_LOG10, TOKEN_10_POW));
@@ -277,6 +283,8 @@ BTN_ID_TO_GET_TOKEN_FUNC.set("btn_exp",    ret_token_factory(TOKEN_EXP));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sin",    get_trig_token("sin"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_cos",    get_trig_token("cos"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_tan",    get_trig_token("tan"));
+
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_ncr_npr", ret_token_factory_w_alt(TOKEN_NCR, TOKEN_NPR));
 
 
 function debug_log(type: string, msg: string) {
@@ -340,9 +348,11 @@ function update_other_btns(ui: CalcUi) {
 	if (!ui.state.alt_state) {
 		ui.btn_img_unit.innerHTML = "i";
 		ui.btn_units.innerHTML = "units";
+		ui.btn_ncr_npr.innerHTML = "<sup>n</sup>C<sub>r</sub>";
 	} else {
 		ui.btn_img_unit.innerHTML = "angle";
 		ui.btn_units.innerHTML = "to units";
+		ui.btn_ncr_npr.innerHTML = "<sup>n</sup>P<sub>r</sub>";
 	}
 
 	if (!ui.state.inv_state) {
@@ -862,6 +872,8 @@ function token_is_bin_op(token: string) {
 		"^",
 		"->",
 		ANGLE_OP_SYMBOL,
+		TOKEN_NCR_STR,
+		TOKEN_NPR_STR,
 	];
 	for (let bin_op of bin_ops) {
 		if (bin_op == token) { return true; }

@@ -80,6 +80,7 @@ typedef std::int8_t precedence_t;
 #define PRECEDENCE_MULT_DIV     ( (precedence_t) 3 )
 #define PRECEDENCE_POW          ( (precedence_t) 4 )
 #define PRECEDENCE_ANGLE        ( (precedence_t) 5 )
+#define PRECEDENCE_NPR_NCR      ( (precedence_t) 6 ) /* TODO not sure... */
 
 typedef val_t (*eval_func_t)(std::vector<val_t> vals);
 
@@ -92,6 +93,9 @@ typedef enum {
 	OP_NEG,
 	OP_POW,
 	OP_ANGLE,
+
+	OP_NCR,
+	OP_NPR,
 } op_t;
 
 
