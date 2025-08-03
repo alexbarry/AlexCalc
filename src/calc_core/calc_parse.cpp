@@ -921,6 +921,23 @@ bool collapse( std::list<Node*> *node_list ) {
 	} 
 }
 
+bool starts_with_ambiguous_op(const std::string &str_input) {
+	static const std::regex sto_regex( "^"
+	                                   "\\s*"
+	                                   "(:?"
+	                                   OP_NCR_TOKEN
+	                                   "|" OP_NPR_TOKEN
+	                                   ")"
+	                                   );
+	std::smatch result;
+
+	bool found = std::regex_search(str_input,
+	                               result,
+	                               sto_regex );
+
+	return found;
+}
+
 void calc_parse_throws(std::list<Node*> *node_list,
                        std::string str_input,
                        int *input_pos,
@@ -974,15 +991,17 @@ void calc_parse_throws(std::list<Node*> *node_list,
 			any_found = true;
 		}
 
-		Node *non_op_node;
-		bool found_non_op = parse_non_op( &str_input, input_pos, &non_op_node, info_out, params );
-
-		if( found_non_op ) {
-			//std::cout << "found val \"" << val << "\", ";
-			//std::cout << "rest of str: \"" << str_input << "\"" << std::endl;
-
-			node_list->push_back(non_op_node);
-			any_found = true;
+		if (!starts_with_ambiguous_op(str_input)) {
+			Node *non_op_node;
+			bool found_non_op = parse_non_op( &str_input, input_pos, &non_op_node, info_out, params );
+	
+			if( found_non_op ) {
+				//std::cout << "found val \"" << val << "\", ";
+				//std::cout << "rest of str: \"" << str_input << "\"" << std::endl;
+	
+				node_list->push_back(non_op_node);
+				any_found = true;
+			}
 		}
 
 		std::string op_str;
