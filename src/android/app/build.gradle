@@ -9,7 +9,7 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 */
 
 android {
-    compileSdkVersion 34
+    compileSdkVersion 36
 	// I am not impressed that at first, Android Studio dumped the passwords here in
 	// plaintext.
 
@@ -29,7 +29,7 @@ android {
     defaultConfig {
         applicationId "net.alexbarry.calc_android"
         minSdkVersion 23
-        targetSdkVersion 34
+        targetSdkVersion 36
         versionCode 11
         versionName "1.0.7"
 
