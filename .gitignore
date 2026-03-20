@@ -4,3 +4,5 @@ obj/
 cscope.out
 log/
 *.pyc
+
+.DS_Store
