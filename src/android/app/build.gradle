@@ -24,7 +24,7 @@ android {
         }
     }
 */
-    ndkVersion '21.2.6472646'
+    ndkVersion "29.0.14033849"
 
     defaultConfig {
         applicationId "net.alexbarry.calc_android"
