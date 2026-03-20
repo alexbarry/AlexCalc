@@ -38,6 +38,10 @@ public class CalcOutputDisplayHelper {
         evaluateJavascript("clear_wip_tex();");
     }
 
+    public void checkMathjax() {
+        evaluateJavascript("check_mathjax();");
+    }
+
     public void clearOutputDisplay() {
         evaluateJavascript("clear_output_display();");
         clearWipDisplay();
