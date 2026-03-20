@@ -37,6 +37,7 @@
 </div>
 <p id="input_wip_display"></p>
 <script>
+    console.log("js_display.html first script tag starting, setting MathJax config...");
         window.MathJax = {
             chtml: {
                 displayAlign: 'left',
@@ -46,9 +47,11 @@
                 fontCache: 'global',
             }
         };
+    console.log("js_display.html first script tag finishing, loading MathJax lib");
 </script>
 <script id="MathJax-script" src="node_modules/mathjax/es5/tex-chtml-full.js"></script>
 <script>
+    console.log("js_display.html second script tag starting...");
 
         function generate_latex_node(tex) {
             var options = {
@@ -225,6 +228,7 @@
                 elem.classList.add(css_class);
             }
         }
+    console.log("js_display.html second script tag done.");
 </script>
 </body>
 </html>
