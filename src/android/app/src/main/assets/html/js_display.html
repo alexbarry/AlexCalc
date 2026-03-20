@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <!--<script id="MathJax-script" async src="node_modules/mathjax/es5/tex-svg-full.js"></script>-->
     <script src="node_modules/@babel/polyfill/dist/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="node_modules/mathjax/es5/tex-chtml-full.js"></script>
     <style>
         h1 {
             text-align:center;
@@ -47,6 +46,9 @@
                 fontCache: 'global',
             }
         };
+</script>
+<script id="MathJax-script" src="node_modules/mathjax/es5/tex-chtml-full.js"></script>
+<script>
 
         function generate_latex_node(tex) {
             var options = {
