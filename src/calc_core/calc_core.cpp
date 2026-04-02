@@ -1545,6 +1545,19 @@ enum MiscOutputFormat to_units_indicate_other_format(std::vector<UnitInfoInput> 
 	return NORMAL;
 }
 
+std::vector<UnitInfoInput> base_units_to_unit_info_input(unit_dim_t unit_dim) {
+	std::vector<UnitInfoInput> units;
+
+	if (unit_dim.m   != 0) { units.push_back(UnitInfoInput("m",   unit_dim.m  )); }
+	if (unit_dim.s   != 0) { units.push_back(UnitInfoInput("s",   unit_dim.s  )); }
+	if (unit_dim.kg  != 0) { units.push_back(UnitInfoInput("kg",  unit_dim.kg )); }
+	if (unit_dim.A   != 0) { units.push_back(UnitInfoInput("A",   unit_dim.A  )); }
+	if (unit_dim.K   != 0) { units.push_back(UnitInfoInput("K",   unit_dim.K  )); }
+	if (unit_dim.mol != 0) { units.push_back(UnitInfoInput("mol", unit_dim.mol)); }
+	if (unit_dim.cd  != 0) { units.push_back(UnitInfoInput("cd",  unit_dim.cd )); }
+
+	return units;
+}
 
 OutputInfo InputInfo::eval(CalcData *calcData) {
 	OutputInfo output;
@@ -1588,6 +1601,36 @@ OutputInfo InputInfo::eval(CalcData *calcData) {
 		output.desired_base = desired_base;
 	} else if (misc_output_format != NORMAL) {
 		output.misc_output_format = misc_output_format;
+	} else {
+		// For the case where output units are not specified, and
+		// the unit contains both Amps and kg^N, divide by Volts^N to
+		// avoid showing kg units in output
+		// https://github.com/alexbarry/AlexCalc/issues/47
+		if (output.val.unit_dim.A != 0 && output.val.unit_dim.kg != 0) {
+			unit_dim_t unit_dim = output.val.unit_dim;
+
+			unit_dim_t unit_volt = {
+				.s  = -3,
+				.m  = 2,
+				.kg = 1,
+				.A  = -1,
+
+				.K = 0,
+				.mol = 0,
+				.cd = 0,
+			};
+
+			int kg_ord = unit_dim.kg;
+			unit_dim = mult_units_dim(unit_dim, pow_unit_dim(unit_volt, -kg_ord));
+			std::vector<UnitInfoInput> to_unit = base_units_to_unit_info_input(unit_dim);
+
+			// to_unit.push_back(UnitInfoInput("V", kg_ord));
+			to_unit.insert(to_unit.begin(), UnitInfoInput("V", kg_ord));
+
+			output.output_unit_str = to_unit;
+			unit_t unit = eval_units(calcData, this->to_unit);
+			output.unit = unit;
+		}
 	}
 
 	return output;
