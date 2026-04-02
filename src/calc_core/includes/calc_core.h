@@ -271,6 +271,8 @@ class OutputInfo {
 	public:
 	val_t val;
 	unit_t unit;
+	int desired_base = 0;
+	enum MiscOutputFormat misc_output_format = NORMAL;
 	std::vector<UnitInfoInputAry> units_in_input;
 	std::vector<UnitInfoInput> output_unit_str;
 	std::string to_string(void) const;

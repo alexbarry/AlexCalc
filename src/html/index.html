@@ -142,6 +142,15 @@
 		/* prevent double tap of a button from zooming on iOS */
 		touch-action: manipulation;
 	}
+
+	.btn_layered {
+		width: 100%;
+		height: 100%;
+	}
+
+	.btn_stack {
+		margin: 2px;
+	}
 	
 
 	.input_txt_cls {
@@ -489,7 +498,7 @@
 			<button id="btn_clear"		class="btn btn_important" style="z-index: 1; width:195%">			clear</button>
 			<div class="btn unused"></div> <!-- spacer for btn_clear -->
 			<button id="btn_bksp"		class="btn btn_important">			bksp</button>
-			<div class="btn unused"></div>
+			<button id="btn_hex_oct_bin" class="btn num">			hex</button>
 			<button id="btn_up"		class="btn meta"> &uarr; </button>
 			<div class="btn unused"></div>
 
@@ -503,19 +512,45 @@
 
 			<!-- row 2 -->
 			<button id="btn_alt"		class="btn meta">			alt		</button>
-			<button id="btn_log"		class="btn func">			\(\log_{10}\) </button>
-			<button id="btn_sin"		class="btn func">			\(\sin\)		</button>
-			<button id="btn_cos"		class="btn func">			\(\cos\)	    </button>
-			<button id="btn_tan"		class="btn func">			\(\tan\)     </button>
-			<button id="btn_pow"		class="btn op">				^		</button>
+			<!-- TODO these are not quite aligned with the others... -->
+			<div class="btn_stack">
+				<button id="btn_log"		class="btn func btn_layered">			\(\log_{10}\) </button>
+				<button id="btn_hex_a"      class="btn num  btn_layered" style="display:none">     A</button>
+			</div>
+			<div class="btn_stack">
+			<button id="btn_sin"		class="btn func btn_layered">			\(\sin\)		</button>
+			<button id="btn_hex_b"		class="btn num btn_layered" style="display:none">			B		</button>
+			</div>
+			<div class="btn_stack">
+				<button id="btn_cos"		class="btn func btn_layered">			\(\cos\)	    </button>
+				<button id="btn_hex_c"		class="btn num btn_layered" style="display:none">			C	    </button>
+			</div>
+			<div class="btn_stack">
+				<button id="btn_tan"		class="btn func btn_layered">			\(\tan\)     </button>
+				<button id="btn_hex_d"		class="btn num btn_layered" style="display:none">			D     </button>
+			</div>
+
+			<div class="btn_stack">
+				<button id="btn_pow"		class="btn op btn_layered">				^		</button>
+				<button id="btn_out_bin"	class="btn num btn_layered" style="display:none"> bin </button>
+			</div>
 
 			<!-- row 3 -->
 			<button id="btn_vars"		class="btn var">			var   	</button>
-			<button id="btn_ln"		    class="btn func">			\(\ln\) </button>
-			<button id="btn_sqrt"		class="btn func">			\(\sqrt{\,\,\,}\)	</button>
+			<div class="btn_stack">
+				<button id="btn_ln"		    class="btn func btn_layered">\(\ln\) </button>
+				<button id="btn_hex_e"		    class="btn num btn_layered" style="display:none">			E </button>
+			</div>
+			<div class="btn_stack">
+				<button id="btn_sqrt"		class="btn func btn_layered">			\(\sqrt{\,\,\,}\)	</button>
+				<button id="btn_hex_f"		class="btn num btn_layered" style="display:none">			F	</button>
+			</div>
 			<button id="btn_par_l"		class="btn specop">			(		</button>
 			<button id="btn_par_r"		class="btn specop">			)		</button>
-			<button id="btn_div"		class="btn op">				&#247;	</button>
+			<div class="btn_stack">
+				<button id="btn_div"		class="btn op btn_layered">				&#247;	</button>
+				<button id="btn_out_oct"	class="btn num btn_layered" style="display:none">	oct     </button>
+			</div>
 
 			<!-- row 4 -->
 			<button id="btn_units"		class="btn var">			units	</button>
@@ -523,7 +558,10 @@
 			<button id="btn_7"			class="btn num">			7		</button>
 			<button id="btn_8"			class="btn num">			8		</button>
 			<button id="btn_9"			class="btn num">			9		</button>
-			<button id="btn_mult"		class="btn op">				&#215;	</button>
+			<div class="btn_stack">
+				<button id="btn_mult"		class="btn op btn_layered">				&#215;	</button>
+				<button id="btn_out_hex"	class="btn num btn_layered" style="display:none"> hex</button>
+			</div>
 
 			<!-- row 5 -->
 			<button id="btn_var1"		class="btn var">			\(x\)	</button>
@@ -531,7 +569,10 @@
 			<button id="btn_4"			class="btn num">			4		</button>
 			<button id="btn_5"			class="btn num">			5		</button>
 			<button id="btn_6"			class="btn num">			6		</button>
-			<button id="btn_sub"		class="btn op">				-		</button>
+			<div class="btn_stack">
+				<button id="btn_sub"		class="btn op btn_layered">				-		</button>
+				<button id="btn_out_f32_bits" class="btn num btn_layered" style="display:none">f32 bits</button>
+			</div>
 
 			<!-- row 6 -->
 			<!--
@@ -1247,6 +1288,32 @@
 			btn_var_display_cancel: document.getElementById("btn_var_display_cancel"),
 			btn_unit_display_cancel: document.getElementById("btn_unit_display_cancel"),
 
+			btn_hex_oct_bin: document.getElementById("btn_hex_oct_bin"),
+			btn_hex_a: document.getElementById("btn_hex_a"),
+			btn_hex_b: document.getElementById("btn_hex_b"),
+			btn_hex_c: document.getElementById("btn_hex_c"),
+			btn_hex_d: document.getElementById("btn_hex_d"),
+			btn_hex_e: document.getElementById("btn_hex_e"),
+			btn_hex_f: document.getElementById("btn_hex_f"),
+
+			btn_stack_non_hex_oct_bin: [
+				document.getElementById("btn_log"),
+				document.getElementById("btn_sin"),
+				document.getElementById("btn_cos"),
+				document.getElementById("btn_tan"),
+				document.getElementById("btn_ln"),
+				document.getElementById("btn_sqrt"),
+			],
+
+			btn_stack_hex_oct_bin: [
+				document.getElementById("btn_hex_a"),
+				document.getElementById("btn_hex_b"),
+				document.getElementById("btn_hex_c"),
+				document.getElementById("btn_hex_d"),
+				document.getElementById("btn_hex_e"),
+				document.getElementById("btn_hex_f"),
+			],
+
 			normal_btns: [
 				document.getElementById("btn_log"),
 				document.getElementById("btn_ln"),
@@ -1289,6 +1356,51 @@
 				document.getElementById("btn_unary_neg"),
 				document.getElementById("btn_decimal"),
 				document.getElementById("btn_exp"),
+
+				document.getElementById("btn_hex_a"),
+				document.getElementById("btn_hex_b"),
+				document.getElementById("btn_hex_c"),
+				document.getElementById("btn_hex_d"),
+				document.getElementById("btn_hex_e"),
+				document.getElementById("btn_hex_f"),
+
+				document.getElementById("btn_out_bin"),
+				document.getElementById("btn_out_oct"),
+				document.getElementById("btn_out_hex"),
+				document.getElementById("btn_out_f32_bits"),
+			],
+
+			num_btns: [
+				{ num:  0, elem: document.getElementById("btn_0") },
+				{ num:  1, elem: document.getElementById("btn_1") },
+				{ num:  2, elem: document.getElementById("btn_2") },
+				{ num:  3, elem: document.getElementById("btn_3") },
+				{ num:  4, elem: document.getElementById("btn_4") },
+				{ num:  5, elem: document.getElementById("btn_5") },
+				{ num:  6, elem: document.getElementById("btn_6") },
+				{ num:  7, elem: document.getElementById("btn_7") },
+				{ num:  8, elem: document.getElementById("btn_8") },
+				{ num:  9, elem: document.getElementById("btn_9") },
+				{ num: 10, elem: document.getElementById("btn_hex_a") },
+				{ num: 11, elem: document.getElementById("btn_hex_b") },
+				{ num: 12, elem: document.getElementById("btn_hex_c") },
+				{ num: 13, elem: document.getElementById("btn_hex_d") },
+				{ num: 14, elem: document.getElementById("btn_hex_e") },
+				{ num: 15, elem: document.getElementById("btn_hex_f") },
+			],
+
+			non_base_output_btns: [
+				document.getElementById("btn_pow"),
+				document.getElementById("btn_div"),
+				document.getElementById("btn_mult"),
+				document.getElementById("btn_sub"),
+			],
+
+			base_output_btns: [
+				document.getElementById("btn_out_bin"),
+				document.getElementById("btn_out_oct"),
+				document.getElementById("btn_out_hex"),
+				document.getElementById("btn_out_f32_bits"),
 			],
 
 			new_var_btns: [

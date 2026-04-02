@@ -98,6 +98,8 @@ void write_val_to_json_str(char *str_output, int str_output_len,
 	if (output_info != nullptr) {
 		desired_units = &output_info->output_unit_str;
 	}
+	params.desired_base = output_info->desired_base;
+	params.misc_output_format = output_info->misc_output_format;
 	std::string nice_str = val_to_latex(&val, params, calcData, desired_units, &output_info->unit);
 
 	std::string re_str = calc_float_to_json_str(val.re, decimal_places);

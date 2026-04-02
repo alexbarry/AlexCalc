@@ -59,12 +59,19 @@ enum exp_format {
 	EXP_FMT_ENG,
 };
 
+enum MiscOutputFormat {
+	NORMAL,
+	F32_BITS,
+};
+
 struct calc_fmt_params {
 	enum exp_format exp_format;
 	/* if true, always show `max_decimal_places`.
 	 * if false, only show now zero decimal places, up to `max_decimal_places` */
 	bool            fixed_decimal_places;
 	int             max_decimal_places;
+	int             desired_base;
+	enum MiscOutputFormat misc_output_format;
 };
 
 typedef std::int8_t precedence_t;

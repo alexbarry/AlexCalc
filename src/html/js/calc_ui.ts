@@ -1,5 +1,5 @@
 //import {CalcUi, ui, set_on_tex_ready, calc_ui_unit_sel_set_visible, init_unit_sel, alexcalc_unit_referenced} from './calc_types.js';
-import {CalcUi, CalcUnitSel, CalcParams, InputTokenT, CalcData, CalcState, CalcOutput} from './calc_types.js';
+import {CalcUi, InputNumberBase, CalcUnitSel, CalcParams, InputTokenT, CalcData, CalcState, CalcOutput} from './calc_types.js';
 import { set_colour_adjuster_pane_visible } from './colour_sel_ui.js';
 
 declare const ui: CalcUi;
@@ -77,6 +77,9 @@ function init_ui_state() {
 
          show_raw_calc_io: false,
          show_about_popup: false,
+
+		
+		hex_oct_bin_num_format: InputNumberBase.DECIMAL
 	};
 }
 
@@ -239,6 +242,18 @@ const TOKEN_ASINH    = { str : "asinh(",        type : TokenType.FUNC_CALL };
 const TOKEN_ACOSH    = { str : "acosh(",        type : TokenType.FUNC_CALL };
 const TOKEN_ATANH    = { str : "atanh(",        type : TokenType.FUNC_CALL };
 
+const TOKEN_HEX_A    = { str : "A",             type : TokenType.DIGIT };
+const TOKEN_HEX_B    = { str : "B",             type : TokenType.DIGIT };
+const TOKEN_HEX_C    = { str : "C",             type : TokenType.DIGIT };
+const TOKEN_HEX_D    = { str : "D",             type : TokenType.DIGIT };
+const TOKEN_HEX_E    = { str : "E",             type : TokenType.DIGIT };
+const TOKEN_HEX_F    = { str : "F",             type : TokenType.DIGIT };
+
+const TOKEN_OUT_BIN  = { str : "bin",           type : TokenType.OTHER };
+const TOKEN_OUT_OCT  = { str : "oct",           type : TokenType.OTHER };
+const TOKEN_OUT_HEX  = { str : "hex",           type : TokenType.OTHER };
+const TOKEN_OUT_F32_BITS = { str : "f32bits",       type : TokenType.OTHER };
+
 
 
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_log",    ret_token_factory_w_inv(TOKEN_LOG10, TOKEN_10_POW));
@@ -274,9 +289,21 @@ BTN_ID_TO_GET_TOKEN_FUNC.set("btn_0",      ret_token_factory(TOKEN_0));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_decimal",ret_token_factory(TOKEN_DECIMAL));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_exp",    ret_token_factory(TOKEN_EXP));
 
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_hex_a",  ret_token_factory(TOKEN_HEX_A));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_hex_b",  ret_token_factory(TOKEN_HEX_B));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_hex_c",  ret_token_factory(TOKEN_HEX_C));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_hex_d",  ret_token_factory(TOKEN_HEX_D));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_hex_e",  ret_token_factory(TOKEN_HEX_E));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_hex_f",  ret_token_factory(TOKEN_HEX_F));
+
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_sin",    get_trig_token("sin"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_cos",    get_trig_token("cos"));
 BTN_ID_TO_GET_TOKEN_FUNC.set("btn_tan",    get_trig_token("tan"));
+
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_out_bin", ret_token_factory(TOKEN_OUT_BIN));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_out_oct", ret_token_factory(TOKEN_OUT_OCT));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_out_hex", ret_token_factory(TOKEN_OUT_HEX));
+BTN_ID_TO_GET_TOKEN_FUNC.set("btn_out_f32_bits", ret_token_factory(TOKEN_OUT_F32_BITS));
 
 
 function debug_log(type: string, msg: string) {
@@ -298,11 +325,33 @@ function handle_btn_toggle_alt(ui: CalcUi) {
 	update_btns(ui);
 }
 
+function set_base_output_btns_visible(ui: CalcUi, base_output_btns_visible: boolean) {
+	for (const btn of ui.non_base_output_btns) {
+		btn.style.display = base_output_btns_visible ? "none" : "";
+	}
+	for (const btn of ui.base_output_btns) {
+		btn.style.display = base_output_btns_visible ? "" : "none";
+	}
+
+	// TODO This is super ugly
+	ui.btn_hex_oct_bin.disabled = base_output_btns_visible;
+}
+
 function update_btns(ui: CalcUi) {
 	update_trig_btns(ui);
 	update_arrow_btns(ui);
 	update_other_btns(ui);
 	update_var_btns(ui);
+
+	update_btn_layers(ui);
+	enable_digits_for_base(ui);
+
+	const next_base_fmt = get_next_hex_oct_bin_num_format(ui.state.hex_oct_bin_num_format);
+	ui.btn_hex_oct_bin.innerText = hex_oct_bin_num_format_to_btn_text(next_base_fmt);
+
+	// TODO only do this if the cursor is at the end too?
+	const base_output_btns_visible = (ui.state.input_tokens.length > 0 && last_elem(ui.state.input_tokens).str == " to "); // TODO refactor out the " to ", at least...
+	set_base_output_btns_visible(ui, base_output_btns_visible);
 }
 
 function update_arrow_btns(ui: CalcUi) {
@@ -503,6 +552,9 @@ function btn_token_pressed(ui: CalcUi, token: Token, needs_mult?: boolean) {
 	update_input_textarea(ui);
 	ui.state.alt_state = false;
 	ui.state.inv_state = false;
+	if (token.type != TokenType.DIGIT) {
+		ui.state.hex_oct_bin_num_format = InputNumberBase.DECIMAL;
+	}
 	update_btns(ui);
 }
 
@@ -875,7 +927,7 @@ function ans_token() {
 
 function token_is_num(token: null|string) {
 	if (token == null || token.length == 0) { return false; }
-	return /^(\*)?[0-9E]$/.test(token);
+	return /^(\*)?[0-9A-Fa-f]$/.test(token);
 }
 
 function token_is_var(token: null|string) {
@@ -924,6 +976,7 @@ function check_if_token_needs_mult_between(prev_token: string, new_token: string
 		return false;
 	}
 
+	// TODO now that TokenType is specified, should use that over is_num regex
 	if (token_is_num(prev_token) && token_is_num(new_token)) {
 		console.debug("both tokens are digits, adding mult symbol");
 		return false;
@@ -1048,6 +1101,83 @@ function check_forced_dark_mode() {
 	return getComputedStyle(elem).backgroundColor != 'rgb(255, 255, 255)';
 }
 
+function number_valid_in_base(num: number, num_fmt: InputNumberBase): boolean {
+	switch (num_fmt) {
+		case InputNumberBase.BIN:     return num < 2;
+		case InputNumberBase.OCT:     return num < 8;
+		case InputNumberBase.DECIMAL: return num < 10;
+		case InputNumberBase.HEX:     return num < 16;
+	}
+}
+
+function update_btn_layers(ui: CalcUi) {
+	let show_hex_btns = (ui.state.hex_oct_bin_num_format == InputNumberBase.HEX);
+	for (const btn of ui.btn_stack_non_hex_oct_bin) {
+		btn.style.display = show_hex_btns ? "none" : "";
+	}
+	for (const btn of ui.btn_stack_hex_oct_bin) {
+		btn.style.display = show_hex_btns ? "" : "none";
+	}
+}
+
+function enable_digits_for_base(ui: CalcUi) {
+	for (const btn_info of ui.num_btns) {
+		const enable_btn = number_valid_in_base(btn_info.num, ui.state.hex_oct_bin_num_format);
+		btn_info.elem.disabled = !enable_btn;
+	}
+}
+
+function get_next_hex_oct_bin_num_format(num_fmt: InputNumberBase): InputNumberBase {
+	switch (num_fmt) {
+		case InputNumberBase.DECIMAL: return InputNumberBase.HEX;
+		case InputNumberBase.HEX:     return InputNumberBase.OCT;
+		case InputNumberBase.OCT:     return InputNumberBase.BIN;
+		case InputNumberBase.BIN:     return InputNumberBase.DECIMAL;
+	}
+}
+
+function hex_oct_bin_num_format_to_btn_text(num_fmt: InputNumberBase): string {
+	switch (num_fmt) {
+		case InputNumberBase.DECIMAL: return "dec";
+		case InputNumberBase.HEX:     return "hex";
+		case InputNumberBase.OCT:     return "oct";
+		case InputNumberBase.BIN:     return "bin";
+	}
+}
+
+function is_base_prefix(input_token: InputTokenT): boolean {
+	return (input_token.str == "0b" || 
+	        input_token.str == "0o" || 
+	        input_token.str == "0x")
+}
+
+function get_base_prefix_token(num_fmt: InputNumberBase): InputTokenT | undefined {
+	switch (num_fmt) {
+		case InputNumberBase.BIN:     return InputToken("0b");
+		case InputNumberBase.OCT:     return InputToken("0o");
+		case InputNumberBase.DECIMAL: return undefined
+		case InputNumberBase.HEX:     return InputToken("0x");
+	}
+}
+
+function handle_hex_oct_bin_cycle(ui: CalcUi) {
+	ui.state.hex_oct_bin_num_format = get_next_hex_oct_bin_num_format(ui.state.hex_oct_bin_num_format);
+
+	if (ui.state.input_tokens.length > 0 && is_base_prefix(last_elem(ui.state.input_tokens))) {
+		ui.state.input_tokens.pop();
+		ui.state.cursor_idx--;
+	}
+	const base_prefix_token = get_base_prefix_token(ui.state.hex_oct_bin_num_format);
+	if (base_prefix_token) {
+		ui.state.input_tokens.push(base_prefix_token);
+		ui.state.cursor_idx++;
+	}
+
+	ui.show_input_wip_display = true;
+	update_input_textarea(ui);
+	update_btns(ui);
+}
+
 function init_ui_throws(ui: CalcUi) {
 	console.debug("Initializing Calc UI");
 	ui.state = init_ui_state();
@@ -1064,6 +1194,7 @@ function init_ui_throws(ui: CalcUi) {
 		{ btn: ui.btn_enter,   handler: function (e: Event) { handle_user_enter(ui); } },
 		{ btn: ui.btn_polar_toggle,  handler: function (e: Event) { handle_polar_toggle(ui); } },
 		{ btn: ui.btn_degree_toggle, handler: function (e: Event) { handle_degree_toggle(ui); } },
+		{ btn: ui.btn_hex_oct_bin, handler: function (e: Event) { handle_hex_oct_bin_cycle(ui); } },
 	];
 
 	ui.checkbox_show_raw.checked = ui.state.show_raw_calc_io

@@ -839,6 +839,29 @@ val_t NodeValue::eval(const CalcData *data) {
 	return val;
 }
 
+static bool handle_hex_bin_oct_prefix(const std::string& val_str, calc_float_t *val_out) {
+	std::cout << "handle_hex_bin_oct_prefix called with \"" << val_str << "\"" << std::endl;
+	int prefix_len = 2;
+	if (val_str.rfind("0x", 0) == 0) {
+		std::cout << "found hex prefix" << std::endl;
+		std::string base_str = val_str.substr(prefix_len, val_str.size() - prefix_len);
+		*val_out = std::stoul(base_str, nullptr, 16);
+		return true;
+	} else if (val_str.rfind("0o", 0) == 0) {
+		std::cout << "found oct prefix" << std::endl;
+		std::string base_str = val_str.substr(prefix_len, val_str.size() - prefix_len);
+		*val_out = std::stoul(base_str, nullptr, 8);
+		return true;
+	} else if (val_str.rfind("0b", 0) == 0) {
+		std::cout << "found bin prefix" << std::endl;
+		std::string base_str = val_str.substr(prefix_len, val_str.size() - prefix_len);
+		*val_out = std::stoul(base_str, nullptr, 2);
+		return true;
+	} else {
+		return false;
+	}
+}
+
 #warning TODO why was anyone else calling this besides NodeValue::eval???
 // I think that my original intention was for this to return a unitless
 // value... but I was calling it in node_to_latex for some reason.
@@ -846,7 +869,12 @@ val_t NodeValueRect::get_val(const CalcData *calcData, bool degrees) const {
 	(void)degrees;
 	val_t val;
 	unit_t unit = eval_units(calcData, this->input_units);
-	calc_float_t mag = std::atof(this->val_str.c_str());
+	calc_float_t mag;
+	if (handle_hex_bin_oct_prefix(this->val_str, &mag)) {
+		// mag set by handle_hex_bin_oct_prefix
+	} else {
+		mag = std::atof(this->val_str.c_str());
+	}
 	mag *= unit.mag;
 	if (!this->is_imag) {
 		val.re = mag;
@@ -1186,6 +1214,8 @@ struct calc_fmt_params get_default_params(void) {
 		.exp_format         = EXP_FMT_NORMAL,
 		.fixed_decimal_places = false,
 		.max_decimal_places = MAX_DECIMAL_PLACES,
+		.desired_base       = 0,
+		.misc_output_format = NORMAL,
 	};
 }
 
@@ -1477,15 +1507,59 @@ std::string UnitInfoInputAry::to_string(void) const {
 	return output;
 }
 
+int to_units_indicate_base(std::vector<UnitInfoInput> to_unit) {
+	if (to_unit.size() != 1) {
+		return 0;
+	}
+
+	if (to_unit[0].pow != 1) {
+		return 0;
+	}
+
+	if (to_unit[0].base == "dec") {
+		return 10;
+	} else if (to_unit[0].base == "hex") {
+		return 16;
+	} else if (to_unit[0].base == "oct") {
+		return 8;
+	} else if (to_unit[0].base == "bin") {
+		return 2;
+	} else {
+		return 0;
+	}
+}
+
+enum MiscOutputFormat to_units_indicate_other_format(std::vector<UnitInfoInput> to_unit) {
+	if (to_unit.size() != 1) {
+		return NORMAL;
+	}
+
+	if (to_unit[0].pow != 1) {
+		return NORMAL;
+	}
+
+	if (to_unit[0].base == "f32bits") {
+		return F32_BITS;
+	}
+
+	return NORMAL;
+}
+
 
 OutputInfo InputInfo::eval(CalcData *calcData) {
 	OutputInfo output;
 	output.val = this->n->eval(calcData);
 	get_all_input_units(this->n, &output.units_in_input);
+	int desired_base = 0;
+	enum MiscOutputFormat misc_output_format = NORMAL;
 	if (this->has_to_unit) {
-		UnitInfoInputAry to_unit_obj;
-		to_unit_obj.units = this->to_unit;
-		output.units_in_input.push_back(to_unit_obj);
+		desired_base = to_units_indicate_base(this->to_unit);
+		misc_output_format = to_units_indicate_other_format(this->to_unit);
+		if (desired_base == 0 && misc_output_format == NORMAL) {
+			UnitInfoInputAry to_unit_obj;
+			to_unit_obj.units = this->to_unit;
+			output.units_in_input.push_back(to_unit_obj);
+		}
 	}
 
 	calcData->set_var(VAR_NAME_ANS, output.val);
@@ -1499,7 +1573,7 @@ OutputInfo InputInfo::eval(CalcData *calcData) {
 		calcData->set_var(this->sto_var_name, output.val);
 	}
 
-	if (this->has_to_unit) {
+	if (this->has_to_unit && desired_base == 0 && misc_output_format == NORMAL) {
 		output.output_unit_str = this->to_unit;
 		unit_t unit = eval_units(calcData, this->to_unit);
 		output.unit = unit;
@@ -1510,6 +1584,10 @@ OutputInfo InputInfo::eval(CalcData *calcData) {
 			                            "\", can not convert to unit \"" +
 			                            unit_dim_to_string(output.val.unit_dim), 0);
 		}
+	} else if (desired_base != 0) {
+		output.desired_base = desired_base;
+	} else if (misc_output_format != NORMAL) {
+		output.misc_output_format = misc_output_format;
 	}
 
 	return output;

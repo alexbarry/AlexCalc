@@ -4,6 +4,8 @@
 #include <string>
 #include <unordered_map>
 #include <cmath>
+#include <regex>
+#include <bitset>
 
 #include "node_to_latex.h"
 
@@ -344,6 +346,69 @@ std::string name_to_latex(std::string name, bool allowed_underscore = true) {
 	//    TODO: maybe if it has two sequential underscores, then convert it to a literal underscore,
 	//          to allow for names like `my_var`, which aren't subscripts?
 }
+static std::string hex_bin_oct_val_to_str(calc_float_t flt, int desired_base) {
+	std::string num_only_str;
+
+	int num_grouping = 4;
+	if (desired_base == 2) {
+		num_only_str = std::bitset<64>((long long)flt).to_string();
+		if (flt != 0) {
+			int first_nonzero = num_only_str.find("1");
+			num_only_str = num_only_str.substr(first_nonzero, num_only_str.size() - first_nonzero);
+		}
+	} else if (desired_base == 8) {
+		std::stringstream ss;
+		ss << std::oct << (long long)flt;
+		num_only_str = ss.str();
+		num_grouping = 3;
+	} else if (desired_base == 16) {
+		std::stringstream ss;
+		ss << std::hex << (long long)flt;
+		num_only_str = ss.str();
+	} else {
+		throw std::runtime_error("unhandled desired base");
+	}
+
+	std::string output_str = "\\texttt{";
+	//std::string output_str = "{";
+	if (desired_base == 2) {
+		output_str += "0b";
+	} else if (desired_base == 8) {
+		output_str += "0o";
+	} else if (desired_base == 16) {
+		output_str += "0x";
+	} else {
+		throw std::runtime_error("unhandled desired base");
+	}
+
+	// TODO should use a string builder or something similar
+	for (int i=0; i<num_only_str.size(); i++) {
+		int num_pos = num_only_str.size() - i;
+		if (i != 0 && num_pos % num_grouping == 0) {
+			output_str += "\\,";
+		}
+		output_str += num_only_str[i];
+	}
+	output_str += "}";
+
+	return output_str;
+}
+
+static std::string format_misc_output_format(calc_float_t flt, const struct calc_fmt_params &params) {
+	if (params.misc_output_format == F32_BITS) {
+		float flt32 = flt;
+		uint32_t float_bits;
+		if (sizeof(uint32_t) != sizeof(float)) {
+			// TODO find a compile time check for this
+			throw std::runtime_error("need to update size of float bits wrapper");
+		}
+		std::memcpy(&float_bits, &flt32, sizeof(flt32));
+		std::cout << "Returning float bits " << float_bits << " ... " << std::endl;
+		return hex_bin_oct_val_to_str(float_bits, 2);
+	}
+
+	throw std::runtime_error("unhandled misc output format");
+}
 
 std::string flt_to_latex(calc_float_t flt, const struct calc_fmt_params &params, bool neg_symb=false) {
 	bool is_neg = (flt < 0);
@@ -362,12 +427,20 @@ std::string flt_to_latex(calc_float_t flt, const struct calc_fmt_params &params,
 		std::snprintf(str_buff, sizeof(str_buff), "\\text{NaN}");
 	} else if (std::isinf(flt)) {
 		std::snprintf(str_buff, sizeof(str_buff), "%s\\infty", is_neg ? "-" : "");
+	} else if (params.misc_output_format != NORMAL) {
+		std::string out_str = format_misc_output_format(flt, params);
+		snprintf(str_buff, sizeof(str_buff), "%s", out_str.c_str());
 	} else if (val_fmt.exponent == 0) {
-		fmt_str = "%s%.*" CALC_FLOAT_FMT "f";
-		//size_t size = std::snprintf(nullptr, 0, fmt_str, val_fmt.decimal_places, val_fmt.base);
-		//str.resize(size+1);
-		//std::sprintf(&str[0], fmt_str, val_fmt.decimal_places, val_fmt.base, val_fmt.exponent);
-		std::snprintf(str_buff, sizeof(str_buff), fmt_str, neg_prefix.c_str(), val_fmt.decimal_places, val_fmt.base, val_fmt.exponent);
+		if (params.desired_base == 0 || params.desired_base == 10) {
+			fmt_str = "%s%.*" CALC_FLOAT_FMT "f";
+			//size_t size = std::snprintf(nullptr, 0, fmt_str, val_fmt.decimal_places, val_fmt.base);
+			//str.resize(size+1);
+			//std::sprintf(&str[0], fmt_str, val_fmt.decimal_places, val_fmt.base, val_fmt.exponent);
+			std::snprintf(str_buff, sizeof(str_buff), fmt_str, neg_prefix.c_str(), val_fmt.decimal_places, val_fmt.base, val_fmt.exponent);
+		} else {
+			std::string out_str = hex_bin_oct_val_to_str(flt, params.desired_base);
+			snprintf(str_buff, sizeof(str_buff), "%s", out_str.c_str());
+		}
 	} else {
 		// negative numbers take up two places because of the negative sign,
 		// exponents >= 10 also take up more than one place
@@ -681,6 +754,12 @@ static std::string int_to_latex_str(int val) {
 	return output;
 }
 
+static bool has_hex_bin_oct_prefix(const std::string &str) {
+	static const std::regex hex_bin_oct_prefix_regex("^0[xob]");
+	std::smatch result;
+	return std::regex_search(str, result, hex_bin_oct_prefix_regex);
+}
+
 // TODO I don't like how messy this "needs_bracks_out" is, just to put the
 // units inside the brackets?
 // TODO for now, I'm surrounding all scientific notation inputted values with brackets.
@@ -692,6 +771,10 @@ static std::string int_to_latex_str(int val) {
 // the reverse
 static std::string format_inputted_val_latex(std::string val_str, bool is_imag, bool *needs_bracks_out) {
 	*needs_bracks_out = false;
+
+	if (has_hex_bin_oct_prefix(val_str)) {
+		return "\\text{" + val_str + "}";
+	}
 
 	std::string mag_str = get_mag_no_exp_str(val_str);
 	int pow             = get_pow_exp_str(val_str);

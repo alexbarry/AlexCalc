@@ -56,15 +56,22 @@ class ValInfo {
 	ValInfo(void){};
 };
 
+static bool contains_hex(const std::string &str) {
+	static const std::regex hex_regex("[a-fA-F]");
+	std::smatch result;
+	return std::regex_search(str, result, hex_regex);
+}
+
 
 bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, std::unique_ptr<ValInfo> *val_info_out, const parse_params_s *params)
 {
 	static const std::regex raw_val_regex( "^"
 	                                       "\\s*"
                                           "([ij])?" // optional imaginary unit at the beginning
+                                          "(0x|0b|0o)?" // optional hex/bin/oct prefix
 	                                       "("
 	                                           // "-?" // there's unary negative, separate from this
-	                                          "[0-9]*"
+	                                          "[0-9a-fA-F]*"
 	                                          "(\\.[0-9]+)?"   // optional decimal
 	                                          "([eE]-?[0-9]+)?"  // optional exponent
 	                                       ")"
@@ -95,13 +102,25 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 	int         match_len   = result.str(0).size();
 
 	std::string img_unit_prefix = result.str(1);
-	std::string raw_val_str     = result.str(2);
+	std::string hex_bin_oct_prefix = result.str(2);
+	std::string raw_val_str     = result.str(3);
 	if (raw_val_str.size() == 0) {
 		return false;
 	}
 	if (str_starts_with(raw_val_str, "e") || str_starts_with(raw_val_str, "E")) {
 		return false;
 	}
+
+	if (hex_bin_oct_prefix.size() == 0 && contains_hex(raw_val_str) ) {
+		return false;
+	}
+
+	std::cout << "[hex] prefix is \"" << hex_bin_oct_prefix << "\", val str \"" << raw_val_str << "\"" << std::endl;
+
+	// TODO not sure if I like this...
+	raw_val_str = hex_bin_oct_prefix + raw_val_str;
+
+
 	// decimal
 	// exponent
 	std::string img_unit_suffix = result.str(5);

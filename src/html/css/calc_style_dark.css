@@ -118,3 +118,9 @@ body.dark .license {
 	color:#fff;
 	overflow:auto;
 }
+
+body.dark button:disabled,
+body.dark button:disabled:hover {
+	background-color: #222;
+	color: #444;
+}

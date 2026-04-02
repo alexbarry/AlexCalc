@@ -16,6 +16,13 @@ export interface RawCalcInputOutput {
 	calc_output: CalcOutput;
 }
 
+export enum InputNumberBase {
+	DECIMAL,
+	HEX,
+	OCT,
+	BIN,
+}
+
 export interface CalcState {
 	new_var_btns_map: Map<HTMLElement, string>;
 	alt_state: boolean;
@@ -33,6 +40,8 @@ export interface CalcState {
 	show_var_display: boolean;
 	show_unit_display: boolean;
 	show_about_popup: boolean;
+
+	hex_oct_bin_num_format: InputNumberBase;
 
 	output_display_srcs: RawCalcInputOutput[];
 
@@ -101,6 +110,15 @@ export interface CalcUi {
 	btn_pi: HTMLElement;
 	btn_e: HTMLElement;
 	normal_btns: HTMLElement[];
+
+	btn_hex_oct_bin: HTMLButtonElement;
+	btn_stack_non_hex_oct_bin: HTMLElement[];
+	btn_stack_hex_oct_bin: HTMLElement[];
+
+	non_base_output_btns: HTMLElement[];
+	base_output_btns: HTMLElement[];
+
+	num_btns: { num: number, elem: HTMLButtonElement }[];
 
 
 	input_text: HTMLInputElement;
