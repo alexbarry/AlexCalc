@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <!--<script id="MathJax-script" async src="node_modules/mathjax/es5/tex-svg-full.js"></script>-->
     <script src="node_modules/@babel/polyfill/dist/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="node_modules/mathjax/es5/tex-chtml-full.js"></script>
     <style>
         h1 {
             text-align:center;
@@ -38,6 +37,7 @@
 </div>
 <p id="input_wip_display"></p>
 <script>
+    console.log("js_display.html first script tag starting, setting MathJax config...");
         window.MathJax = {
             chtml: {
                 displayAlign: 'left',
@@ -47,6 +47,11 @@
                 fontCache: 'global',
             }
         };
+    console.log("js_display.html first script tag finishing, loading MathJax lib");
+</script>
+<script id="MathJax-script" src="node_modules/mathjax/es5/tex-chtml-full.js"></script>
+<script>
+    console.log("js_display.html second script tag starting...");
 
         function generate_latex_node(tex) {
             var options = {
@@ -133,6 +138,51 @@
         function add_output_line_msg(msg) {
             add_output_line_txt(msg, /* is_err */ false);
         }
+
+        function check_mathjax() {
+            console.log("check_mathjax() called, running checks...");
+            let status_good = true;
+            if (!MathJax.tex2chtml) {
+                add_output_line_err("MathJax.tex2chtml is not defined");
+                status_good = false;
+            }
+            if (!MathJax.chtmlStylesheet) {
+                add_output_line_err("MathJax.chtmlStylesheet is not defined");
+                status_good = false;
+            }
+            if (!MathJax.texReset) {
+                add_output_line_err("MathJax.texReset is not defined");
+                status_good = false;
+            }
+            if (!MathJax.getMetricsFor) {
+                add_output_line_err("MathJax.getMetricsFor is not defined");
+                status_good = false;
+            }
+            if (!MathJax.tex2chtmlPromise) {
+                add_output_line_err("MathJax.tex2chtmlPromise is not defined");
+                status_good = false;
+            }
+            if (!MathJax.startup) {
+                add_output_line_err("MathJax.startup. is not defined");
+                status_good = false;
+            } else if (!MathJax.startup.document) {
+                add_output_line_err("MathJax.startup.document is not defined");
+                status_good = false;
+            } else {
+                if (!MathJax.startup.document.clear) {
+                    add_output_line_err("MathJax.startup.document.clear is not defined");
+                    status_good = false;
+                }
+                if (!MathJax.startup.document.updateDocument) {
+                    add_output_line_err("MathJax.startup.document.updateDocument is not defined");
+                    status_good = false;
+                }
+            }
+
+            console.log("check_mathjax() status_good = ", status_good);
+            return status_good;
+        }
+
 
         function clear_output_display() {
             remove_output_display_elems(0);
@@ -223,6 +273,7 @@
                 elem.classList.add(css_class);
             }
         }
+    console.log("js_display.html second script tag done.");
 </script>
 </body>
 </html>

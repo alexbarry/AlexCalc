@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -351,6 +352,10 @@ public class FirstFragment extends Fragment {
         webSettings.setJavaScriptEnabled(true);
 		this.calcOutputDisplayHelper = new CalcOutputDisplayHelper(outputDisplayWebview);
         //outputDisplayWebview.loadUrl("https://calc.alexbarry.net/dev");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // this should be the default, but just in case...
+            webSettings.setAlgorithmicDarkeningAllowed(false);
+        }
         outputDisplayWebview.loadUrl("file:///android_asset/html/js_display.html");
         final Context context = getContext();
         outputDisplayWebview.setWebViewClient(new WebViewClient() {
@@ -367,6 +372,7 @@ public class FirstFragment extends Fragment {
 				flushErrs();
 				calcOutputDisplayHelper.setReady();
 				calcOutputDisplayHelper.addOutputLineMsg(context.getString(R.string.small_msg_terms));
+				calcOutputDisplayHelper.checkMathjax();
 			}
 		});
         this.calcInputHelper = new CalcInputHelper();

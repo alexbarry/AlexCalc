@@ -1,0 +1,5 @@
+* Fix race condition when loading MathJax library in WebView (which caused calculations/inputs to not show sometimes, which was occasionally possible to workaround when changing colour schemes)
+* Update to NDK version 29.0.14033849, which uses 16 kB memory page size
+
+In previous version "1.0.9" (13):
+* Fix android navigation buttons covering bottom calculator buttons on some phones (set android:fitsSystemWindows="true")

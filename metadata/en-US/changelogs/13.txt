@@ -1,0 +1,1 @@
+Fixed issue where navigation buttons (home/back/apps) cover the bottom row of calculator buttons.
