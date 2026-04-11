@@ -357,6 +357,9 @@ public class FirstFragment extends Fragment {
             webSettings.setAlgorithmicDarkeningAllowed(false);
         }
         outputDisplayWebview.loadUrl("file:///android_asset/html/js_display.html");
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+			outputDisplayWebview.setForceDarkAllowed(false);
+		}
         final Context context = getContext();
         outputDisplayWebview.setWebViewClient(new WebViewClient() {
         	@Override
