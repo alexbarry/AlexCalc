@@ -50,6 +50,23 @@ import java.util.TreeMap;
 // TODO units creator/selector
 public class FirstFragment extends Fragment {
 
+	enum FgOverride {
+		DISABLED,
+		WHITE,
+		WHITE_RED,
+		RED,
+		DARK_RED,
+		BLUE,
+		DARK_BLUE,
+		YELLOW,
+		DARK_YELLOW,
+		OFFWHITE,
+		GREY,
+		DARKGREY,
+		DARKERGREY,
+		BLACK,
+	}
+
 	private static final String TAG = "CalcFragment";
 
 	private final static String PRESERVED_STATE_FILENAME = "calc_state.json";
@@ -356,16 +373,21 @@ public class FirstFragment extends Fragment {
             // this should be the default, but just in case...
             webSettings.setAlgorithmicDarkeningAllowed(false);
         }
-        outputDisplayWebview.loadUrl("file:///android_asset/html/js_display.html");
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
 			outputDisplayWebview.setForceDarkAllowed(false);
 		}
+		outputDisplayWebview.loadUrl("file:///android_asset/html/js_display.html");
         final Context context = getContext();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		String fgOverrideStr = prefs.getString(getString(R.string.preference_key_fg_override), getString(R.string.fg_override_disabled));
         outputDisplayWebview.setWebViewClient(new WebViewClient() {
         	@Override
         	public void onPageFinished(WebView view, String url) {
         		Log.d(TAG, "calcOutputDisplayWebview.onPageFinished");
 				calcOutputDisplayHelper.setTheme(getDesiredTheme(context));
+				view.post(() -> {
+					updateFgOverride(fgOverrideStr);
+				});
 				if (savedState != null) {
 					Log.d(TAG, "loading saved output state onPageFinished");
 					applySavedStateToOutputDisplay(savedState);
@@ -739,5 +761,40 @@ public class FirstFragment extends Fragment {
 		}
 
 		setHapticSetting(hapticSetting);
+	}
+
+	public void updateFgOverride(String fgOverrideStr) {
+		FgOverride fgOverrideVal = FgOverride.DISABLED;
+		if (fgOverrideStr.equals(getString(R.string.fg_override_disabled))) {
+			fgOverrideVal = FgOverride.DISABLED;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_white))) {
+			fgOverrideVal = FgOverride.WHITE;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_white_red))) {
+			fgOverrideVal = FgOverride.WHITE_RED;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_red))) {
+			fgOverrideVal = FgOverride.RED;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_dark_red))) {
+			fgOverrideVal = FgOverride.DARK_RED;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_blue))) {
+			fgOverrideVal = FgOverride.BLUE;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_dark_blue))) {
+			fgOverrideVal = FgOverride.DARK_BLUE;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_yellow))) {
+			fgOverrideVal = FgOverride.YELLOW;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_dark_yellow))) {
+			fgOverrideVal = FgOverride.DARK_YELLOW;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_offwhite))) {
+			fgOverrideVal = FgOverride.OFFWHITE;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_grey))) {
+			fgOverrideVal = FgOverride.GREY;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_darkgrey))) {
+			fgOverrideVal = FgOverride.DARKGREY;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_darkergrey))) {
+			fgOverrideVal = FgOverride.DARKERGREY;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_black))) {
+			fgOverrideVal = FgOverride.BLACK;
+		}
+		calcOutputDisplayHelper.setFgOverride(fgOverrideVal);
+		calcOutputDisplayHelper.applyFgOverride();
 	}
 }

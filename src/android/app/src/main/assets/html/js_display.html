@@ -274,6 +274,27 @@
                 elem.classList.add(css_class);
             }
         }
+        function set_fg_override(fg_colour) {
+            console.debug("Setting fg override to ", fg_colour);
+
+            var style_elems = [
+                document.getElementById("calc_body"),
+                document.getElementById("output_text"),
+                document.getElementById("input_wip_display"),
+            ];
+
+            for (var elem of style_elems) {
+                if (fg_colour == "") {
+                    elem.style.removeProperty("color");
+                } else {
+                    elem.style.color = fg_colour;
+                }
+            }
+
+            if (fg_colour != "") {
+                add_output_line_txt("Set foreground override to " + fg_colour + ". This can be disabled in settings.");
+            }
+        }
     console.log("js_display.html second script tag done.");
 </script>
 </body>

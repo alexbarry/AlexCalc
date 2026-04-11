@@ -10,4 +10,9 @@
         android:title="@string/haptic_pref_label"
         android:entries="@array/haptic_pref_options"
         android:entryValues="@array/haptic_pref_options"/>
+    <ListPreference
+        android:key="@string/preference_key_fg_override"
+        android:title="Foreground Override (debug)"
+        android:entries="@array/fg_override_options"
+        android:entryValues="@array/fg_override_options"/>
 </PreferenceScreen>
