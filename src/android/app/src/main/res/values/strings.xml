@@ -181,4 +181,37 @@ Terms of use: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EX
 		<item>@string/haptic_pref_enabled</item>
 		<item>@string/haptic_pref_disabled</item>
 	</string-array>
+
+	<string name="fg_override_disabled">Disabled</string>
+	<string name="fg_override_white">White (#fff)</string>
+	<string name="fg_override_white_red">White-red (#faa)</string>
+	<string name="fg_override_red">Red (#f00)</string>
+	<string name="fg_override_dark_red">Dark-red (#800)</string>
+	<string name="fg_override_blue">Blue (#00f)</string>
+	<string name="fg_override_dark_blue">Dark-blue (#008)</string>
+	<string name="fg_override_yellow">Yellow (#ff0)</string>
+	<string name="fg_override_dark_yellow">Dark-Yellow (#880)</string>
+	<string name="fg_override_offwhite">Offwhite (#aaa)</string>
+	<string name="fg_override_grey">Grey (#bbb)</string>
+	<string name="fg_override_darkgrey">Dark-Grey (#888)</string>
+	<string name="fg_override_darkergrey">Darker-Grey (#444)</string>
+	<string name="fg_override_black">Black (#000)</string>
+	<string name="preference_key_fg_override">fg_override_preference</string>
+
+	<string-array name="fg_override_options">
+		<item>@string/fg_override_disabled</item>
+		<item>@string/fg_override_white</item>
+		<item>@string/fg_override_white_red</item>
+		<item>@string/fg_override_red</item>
+		<item>@string/fg_override_dark_red</item>
+		<item>@string/fg_override_blue</item>
+		<item>@string/fg_override_dark_blue</item>
+		<item>@string/fg_override_yellow</item>
+		<item>@string/fg_override_dark_yellow</item>
+		<item>@string/fg_override_offwhite</item>
+		<item>@string/fg_override_grey</item>
+		<item>@string/fg_override_darkgrey</item>
+		<item>@string/fg_override_darkergrey</item>
+		<item>@string/fg_override_black</item>
+	</string-array>
 </resources>

@@ -11,6 +11,7 @@ public class CalcOutputDisplayHelper {
 
     private final WebView webView;
     private boolean isReady = false;
+    private FirstFragment.FgOverride fgOverride = FirstFragment.FgOverride.DISABLED;
 
     public CalcOutputDisplayHelper(WebView webView) {
         this.webView = webView;
@@ -73,6 +74,27 @@ public class CalcOutputDisplayHelper {
                 escapeStringForJs(type_string)));
     }
 
+    public void applyFgOverride() {
+        String colour = "";
+        switch (this.fgOverride) {
+            case DISABLED:     colour = "";      break;
+            case WHITE:        colour = "#fff";  break;
+            case WHITE_RED:    colour = "#faa";  break;
+            case RED:          colour = "#f00";  break;
+            case DARK_RED:     colour = "#800";  break;
+            case BLUE:         colour = "#00f";  break;
+            case DARK_BLUE:    colour = "#008";  break;
+            case YELLOW:       colour = "#ff0";  break;
+            case DARK_YELLOW:  colour = "#880";  break;
+            case OFFWHITE:     colour = "#aaa";  break;
+            case GREY:         colour = "#bbb";  break;
+            case DARKGREY:     colour = "#888";  break;
+            case DARKERGREY:   colour = "#444";  break;
+            case BLACK:        colour = "#000";  break;
+        }
+        evaluateJavascript(String.format("set_fg_override(\"%s\")", escapeStringForJs(colour)));
+    }
+
     private void evaluateJavascript(String js_cmd) {
         Log.d(TAG, "evaluateJavascript(\"" + js_cmd + "\")");
         //webView.loadUrl("javascript:" + js_cmd);
@@ -100,5 +122,9 @@ public class CalcOutputDisplayHelper {
 
     public void setReady() {
         this.isReady = true;
+    }
+
+    public void setFgOverride(FirstFragment.FgOverride fgOverride) {
+        this.fgOverride = fgOverride;
     }
 }

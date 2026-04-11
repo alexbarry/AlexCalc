@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
                         updateTheme(MainActivity.this);
                         updateNightMode(MainActivity.this);
                         MainActivity.this.recreate();
+                    } else if (key.equals(getString(R.string.preference_key_fg_override))) {
+                        MainActivity.this.recreate();
                     } else {
                         Log.d(TAG, String.format("onSharedPreferenceChanged: unhandled pref \"%s\"", key));
                     }
