@@ -1,5 +1,6 @@
 package net.alexbarry.calc_android;
 
+import android.os.Build;
 import android.util.Log;
 import android.webkit.WebView;
 
@@ -171,8 +172,16 @@ public class CalcOutputDisplayHelper {
     }
 
     public static String inputTokensToPlaintext(List<CalcInputHelper.InputToken> inputTokens) {
-        return inputTokens.stream()
-                .map(token -> token.token)
-                .collect(Collectors.joining(""));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return inputTokens.stream()
+                    .map(token -> token.token)
+                    .collect(Collectors.joining(""));
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (CalcInputHelper.InputToken token : inputTokens) {
+                sb.append(token.token);
+            }
+            return sb.toString();
+        }
     }
 }
