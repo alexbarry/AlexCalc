@@ -618,7 +618,10 @@ public class FirstFragment extends Fragment {
 
         Log.d(TAG, String.format("ENTER; is_err:%b tex:%s, output:%s", is_err, texInput, output));
 		String plaintext = CalcOutputDisplayHelper.inputTokensToPlaintext(calcInputHelper.getCurrentInputTokens());
-		plaintext += " = " + output;
+		plaintext += " = ";
+		if (!is_err) {
+			plaintext += output;
+		}
 		calcOutputDisplayHelper.addOutputLinePlaintext(plaintext);
         calcOutputDisplayHelper.addOutputLine(texInput);
         if (!is_err) {
