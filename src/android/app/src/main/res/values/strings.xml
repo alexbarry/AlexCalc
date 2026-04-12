@@ -237,4 +237,15 @@ Terms of use: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EX
 		<item>@string/log_webview_to_file_disabled</item>
 		<item>@string/log_webview_to_file_enabled</item>
 	</string-array>
+
+	<string name="preference_key_output_display_type">output_display_type</string>
+	<string name="output_display_type_latex_only_default">LaTeX only (default)</string>
+	<string name="output_display_type_latex_and_plaintext">LaTeX and plaintext</string>
+	<string name="output_display_type_plaintext_only">Plaintext only</string>
+	<string-array name="output_display_type_options">
+		<item>@string/output_display_type_latex_only_default</item>
+		<item>@string/output_display_type_latex_and_plaintext</item>
+		<item>@string/output_display_type_plaintext_only</item>
+	</string-array>
+	<string name="output_display_type_key_label">Output display type</string>
 </resources>

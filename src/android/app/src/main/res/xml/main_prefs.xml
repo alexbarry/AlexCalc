@@ -17,6 +17,11 @@
         android:entries="@array/fg_override_options"
         android:entryValues="@array/fg_override_options"/>
     <ListPreference
+        android:key="@string/preference_key_output_display_type"
+        android:title="@string/output_display_type_key_label"
+        android:entries="@array/output_display_type_options"
+        android:entryValues="@array/output_display_type_options"/>
+    <ListPreference
         android:key="@string/preference_key_log_webview_console_to_file"
         android:title="@string/log_webview_console_to_file_pref_label"
         android:entries="@array/log_webview_console_to_file_options"
