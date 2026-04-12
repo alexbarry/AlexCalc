@@ -4,13 +4,23 @@ import android.util.Log;
 import android.webkit.WebView;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CalcOutputDisplayHelper {
+
+
+
+    enum OutputDisplayType {
+        LATEX_ONLY,
+        LATEX_AND_PLAINTEXT,
+        PLAINTEXT_ONLY,
+    }
 
     private static final String TAG = "CalcOutputDisplayHelper";
 
     private final WebView webView;
     private boolean isReady = false;
+    private OutputDisplayType outputDisplayType = OutputDisplayType.LATEX_ONLY;
     private FirstFragment.FgOverride fgOverride = FirstFragment.FgOverride.DISABLED;
 
     public CalcOutputDisplayHelper(WebView webView) {
@@ -24,7 +34,9 @@ public class CalcOutputDisplayHelper {
     }
 
     public void updateWipDisplay(String tex) {
-        evaluateJavascript("update_wip_tex(\"" + escapeStringForJs(tex) + "\");");
+        if (showInputLatex()) {
+            evaluateJavascript("update_wip_tex(\"" + escapeStringForJs(tex) + "\");");
+        }
     }
 
     public void editLastOutputLine(String output_tex) {
@@ -33,8 +45,17 @@ public class CalcOutputDisplayHelper {
     }
 
     public void addOutputLine(String output_tex) {
-        evaluateJavascript("add_output_line_tex(\"" + escapeStringForJs(output_tex) + "\");");
+        if (showInputLatex()) {
+            evaluateJavascript("add_output_line_tex(\"" + escapeStringForJs(output_tex) + "\");");
+        }
     }
+
+    public void addOutputLinePlaintext(String plaintext) {
+        if (showInputPlaintext()) {
+            addOutputLineMsg(plaintext);
+        }
+    }
+
     public void clearWipDisplay() {
         evaluateJavascript("clear_wip_tex();");
     }
@@ -107,6 +128,17 @@ public class CalcOutputDisplayHelper {
         for (CalcHistoryHelper.HistoryEntry input : inputs) {
             Log.v(TAG, String.format("loadState: input=%s, output=%s, outputType=%s",
                     input.tex_input, input.tex_output, input.output_type.name()));
+            if (showInputPlaintext()) {
+                String plaintext = inputTokensToPlaintext(input.inputTokens);
+                if (input.output_type == CalcHistoryHelper.EntryType.NORMAL) {
+                    if (input.plaintext_output != null) {
+                        plaintext += " = " + input.plaintext_output;
+                    } else {
+                        plaintext += input.tex_output;
+                    }
+                }
+                addOutputLineMsg(plaintext);
+            }
             addOutputLine(input.tex_input);
             // tex_output should already have the equals
             switch (input.output_type) {
@@ -120,11 +152,29 @@ public class CalcOutputDisplayHelper {
         return this.isReady;
     }
 
+    public boolean showInputPlaintext() {
+        return this.outputDisplayType == OutputDisplayType.PLAINTEXT_ONLY || this.outputDisplayType == OutputDisplayType.LATEX_AND_PLAINTEXT;
+    }
+
+    public boolean showInputLatex() {
+        return this.outputDisplayType == OutputDisplayType.LATEX_ONLY || this.outputDisplayType == OutputDisplayType.LATEX_AND_PLAINTEXT;
+    }
+
     public void setReady() {
         this.isReady = true;
     }
 
     public void setFgOverride(FirstFragment.FgOverride fgOverride) {
         this.fgOverride = fgOverride;
+    }
+
+    public void setOutputDisplayType(OutputDisplayType outputDisplayType) {
+        this.outputDisplayType = outputDisplayType;
+    }
+
+    public static String inputTokensToPlaintext(List<CalcInputHelper.InputToken> inputTokens) {
+        return inputTokens.stream()
+                .map(token -> token.token)
+                .collect(Collectors.joining(""));
     }
 }

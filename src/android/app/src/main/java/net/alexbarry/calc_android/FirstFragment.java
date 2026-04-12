@@ -417,6 +417,18 @@ public class FirstFragment extends Fragment {
 		outputDisplayWebview.loadUrl("file:///android_asset/html/js_display.html");
         final Context context = getContext();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		String outputDisplayTypeStr = prefs.getString(getString(R.string.preference_key_output_display_type), getString(R.string.output_display_type_latex_only_default));
+		CalcOutputDisplayHelper.OutputDisplayType outputDisplayType = CalcOutputDisplayHelper.OutputDisplayType.LATEX_ONLY;
+		if (outputDisplayTypeStr.equals(getString(R.string.output_display_type_latex_only_default))) {
+			outputDisplayType = CalcOutputDisplayHelper.OutputDisplayType.LATEX_ONLY;
+		} else if (outputDisplayTypeStr.equals(getString(R.string.output_display_type_latex_and_plaintext))) {
+			outputDisplayType = CalcOutputDisplayHelper.OutputDisplayType.LATEX_AND_PLAINTEXT;
+		} else if (outputDisplayTypeStr.equals(getString(R.string.output_display_type_plaintext_only))) {
+			outputDisplayType = CalcOutputDisplayHelper.OutputDisplayType.PLAINTEXT_ONLY;
+		}
+		Log.d(TAG, String.format("Setting output display type to %s", outputDisplayType.name()));
+		calcOutputDisplayHelper.setOutputDisplayType(outputDisplayType);
+
 		String fgOverrideStr = prefs.getString(getString(R.string.preference_key_fg_override), getString(R.string.fg_override_disabled));
         outputDisplayWebview.setWebViewClient(new WebViewClient() {
         	@Override
@@ -605,6 +617,9 @@ public class FirstFragment extends Fragment {
 		}
 
         Log.d(TAG, String.format("ENTER; is_err:%b tex:%s, output:%s", is_err, texInput, output));
+		String plaintext = CalcOutputDisplayHelper.inputTokensToPlaintext(calcInputHelper.getCurrentInputTokens());
+		plaintext += " = " + output;
+		calcOutputDisplayHelper.addOutputLinePlaintext(plaintext);
         calcOutputDisplayHelper.addOutputLine(texInput);
         if (!is_err) {
 			output = formatOutputLine(output);
