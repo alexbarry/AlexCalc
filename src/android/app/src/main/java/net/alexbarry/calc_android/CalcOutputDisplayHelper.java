@@ -123,7 +123,7 @@ public class CalcOutputDisplayHelper {
     }
 
     public void loadState(List<CalcHistoryHelper.HistoryEntry> inputs) {
-        Log.d(TAG, "loadState");
+        Log.d(TAG, String.format("loadState; displayType=%s", outputDisplayType.name()));
         clearOutputDisplay();
         for (CalcHistoryHelper.HistoryEntry input : inputs) {
             Log.v(TAG, String.format("loadState: input=%s, output=%s, outputType=%s",
@@ -131,11 +131,9 @@ public class CalcOutputDisplayHelper {
             if (showInputPlaintext()) {
                 String plaintext = inputTokensToPlaintext(input.inputTokens);
                 if (input.output_type == CalcHistoryHelper.EntryType.NORMAL) {
-                    if (input.plaintext_output != null) {
-                        plaintext += " = " + input.plaintext_output;
-                    } else {
-                        plaintext += input.tex_output;
-                    }
+                   plaintext += input.tex_output;
+                } else {
+                    plaintext += " =";
                 }
                 addOutputLineMsg(plaintext);
             }
