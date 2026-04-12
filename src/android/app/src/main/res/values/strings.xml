@@ -197,6 +197,7 @@ Terms of use: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EX
 	<string name="fg_override_darkergrey">Darker-Grey (#444)</string>
 	<string name="fg_override_black">Black (#000)</string>
 	<string name="preference_key_fg_override">fg_override_preference</string>
+	<string name="fg_override_pref_label">Foreground override</string>
 
 	<string-array name="fg_override_options">
 		<item>@string/fg_override_disabled</item>
@@ -213,5 +214,25 @@ Terms of use: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EX
 		<item>@string/fg_override_darkgrey</item>
 		<item>@string/fg_override_darkergrey</item>
 		<item>@string/fg_override_black</item>
+	</string-array>
+
+	<string name="preference_key_log_webview_console_to_file">log_webview_to_file</string>
+	<string name="log_webview_console_to_file_pref_label">Log WebView console to file</string>
+	<string name="log_webview_to_file_disabled">Disabled</string>
+	<string name="log_webview_to_file_enabled">Enabled</string>
+	<string name="pref_title_debug">Debug</string>
+	<string name="pref_key_download_webview_logs">download_webview_logs</string>
+	<string name="download_webview_logs_pref_label">Download WebView logs file</string>
+	<string name="download_webview_logs_pref_summary">Generates a file containing AlexCalc\'s WebView console logs. Must have enabled WebView logging and performed some calculations first.</string>
+	<string name="webview_logs_download_filename">alexcalc_webview_console.log</string>
+	<string name="webview_logs_share_title">Export AlexCalc WebView logs to...</string>
+	<string name="failed_to_save_file">Failed to save file</string>
+	<string name="file_written_successfully">File written successfully</string>
+	<string name="pref_key_share_webview_logs">share_webview_logs</string>
+	<string name="share_webview_logs_pref_label">Share WebView logs file</string>
+	<string name="share_webview_logs_pref_summary">Open the \"share file\" dialog to share this file with another app, or save to device if your phone supports it.</string>
+	<string-array name="log_webview_console_to_file_options">
+		<item>@string/log_webview_to_file_disabled</item>
+		<item>@string/log_webview_to_file_enabled</item>
 	</string-array>
 </resources>

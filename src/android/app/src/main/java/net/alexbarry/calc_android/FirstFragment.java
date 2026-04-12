@@ -1,10 +1,13 @@
 package net.alexbarry.calc_android;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,6 +17,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.ConsoleMessage;
+import android.webkit.WebChromeClient;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,8 +28,11 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
@@ -38,8 +46,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -68,6 +81,8 @@ public class FirstFragment extends Fragment {
 	}
 
 	private static final String TAG = "CalcFragment";
+
+	private static final int REQUEST_CODE_WRITE_WEBVIEW_LOGS_FILE = 42;
 
 	private final static String PRESERVED_STATE_FILENAME = "calc_state.json";
 	private static final int MAX_ERRS_ON_ENTER_PRESS = 5;
@@ -131,6 +146,10 @@ public class FirstFragment extends Fragment {
 	private EditText inputEditText;
 	View view = null;
 
+	private File webviewLogsFile = null;
+	private static long MAX_LOGS_FILE_SIZE = 8 * 1024 * 1024;
+	private static long LOGS_FILE_SIZE_TO_KEEP = 4 * 1024 * 1024;
+	private static String WEBVIEW_LOGS_FILE_NAME = "alexcalc_webview_logs.txt";
 
 	private final CalcButtonsHelper.ButtonCallback buttonCallback = new CalcButtonsHelper.ButtonCallback() {
 		@Override
@@ -299,6 +318,14 @@ public class FirstFragment extends Fragment {
 	}
 
 	@Override
+	public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		if (requestCode == REQUEST_CODE_WRITE_WEBVIEW_LOGS_FILE && resultCode == Activity.RESULT_OK && data != null) {
+			Uri uri = data.getData();
+			writeWebViewLogsToOutputFile(getContext(), uri);
+		}
+	}
+
+	@Override
 	public void onSaveInstanceState(Bundle bundle) {
 		Log.d(TAG, "onSaveInstanceState");
 		super.onSaveInstanceState(bundle);
@@ -317,6 +344,17 @@ public class FirstFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 		Log.d(TAG, "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
+
+		Bundle args = getArguments();
+		if (args != null) {
+			if (args.getBoolean(MainActivity.SHARE_WEBVIEW_LOGS_FILE)) {
+				shareWebViewLogsFile(getContext());
+				args.putBoolean(MainActivity.SHARE_WEBVIEW_LOGS_FILE, false);
+			} else if (args.getBoolean(MainActivity.DOWNLOAD_WEBVIEW_LOGS_FILE)) {
+				requestWriteFileLocation(WEBVIEW_LOGS_FILE_NAME, REQUEST_CODE_WRITE_WEBVIEW_LOGS_FILE);
+				args.putBoolean(MainActivity.DOWNLOAD_WEBVIEW_LOGS_FILE, false);
+			}
+		}
 
         /*
         view.findViewById(R.id.button_display).setOnClickListener(new View.OnClickListener() {
@@ -400,6 +438,32 @@ public class FirstFragment extends Fragment {
 				calcOutputDisplayHelper.checkMathjax();
 			}
 		});
+
+		String logWebviewToFileStr = prefs.getString(getString(R.string.preference_key_log_webview_console_to_file), getString(R.string.log_webview_to_file_disabled));
+		if (logWebviewToFileStr.equals(getString(R.string.log_webview_to_file_enabled))) {
+			String msg = "Setting WebChromeClient of webview for debugging due to shared pref enabled";
+			Log.d(TAG, msg);
+			addWebviewLog(context, msg + "\n");
+			outputDisplayWebview.setWebChromeClient(new WebChromeClient() {
+				@Override
+				public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+					String msg = String.format("WebView console: %s: %s -- %s:%d",
+						consoleMessage.messageLevel().name(),
+						consoleMessage.message(),
+						consoleMessage.sourceId(),
+						consoleMessage.lineNumber());
+
+					addWebviewLog(context, msg + "\n");
+					Log.i(TAG, msg);
+					return true;
+				}
+			});
+		} else {
+			String msg = "Not setting WebChromeClient of webview for debugging, shared pref is disabled";
+			Log.d(TAG, msg);
+			addWebviewLog(context, msg + "\n");
+		}
+
         this.calcInputHelper = new CalcInputHelper();
         // TODO clean up. Just testing for now
         this.calcButtonsHelper = new CalcButtonsHelper(buttonCallback);
@@ -797,4 +861,89 @@ public class FirstFragment extends Fragment {
 		calcOutputDisplayHelper.setFgOverride(fgOverrideVal);
 		calcOutputDisplayHelper.applyFgOverride();
 	}
+
+	public void requestWriteFileLocation(String filename, int requestCode) {
+		Intent sendIntent = new Intent();
+		sendIntent.setAction(Intent.ACTION_CREATE_DOCUMENT);
+		sendIntent.addCategory(Intent.CATEGORY_OPENABLE);
+		sendIntent.setType("text/plain");
+		sendIntent.putExtra(Intent.EXTRA_TITLE, filename);
+
+		startActivityForResult(sendIntent, requestCode);
+	}
+
+	public void shareWebViewLogsFile(Context context) {
+		File logFileToDownload = new File(context.getCacheDir(), WEBVIEW_LOGS_FILE_NAME);
+
+		if (!logFileToDownload.exists()) {
+			Toast.makeText(context, "No log file found!", Toast.LENGTH_SHORT).show();
+			return;
+		}
+
+		Uri contentUri = FileProvider.getUriForFile(context, context.getPackageName() + ".provider", logFileToDownload);
+
+		Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.setType("text/plain");
+		intent.putExtra(Intent.EXTRA_STREAM, contentUri);
+		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+		startActivity(Intent.createChooser(intent, "Download/Share AlexCalc WebView log file"));;
+    }
+
+
+	private void trimLogFile(File file, long sizeToTrim, long sizeToKeep) {
+		if (file.length() > sizeToTrim) {
+			try {
+				long bytesToDelete = file.length() - sizeToKeep;
+				String dateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+				String header = String.format("--- Erased %d bytes on %s due to reaching log size limit ---\n", bytesToDelete, dateStr);
+
+				byte[] buffer = new byte[(int) sizeToKeep];
+				try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
+					raf.seek(bytesToDelete); // Move pointer to the start of the "keep" zone
+					raf.readFully(buffer);
+				}
+
+				try (FileOutputStream fos = new FileOutputStream(file, false)) { // 'false' to overwrite
+					fos.write(header.getBytes(StandardCharsets.UTF_8));
+					fos.write(buffer);
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void addWebviewLog(Context context, String msg) {
+		try {
+			if (webviewLogsFile == null) {
+				webviewLogsFile = new File(context.getCacheDir(), WEBVIEW_LOGS_FILE_NAME);
+			}
+			trimLogFile(webviewLogsFile, MAX_LOGS_FILE_SIZE, LOGS_FILE_SIZE_TO_KEEP);
+			FileOutputStream webviewLogsFileOs = new FileOutputStream(webviewLogsFile, true);
+			webviewLogsFileOs.write((msg + "\n").getBytes());
+			webviewLogsFileOs.close();
+		} catch (IOException ex) {
+			Log.e(TAG, String.format("IOException %s when writing to webview logs file", ex));
+			ex.printStackTrace();
+		}
+	}
+
+	private void writeWebViewLogsToOutputFile(Context context, Uri uri) {
+		try (InputStream in = new FileInputStream(webviewLogsFile);
+			 OutputStream out = context.getContentResolver().openOutputStream(uri)) {
+			byte[] buffer = new byte[8*1024];
+			int bytesRead;
+			while ((bytesRead = in.read(buffer)) != -1) {
+				out.write(buffer, 0, bytesRead);
+			}
+			Toast.makeText(context, context.getString(R.string.file_written_successfully), Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+			Toast.makeText(context, context.getString(R.string.failed_to_save_file), Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Failed to write logs file");
+			e.printStackTrace();
+        }
+
+    }
 }

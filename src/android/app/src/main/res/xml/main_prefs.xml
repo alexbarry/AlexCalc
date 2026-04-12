@@ -10,9 +10,24 @@
         android:title="@string/haptic_pref_label"
         android:entries="@array/haptic_pref_options"
         android:entryValues="@array/haptic_pref_options"/>
+    <PreferenceCategory android:title="@string/pref_title_debug">
     <ListPreference
         android:key="@string/preference_key_fg_override"
-        android:title="Foreground Override (debug)"
+        android:title="@string/fg_override_pref_label"
         android:entries="@array/fg_override_options"
         android:entryValues="@array/fg_override_options"/>
+    <ListPreference
+        android:key="@string/preference_key_log_webview_console_to_file"
+        android:title="@string/log_webview_console_to_file_pref_label"
+        android:entries="@array/log_webview_console_to_file_options"
+        android:entryValues="@array/log_webview_console_to_file_options"/>
+    <Preference
+        android:key="@string/pref_key_download_webview_logs"
+        android:title="@string/download_webview_logs_pref_label"
+        android:summary="@string/download_webview_logs_pref_summary"/>
+    <Preference
+        android:key="@string/pref_key_share_webview_logs"
+        android:title="@string/share_webview_logs_pref_label"
+        android:summary="@string/share_webview_logs_pref_summary"/>
+    </PreferenceCategory>
 </PreferenceScreen>
