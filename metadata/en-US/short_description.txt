@@ -1,1 +1,1 @@
-Scientific calculator with LaTeX equation display
+Scientific calculator with LaTeX equation display, buttons and plaintext input
