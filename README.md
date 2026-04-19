@@ -36,7 +36,6 @@ Once the page is downloaded, there are no server side dependencies. Everything s
 
 Please submit comments, feedback, feature requests, or discussions to:
 * Github: https://github.com/alexbarry/AlexCalc
-* Reddit: [reddit.com/r/AlexCalc](https://www.reddit.com/r/alexcalc/)
 * Discord: [discord.gg/ckNstZc2nF](https://discord.gg/ckNstZc2nF)
 * Email: `alexbarry.dev2 [ at ] gmail.com`
 * Matrix: [`#alexcalc:matrix.org`](https://matrix.to/#/#alexcalc:matrix.org)
