@@ -1,0 +1,1 @@
+Added adi-registration.properties, and donation links to "about" popup.
