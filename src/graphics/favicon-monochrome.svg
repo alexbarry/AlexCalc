@@ -31,9 +31,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.959798"
-     inkscape:cx="55.810928"
-     inkscape:cy="81.191011"
+     inkscape:zoom="5.6"
+     inkscape:cx="60.892857"
+     inkscape:cy="67.410714"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -76,8 +76,15 @@
        cy="20.585941"
        cx="20.688986"
        id="path847-6"
-       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.457831"
+       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.26666668"
        rx="11.772615"
        ry="11.772572" />
+    <ellipse
+       cy="20.658947"
+       cx="20.702179"
+       id="path847-6-7"
+       style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.552931;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.53333336"
+       rx="12.330729"
+       ry="12.330682" />
   </g>
 </svg>

@@ -15,9 +15,18 @@
       android:strokeWidth="0.209631"/>
   <path
       android:pathData="M7.382,19.052a11.773,11.773 0,1 0,23.545 0a11.773,11.773 0,1 0,-23.545 0z"
-      android:strokeAlpha="0.457831"
+      android:strokeAlpha="0.26666668"
       android:strokeLineJoin="round"
       android:strokeWidth="1.6"
+      android:fillColor="#00000000"
+      android:strokeColor="#000000"
+      android:fillType="evenOdd"
+      android:strokeLineCap="round"/>
+  <path
+      android:pathData="M6.837,19.125a12.331,12.331 0,1 0,24.661 0a12.331,12.331 0,1 0,-24.661 0z"
+      android:strokeAlpha="0.53333336"
+      android:strokeLineJoin="round"
+      android:strokeWidth="0.552931"
       android:fillColor="#00000000"
       android:strokeColor="#000000"
       android:fillType="evenOdd"
