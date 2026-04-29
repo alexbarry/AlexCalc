@@ -36,3 +36,4 @@ mkdir -p graphics
 cp "${SRC_DIR}/graphics/favicon.png" graphics/favicon.png
 cp "${SRC_DIR}/graphics/GetItOnGooglePlay_Badge_Web_color_English.png" graphics/
 cp "${SRC_DIR}/../docs/android_privacy_policy.txt" ./
+cp "${SRC_DIR}/../docs/privacy_policy.txt" ./
