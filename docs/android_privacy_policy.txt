@@ -18,6 +18,7 @@ The only information collected or stored by the application is:
 * the state of the radians/degrees, polar/rectangular format, and output format
   preferences (e.g. number of desired decimal places,
   normal/scientific/engineering notation, etc)
+* user preferences such as colour scheme, haptics enabled/disabled
 
 This data is stored in an SQLite database within the app's private data.
 It is never transmitted over the internet or shared with any other
