@@ -10,6 +10,12 @@
         android:title="@string/haptic_pref_label"
         android:entries="@array/haptic_pref_options"
         android:entryValues="@array/haptic_pref_options"/>
+    <ListPreference
+        android:key="@string/preference_key_output_display_height_dp"
+        android:title="@string/preference_key_output_display_height_dp_title"
+        android:summary="@string/preference_output_display_height_dp_summary"
+        android:entries="@array/output_display_height_options_labels"
+        android:entryValues="@array/output_display_height_options_values"/>
     <PreferenceCategory android:title="@string/pref_title_debug">
     <ListPreference
         android:key="@string/preference_key_fg_override"

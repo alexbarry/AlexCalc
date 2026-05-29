@@ -248,4 +248,20 @@ Terms of use: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EX
 		<item>@string/output_display_type_plaintext_only</item>
 	</string-array>
 	<string name="output_display_type_key_label">Output display type</string>
+
+    <string name="preference_key_output_display_height_dp">output_display_min_height_dp</string>
+	<string name="preference_key_output_display_height_dp_title">Output Display Minimum Height</string>
+	<string name="output_display_height_option_label_default">Default (75 dp)</string>
+	<string name="output_display_height_option_label_340dp">340 dp</string>
+	<string name="output_display_height_option_value_default">0</string>
+	<string name="output_display_height_option_value_340dp">340</string>
+	<string name="preference_output_display_height_dp_summary">(Only affects small screen sizes)</string>
+	<string-array name="output_display_height_options_labels">
+		<item>@string/output_display_height_option_label_default</item>
+		<item>@string/output_display_height_option_label_340dp</item>
+	</string-array>
+	<string-array name="output_display_height_options_values">
+		<item>@string/output_display_height_option_value_default</item>
+		<item>@string/output_display_height_option_value_340dp</item>
+	</string-array>
 </resources>

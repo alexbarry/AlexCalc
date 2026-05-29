@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -403,7 +404,21 @@ public class FirstFragment extends Fragment {
         //editText.setCursorVisible(true);
         //editText.requestFocus();
 
+		final Context context = getContext();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
 		outputDisplayWebview = view.findViewById(R.id.output_display_webivew);
+
+		final String outputDisplayMinHeightDefault = getString(R.string.output_display_height_option_value_default);
+		String outputDisplayMinHeightDpStr = prefs.getString(getString(R.string.preference_key_output_display_height_dp), outputDisplayMinHeightDefault);
+
+		if (!outputDisplayMinHeightDpStr.equals(outputDisplayMinHeightDefault)) {
+			ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) outputDisplayWebview.getLayoutParams();
+			int outputDisplayMinHeightDp = Integer.parseInt(outputDisplayMinHeightDpStr);
+			layoutParams.matchConstraintMinHeight = dpToPx(getContext(), outputDisplayMinHeightDp);
+			outputDisplayWebview.setLayoutParams(layoutParams);
+		}
+
         WebSettings webSettings = outputDisplayWebview.getSettings();
         // this seems to keep the webview from flashing white when dark mode is enabled
         outputDisplayWebview.setBackgroundColor(Color.argb(1,0,0,0));
@@ -418,8 +433,6 @@ public class FirstFragment extends Fragment {
 			outputDisplayWebview.setForceDarkAllowed(false);
 		}
 		outputDisplayWebview.loadUrl("file:///android_asset/html/js_display.html");
-        final Context context = getContext();
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		String outputDisplayTypeStr = prefs.getString(getString(R.string.preference_key_output_display_type), getString(R.string.output_display_type_latex_only_default));
 		CalcOutputDisplayHelper.OutputDisplayType outputDisplayType = CalcOutputDisplayHelper.OutputDisplayType.LATEX_ONLY;
 		if (outputDisplayTypeStr.equals(getString(R.string.output_display_type_latex_only_default))) {
@@ -516,6 +529,11 @@ public class FirstFragment extends Fragment {
 
 		initPrefs();
     }
+
+	private static int dpToPx(Context context, float dp) {
+		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
+	}
+
 
 	String androidColourToHtmlColour(int androidColour) {
 		// Note that android seems to store the alpha bits
