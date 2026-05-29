@@ -84,6 +84,7 @@
     <color name="textColor_dated_yet_pricey">#fff</color>
     <color name="windowBackground_dated_yet_pricey">#000</color>
     <color name="outputBackground_dated_yet_pricey">#bbc494</color>
+    <color name="outputForeground_dated_yet_pricey">#000</color>
     <color name="btn_default_dated_yet_pricey">#d8d8df</color>
     <color name="btn_text_dated_yet_pricey">#000</color>
     <color name="btn_important_dated_yet_pricey">#ff7800</color>

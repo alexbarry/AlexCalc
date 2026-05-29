@@ -292,7 +292,26 @@
             }
 
             if (fg_colour != "") {
-                add_output_line_txt("Set foreground override to " + fg_colour + ". This can be disabled in settings.");
+                //add_output_line_txt("Set foreground override to " + fg_colour + ". This can be disabled in settings.");
+            }
+        }
+        function set_bg_override(bg_colour) {
+            console.debug("Setting bg override to ", bg_colour);
+
+            var style_elems = [
+                document.getElementById("calc_body"),
+            ];
+
+            for (var elem of style_elems) {
+                if (bg_colour == "") {
+                    elem.style.removeProperty("background-color");
+                } else {
+                    elem.style.backgroundColor = bg_colour;
+                }
+            }
+
+            if (bg_colour != "") {
+                // add_output_line_txt("Set foreground override to " + bg_colour + ". This can be disabled in settings.");
             }
         }
     console.log("js_display.html second script tag done.");

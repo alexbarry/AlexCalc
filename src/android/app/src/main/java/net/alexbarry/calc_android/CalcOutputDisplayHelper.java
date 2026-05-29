@@ -96,6 +96,16 @@ public class CalcOutputDisplayHelper {
                 escapeStringForJs(type_string)));
     }
 
+    public void setBgColour(String colour) {
+        evaluateJavascript(String.format("set_bg_override(\"%s\");",
+                escapeStringForJs(colour)));
+    }
+
+    public void setFgColour(String colour) {
+        evaluateJavascript(String.format("set_fg_override(\"%s\")",
+                escapeStringForJs(colour)));
+    }
+
     public void applyFgOverride() {
         String colour = "";
         switch (this.fgOverride) {

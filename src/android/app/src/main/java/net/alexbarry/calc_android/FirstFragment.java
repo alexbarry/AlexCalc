@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
@@ -53,6 +55,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -437,6 +440,17 @@ public class FirstFragment extends Fragment {
 				calcOutputDisplayHelper.setTheme(getDesiredTheme(context));
 				view.post(() -> {
 					updateFgOverride(fgOverrideStr);
+
+					Optional<String> bgColour = resolveThemeColour(context, R.attr.outputDisplayBg);
+					Optional<String> fgColour = resolveThemeColour(context, R.attr.outputDisplayFg);
+					if (bgColour.isPresent()) {
+						Log.d(TAG, String.format("Setting OutputDisplayWebView BG colour to %s", bgColour.get()));
+						calcOutputDisplayHelper.setBgColour(bgColour.get());
+						if (fgColour.isPresent()) {
+							Log.d(TAG, String.format("Setting OutputDisplayWebView FG colour to %s", fgColour.get()));
+							calcOutputDisplayHelper.setFgColour(fgColour.get());
+						}
+					}
 				});
 				if (savedState != null) {
 					Log.d(TAG, "loading saved output state onPageFinished");
@@ -502,6 +516,28 @@ public class FirstFragment extends Fragment {
 
 		initPrefs();
     }
+
+	String androidColourToHtmlColour(int androidColour) {
+		// Note that android seems to store the alpha bits
+		// as the most significant bits, not at the end like HTML
+		int alpha = Color.alpha(androidColour);
+		int r = Color.red(androidColour);
+		int g = Color.green(androidColour);
+		int b = Color.blue(androidColour);
+
+		return String.format("#%02x%02x%02x%02x", r, g, b, alpha);
+	}
+
+	Optional<String> resolveThemeColour(Context context, int attrId) {
+		TypedValue typedValue = new TypedValue();
+		if (context.getTheme().resolveAttribute(attrId, typedValue, true)) {
+			int colour = ContextCompat.getColor(context, typedValue.resourceId);
+			String colourStr = androidColourToHtmlColour(colour);
+			return Optional.of(colourStr);
+		}
+		return Optional.empty();
+	}
+
 
     private void addToken(TokenType type, String token, boolean is_unit) {
 		calcInputHelper.add_token(type, token, is_unit);
