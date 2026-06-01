@@ -1,0 +1,6 @@
+Fix padding between variable names and values in "vars" popup.
+Fix "dated yet pricey" theme output display background to retro LCD colour.
+Add some settings to increase output display size on small screens:
+ - option to increase the size of the output display, and
+ - option to hide most or all buttons, instead relying mostly on the on-screen keyboard for text input.
+Add some debug settings for unreadable text or missing LaTeX in output display.
