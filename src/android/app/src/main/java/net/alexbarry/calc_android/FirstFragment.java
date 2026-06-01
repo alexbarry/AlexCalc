@@ -16,6 +16,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.ViewStub;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.webkit.ConsoleMessage;
@@ -407,12 +408,40 @@ public class FirstFragment extends Fragment {
 		final Context context = getContext();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
+		final String smallInputButtonsDefault = getString(R.string.small_input_buttons_entry_value_full);
+		String smallInputButtons = prefs.getString(getString(R.string.preference_key_small_input_buttons), smallInputButtonsDefault);
+		boolean smallInputButtonsEnabled = !smallInputButtons.equals(smallInputButtonsDefault);
+		// minimal buttons
+		if (smallInputButtons.equals(getString(R.string.small_input_buttons_entry_value_minimal))) {
+			ViewStub minimalButtonsStub = view.findViewById(R.id.stub_minimal_buttons);
+
+			View btnGrid = view.findViewById(R.id.btn_grid);
+			ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) btnGrid.getLayoutParams();
+			layoutParams.matchConstraintMinHeight = dpToPx(getContext(), 50);
+			layoutParams.matchConstraintMaxHeight = dpToPx(getContext(), 50);
+			btnGrid.setLayoutParams(layoutParams);
+			minimalButtonsStub.inflate();
+		// no buttons
+		} else if (smallInputButtons.equals(getString(R.string.small_input_buttons_entry_value_none))) {
+			View btnGrid = view.findViewById(R.id.btn_grid);
+			btnGrid.setVisibility(View.GONE);
+		// full buttons (default)
+		} else {
+			if (!smallInputButtonsEnabled) {
+				Log.e(TAG, String.format("Unhandled value for small input buttons pref: \"%s\"", smallInputButtons));
+			}
+			ViewStub fullButtonsStub = view.findViewById(R.id.stub_full_buttons);
+			fullButtonsStub.inflate();
+		}
+
 		outputDisplayWebview = view.findViewById(R.id.output_display_webivew);
 
 		final String outputDisplayMinHeightDefault = getString(R.string.output_display_height_option_value_default);
 		String outputDisplayMinHeightDpStr = prefs.getString(getString(R.string.preference_key_output_display_height_dp), outputDisplayMinHeightDefault);
 
-		if (!outputDisplayMinHeightDpStr.equals(outputDisplayMinHeightDefault)) {
+		// For smallInputButtons, must not set large output display, otherwise it can be larger than the remaining
+		// screen size and not shrink to take up remaining size once on-screen keyboard is visible.
+		if (!outputDisplayMinHeightDpStr.equals(outputDisplayMinHeightDefault) && !smallInputButtonsEnabled) {
 			ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) outputDisplayWebview.getLayoutParams();
 			int outputDisplayMinHeightDp = Integer.parseInt(outputDisplayMinHeightDpStr);
 			layoutParams.matchConstraintMinHeight = dpToPx(getContext(), outputDisplayMinHeightDp);

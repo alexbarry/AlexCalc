@@ -53,6 +53,24 @@
 			app:layout_constraintTop_toBottomOf="@id/txt_input"
 			app:layout_constraintBottom_toBottomOf="parent"
 			app:layout_constraintVertical_weight="0">
-			<include layout="@layout/buttons_full"/>
+			<!--<include layout="@layout/buttons_full"/>-->
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="vertical"
+				>
+			<ViewStub
+				android:id="@+id/stub_minimal_buttons"
+				android:inflatedId="@+id/inflated_buttons"
+				android:layout="@layout/buttons_minimal"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"/>
+			<ViewStub
+				android:id="@+id/stub_full_buttons"
+				android:inflatedId="@+id/inflated_buttons"
+				android:layout="@layout/buttons_full"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"/>
+			</LinearLayout>
 		</ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

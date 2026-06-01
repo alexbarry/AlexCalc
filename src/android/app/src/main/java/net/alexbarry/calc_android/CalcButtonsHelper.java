@@ -285,6 +285,9 @@ public class CalcButtonsHelper {
 		for (final ButtonId internal_btn_id : button_id_to_android_layout_elem_id.keySet()) {
 			Integer android_btn_id = button_id_to_android_layout_elem_id.get(internal_btn_id);
 			Button btn = (Button)view.findViewById(android_btn_id);
+			if (btn == null) {
+				continue;
+			}
 			if (hapticSetting != HapticSetting.DISABLED) {
 				btn.setHapticFeedbackEnabled(true);
 			}
@@ -558,14 +561,18 @@ public class CalcButtonsHelper {
 				continue;
 			}
 			Button btn = (Button)view.findViewById(android_btn_id);
-			btn.setText(btnText);
+			if (btn != null) {
+				btn.setText(btnText);
+			}
 		}
 	}
 
 	private void setButtonText(int android_btn_id, int android_string_id) {
 		Button btn = (Button)view.findViewById(android_btn_id);
 		String btnText = context.getString(android_string_id);
-		btn.setText(btnText);
+		if (btn != null) {
+			btn.setText(btnText);
+		}
 	}
 
 	public void setHapticSetting(HapticSetting hapticSetting) {
