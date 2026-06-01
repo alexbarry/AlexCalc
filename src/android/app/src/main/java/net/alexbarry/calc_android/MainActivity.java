@@ -37,9 +37,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SettingsFragment.SettingsCallbacks {
 
     private static final String TAG = "CalcActivity";
+
+    public static final String DOWNLOAD_WEBVIEW_LOGS_FILE = "download_webview_logs_file";
+    public static final String SHARE_WEBVIEW_LOGS_FILE = "share_webview_logs_file";
 
     final SharedPreferences.OnSharedPreferenceChangeListener sharedPrefsListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -49,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
                         Log.i(TAG, "updating theme due to shared preference change");
                         updateTheme(MainActivity.this);
                         updateNightMode(MainActivity.this);
+                        MainActivity.this.recreate();
+                    } else if (key.equals(getString(R.string.preference_key_fg_override))) {
                         MainActivity.this.recreate();
                     } else {
                         Log.d(TAG, String.format("onSharedPreferenceChanged: unhandled pref \"%s\"", key));
@@ -238,5 +243,21 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    @Override
+    public void downloadWebviewLogsToFile() {
+        NavHostFragment navHostFragment = (NavHostFragment)getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(DOWNLOAD_WEBVIEW_LOGS_FILE, true);
+        navHostFragment.getNavController().navigate(R.id.FirstFragment, bundle);
+    }
+
+    @Override
+    public void shareWebviewLogsFile() {
+        NavHostFragment navHostFragment = (NavHostFragment)getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(SHARE_WEBVIEW_LOGS_FILE, true);
+        navHostFragment.getNavController().navigate(R.id.FirstFragment, bundle);
     }
 }

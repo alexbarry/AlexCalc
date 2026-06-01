@@ -1,19 +1,26 @@
 package net.alexbarry.calc_android;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.ViewStub;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.ConsoleMessage;
+import android.webkit.WebChromeClient;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,8 +30,13 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
@@ -38,8 +50,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -50,7 +68,26 @@ import java.util.TreeMap;
 // TODO units creator/selector
 public class FirstFragment extends Fragment {
 
+	enum FgOverride {
+		DISABLED,
+		WHITE,
+		WHITE_RED,
+		RED,
+		DARK_RED,
+		BLUE,
+		DARK_BLUE,
+		YELLOW,
+		DARK_YELLOW,
+		OFFWHITE,
+		GREY,
+		DARKGREY,
+		DARKERGREY,
+		BLACK,
+	}
+
 	private static final String TAG = "CalcFragment";
+
+	private static final int REQUEST_CODE_WRITE_WEBVIEW_LOGS_FILE = 42;
 
 	private final static String PRESERVED_STATE_FILENAME = "calc_state.json";
 	private static final int MAX_ERRS_ON_ENTER_PRESS = 5;
@@ -114,6 +151,10 @@ public class FirstFragment extends Fragment {
 	private EditText inputEditText;
 	View view = null;
 
+	private File webviewLogsFile = null;
+	private static long MAX_LOGS_FILE_SIZE = 8 * 1024 * 1024;
+	private static long LOGS_FILE_SIZE_TO_KEEP = 4 * 1024 * 1024;
+	private static String WEBVIEW_LOGS_FILE_NAME = "alexcalc_webview_logs.txt";
 
 	private final CalcButtonsHelper.ButtonCallback buttonCallback = new CalcButtonsHelper.ButtonCallback() {
 		@Override
@@ -282,6 +323,14 @@ public class FirstFragment extends Fragment {
 	}
 
 	@Override
+	public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+		if (requestCode == REQUEST_CODE_WRITE_WEBVIEW_LOGS_FILE && resultCode == Activity.RESULT_OK && data != null) {
+			Uri uri = data.getData();
+			writeWebViewLogsToOutputFile(getContext(), uri);
+		}
+	}
+
+	@Override
 	public void onSaveInstanceState(Bundle bundle) {
 		Log.d(TAG, "onSaveInstanceState");
 		super.onSaveInstanceState(bundle);
@@ -300,6 +349,17 @@ public class FirstFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 		Log.d(TAG, "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
+
+		Bundle args = getArguments();
+		if (args != null) {
+			if (args.getBoolean(MainActivity.SHARE_WEBVIEW_LOGS_FILE)) {
+				shareWebViewLogsFile(getContext());
+				args.putBoolean(MainActivity.SHARE_WEBVIEW_LOGS_FILE, false);
+			} else if (args.getBoolean(MainActivity.DOWNLOAD_WEBVIEW_LOGS_FILE)) {
+				requestWriteFileLocation(WEBVIEW_LOGS_FILE_NAME, REQUEST_CODE_WRITE_WEBVIEW_LOGS_FILE);
+				args.putBoolean(MainActivity.DOWNLOAD_WEBVIEW_LOGS_FILE, false);
+			}
+		}
 
         /*
         view.findViewById(R.id.button_display).setOnClickListener(new View.OnClickListener() {
@@ -345,7 +405,49 @@ public class FirstFragment extends Fragment {
         //editText.setCursorVisible(true);
         //editText.requestFocus();
 
+		final Context context = getContext();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+		final String smallInputButtonsDefault = getString(R.string.small_input_buttons_entry_value_full);
+		String smallInputButtons = prefs.getString(getString(R.string.preference_key_small_input_buttons), smallInputButtonsDefault);
+		boolean smallInputButtonsEnabled = !smallInputButtons.equals(smallInputButtonsDefault);
+		// minimal buttons
+		if (smallInputButtons.equals(getString(R.string.small_input_buttons_entry_value_minimal))) {
+			ViewStub minimalButtonsStub = view.findViewById(R.id.stub_minimal_buttons);
+
+			View btnGrid = view.findViewById(R.id.btn_grid);
+			ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) btnGrid.getLayoutParams();
+			layoutParams.matchConstraintMinHeight = dpToPx(getContext(), 50);
+			layoutParams.matchConstraintMaxHeight = dpToPx(getContext(), 50);
+			btnGrid.setLayoutParams(layoutParams);
+			minimalButtonsStub.inflate();
+		// no buttons
+		} else if (smallInputButtons.equals(getString(R.string.small_input_buttons_entry_value_none))) {
+			View btnGrid = view.findViewById(R.id.btn_grid);
+			btnGrid.setVisibility(View.GONE);
+		// full buttons (default)
+		} else {
+			if (!smallInputButtonsEnabled) {
+				Log.e(TAG, String.format("Unhandled value for small input buttons pref: \"%s\"", smallInputButtons));
+			}
+			ViewStub fullButtonsStub = view.findViewById(R.id.stub_full_buttons);
+			fullButtonsStub.inflate();
+		}
+
 		outputDisplayWebview = view.findViewById(R.id.output_display_webivew);
+
+		final String outputDisplayMinHeightDefault = getString(R.string.output_display_height_option_value_default);
+		String outputDisplayMinHeightDpStr = prefs.getString(getString(R.string.preference_key_output_display_height_dp), outputDisplayMinHeightDefault);
+
+		// For smallInputButtons, must not set large output display, otherwise it can be larger than the remaining
+		// screen size and not shrink to take up remaining size once on-screen keyboard is visible.
+		if (!outputDisplayMinHeightDpStr.equals(outputDisplayMinHeightDefault) && !smallInputButtonsEnabled) {
+			ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) outputDisplayWebview.getLayoutParams();
+			int outputDisplayMinHeightDp = Integer.parseInt(outputDisplayMinHeightDpStr);
+			layoutParams.matchConstraintMinHeight = dpToPx(getContext(), outputDisplayMinHeightDp);
+			outputDisplayWebview.setLayoutParams(layoutParams);
+		}
+
         WebSettings webSettings = outputDisplayWebview.getSettings();
         // this seems to keep the webview from flashing white when dark mode is enabled
         outputDisplayWebview.setBackgroundColor(Color.argb(1,0,0,0));
@@ -356,13 +458,42 @@ public class FirstFragment extends Fragment {
             // this should be the default, but just in case...
             webSettings.setAlgorithmicDarkeningAllowed(false);
         }
-        outputDisplayWebview.loadUrl("file:///android_asset/html/js_display.html");
-        final Context context = getContext();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+			outputDisplayWebview.setForceDarkAllowed(false);
+		}
+		outputDisplayWebview.loadUrl("file:///android_asset/html/js_display.html");
+		String outputDisplayTypeStr = prefs.getString(getString(R.string.preference_key_output_display_type), getString(R.string.output_display_type_latex_only_default));
+		CalcOutputDisplayHelper.OutputDisplayType outputDisplayType = CalcOutputDisplayHelper.OutputDisplayType.LATEX_ONLY;
+		if (outputDisplayTypeStr.equals(getString(R.string.output_display_type_latex_only_default))) {
+			outputDisplayType = CalcOutputDisplayHelper.OutputDisplayType.LATEX_ONLY;
+		} else if (outputDisplayTypeStr.equals(getString(R.string.output_display_type_latex_and_plaintext))) {
+			outputDisplayType = CalcOutputDisplayHelper.OutputDisplayType.LATEX_AND_PLAINTEXT;
+		} else if (outputDisplayTypeStr.equals(getString(R.string.output_display_type_plaintext_only))) {
+			outputDisplayType = CalcOutputDisplayHelper.OutputDisplayType.PLAINTEXT_ONLY;
+		}
+		Log.d(TAG, String.format("Setting output display type to %s", outputDisplayType.name()));
+		calcOutputDisplayHelper.setOutputDisplayType(outputDisplayType);
+
+		String fgOverrideStr = prefs.getString(getString(R.string.preference_key_fg_override), getString(R.string.fg_override_disabled));
         outputDisplayWebview.setWebViewClient(new WebViewClient() {
         	@Override
         	public void onPageFinished(WebView view, String url) {
         		Log.d(TAG, "calcOutputDisplayWebview.onPageFinished");
 				calcOutputDisplayHelper.setTheme(getDesiredTheme(context));
+				view.post(() -> {
+					updateFgOverride(fgOverrideStr);
+
+					Optional<String> bgColour = resolveThemeColour(context, R.attr.outputDisplayBg);
+					Optional<String> fgColour = resolveThemeColour(context, R.attr.outputDisplayFg);
+					if (bgColour.isPresent()) {
+						Log.d(TAG, String.format("Setting OutputDisplayWebView BG colour to %s", bgColour.get()));
+						calcOutputDisplayHelper.setBgColour(bgColour.get());
+						if (fgColour.isPresent()) {
+							Log.d(TAG, String.format("Setting OutputDisplayWebView FG colour to %s", fgColour.get()));
+							calcOutputDisplayHelper.setFgColour(fgColour.get());
+						}
+					}
+				});
 				if (savedState != null) {
 					Log.d(TAG, "loading saved output state onPageFinished");
 					applySavedStateToOutputDisplay(savedState);
@@ -375,6 +506,32 @@ public class FirstFragment extends Fragment {
 				calcOutputDisplayHelper.checkMathjax();
 			}
 		});
+
+		String logWebviewToFileStr = prefs.getString(getString(R.string.preference_key_log_webview_console_to_file), getString(R.string.log_webview_to_file_disabled));
+		if (logWebviewToFileStr.equals(getString(R.string.log_webview_to_file_enabled))) {
+			String msg = "Setting WebChromeClient of webview for debugging due to shared pref enabled";
+			Log.d(TAG, msg);
+			addWebviewLog(context, msg + "\n");
+			outputDisplayWebview.setWebChromeClient(new WebChromeClient() {
+				@Override
+				public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+					String msg = String.format("WebView console: %s: %s -- %s:%d",
+						consoleMessage.messageLevel().name(),
+						consoleMessage.message(),
+						consoleMessage.sourceId(),
+						consoleMessage.lineNumber());
+
+					addWebviewLog(context, msg + "\n");
+					Log.i(TAG, msg);
+					return true;
+				}
+			});
+		} else {
+			String msg = "Not setting WebChromeClient of webview for debugging, shared pref is disabled";
+			Log.d(TAG, msg);
+			addWebviewLog(context, msg + "\n");
+		}
+
         this.calcInputHelper = new CalcInputHelper();
         // TODO clean up. Just testing for now
         this.calcButtonsHelper = new CalcButtonsHelper(buttonCallback);
@@ -401,6 +558,33 @@ public class FirstFragment extends Fragment {
 
 		initPrefs();
     }
+
+	private static int dpToPx(Context context, float dp) {
+		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
+	}
+
+
+	String androidColourToHtmlColour(int androidColour) {
+		// Note that android seems to store the alpha bits
+		// as the most significant bits, not at the end like HTML
+		int alpha = Color.alpha(androidColour);
+		int r = Color.red(androidColour);
+		int g = Color.green(androidColour);
+		int b = Color.blue(androidColour);
+
+		return String.format("#%02x%02x%02x%02x", r, g, b, alpha);
+	}
+
+	Optional<String> resolveThemeColour(Context context, int attrId) {
+		TypedValue typedValue = new TypedValue();
+		if (context.getTheme().resolveAttribute(attrId, typedValue, true)) {
+			int colour = ContextCompat.getColor(context, typedValue.resourceId);
+			String colourStr = androidColourToHtmlColour(colour);
+			return Optional.of(colourStr);
+		}
+		return Optional.empty();
+	}
+
 
     private void addToken(TokenType type, String token, boolean is_unit) {
 		calcInputHelper.add_token(type, token, is_unit);
@@ -516,6 +700,12 @@ public class FirstFragment extends Fragment {
 		}
 
         Log.d(TAG, String.format("ENTER; is_err:%b tex:%s, output:%s", is_err, texInput, output));
+		String plaintext = CalcOutputDisplayHelper.inputTokensToPlaintext(calcInputHelper.getCurrentInputTokens());
+		plaintext += " = ";
+		if (!is_err) {
+			plaintext += output;
+		}
+		calcOutputDisplayHelper.addOutputLinePlaintext(plaintext);
         calcOutputDisplayHelper.addOutputLine(texInput);
         if (!is_err) {
 			output = formatOutputLine(output);
@@ -737,4 +927,124 @@ public class FirstFragment extends Fragment {
 
 		setHapticSetting(hapticSetting);
 	}
+
+	public void updateFgOverride(String fgOverrideStr) {
+		FgOverride fgOverrideVal = FgOverride.DISABLED;
+		if (fgOverrideStr.equals(getString(R.string.fg_override_disabled))) {
+			fgOverrideVal = FgOverride.DISABLED;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_white))) {
+			fgOverrideVal = FgOverride.WHITE;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_white_red))) {
+			fgOverrideVal = FgOverride.WHITE_RED;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_red))) {
+			fgOverrideVal = FgOverride.RED;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_dark_red))) {
+			fgOverrideVal = FgOverride.DARK_RED;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_blue))) {
+			fgOverrideVal = FgOverride.BLUE;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_dark_blue))) {
+			fgOverrideVal = FgOverride.DARK_BLUE;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_yellow))) {
+			fgOverrideVal = FgOverride.YELLOW;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_dark_yellow))) {
+			fgOverrideVal = FgOverride.DARK_YELLOW;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_offwhite))) {
+			fgOverrideVal = FgOverride.OFFWHITE;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_grey))) {
+			fgOverrideVal = FgOverride.GREY;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_darkgrey))) {
+			fgOverrideVal = FgOverride.DARKGREY;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_darkergrey))) {
+			fgOverrideVal = FgOverride.DARKERGREY;
+		} else if (fgOverrideStr.equals(getString(R.string.fg_override_black))) {
+			fgOverrideVal = FgOverride.BLACK;
+		}
+		calcOutputDisplayHelper.setFgOverride(fgOverrideVal);
+		calcOutputDisplayHelper.applyFgOverride();
+	}
+
+	public void requestWriteFileLocation(String filename, int requestCode) {
+		Intent sendIntent = new Intent();
+		sendIntent.setAction(Intent.ACTION_CREATE_DOCUMENT);
+		sendIntent.addCategory(Intent.CATEGORY_OPENABLE);
+		sendIntent.setType("text/plain");
+		sendIntent.putExtra(Intent.EXTRA_TITLE, filename);
+
+		startActivityForResult(sendIntent, requestCode);
+	}
+
+	public void shareWebViewLogsFile(Context context) {
+		File logFileToDownload = new File(context.getCacheDir(), WEBVIEW_LOGS_FILE_NAME);
+
+		if (!logFileToDownload.exists()) {
+			Toast.makeText(context, "No log file found!", Toast.LENGTH_SHORT).show();
+			return;
+		}
+
+		Uri contentUri = FileProvider.getUriForFile(context, context.getPackageName() + ".provider", logFileToDownload);
+
+		Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.setType("text/plain");
+		intent.putExtra(Intent.EXTRA_STREAM, contentUri);
+		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+		startActivity(Intent.createChooser(intent, "Download/Share AlexCalc WebView log file"));;
+    }
+
+
+	private void trimLogFile(File file, long sizeToTrim, long sizeToKeep) {
+		if (file.length() > sizeToTrim) {
+			try {
+				long bytesToDelete = file.length() - sizeToKeep;
+				String dateStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+				String header = String.format("--- Erased %d bytes on %s due to reaching log size limit ---\n", bytesToDelete, dateStr);
+
+				byte[] buffer = new byte[(int) sizeToKeep];
+				try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
+					raf.seek(bytesToDelete); // Move pointer to the start of the "keep" zone
+					raf.readFully(buffer);
+				}
+
+				try (FileOutputStream fos = new FileOutputStream(file, false)) { // 'false' to overwrite
+					fos.write(header.getBytes(StandardCharsets.UTF_8));
+					fos.write(buffer);
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void addWebviewLog(Context context, String msg) {
+		try {
+			if (webviewLogsFile == null) {
+				webviewLogsFile = new File(context.getCacheDir(), WEBVIEW_LOGS_FILE_NAME);
+			}
+			trimLogFile(webviewLogsFile, MAX_LOGS_FILE_SIZE, LOGS_FILE_SIZE_TO_KEEP);
+			FileOutputStream webviewLogsFileOs = new FileOutputStream(webviewLogsFile, true);
+			webviewLogsFileOs.write((msg + "\n").getBytes());
+			webviewLogsFileOs.close();
+		} catch (IOException ex) {
+			Log.e(TAG, String.format("IOException %s when writing to webview logs file", ex));
+			ex.printStackTrace();
+		}
+	}
+
+	private void writeWebViewLogsToOutputFile(Context context, Uri uri) {
+		try (InputStream in = new FileInputStream(webviewLogsFile);
+			 OutputStream out = context.getContentResolver().openOutputStream(uri)) {
+			byte[] buffer = new byte[8*1024];
+			int bytesRead;
+			while ((bytesRead = in.read(buffer)) != -1) {
+				out.write(buffer, 0, bytesRead);
+			}
+			Toast.makeText(context, context.getString(R.string.file_written_successfully), Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+			Toast.makeText(context, context.getString(R.string.failed_to_save_file), Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Failed to write logs file");
+			e.printStackTrace();
+        }
+
+    }
 }

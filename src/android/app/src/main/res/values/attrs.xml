@@ -3,6 +3,7 @@
     <attr name="windowBackground" format="color"/>
 
     <attr name="outputDisplayBg" format="color"/>
+    <attr name="outputDisplayFg" format="color"/>
     <attr name="inputTextBg" format="color"/>
     <attr name="btnTextColour" format="color"/>
     <attr name="btnColourImportant" format="color"/>

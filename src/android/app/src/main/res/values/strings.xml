@@ -183,4 +183,105 @@ Terms of use: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EX
 		<item>@string/haptic_pref_enabled</item>
 		<item>@string/haptic_pref_disabled</item>
 	</string-array>
+
+	<string name="fg_override_disabled">Disabled</string>
+	<string name="fg_override_white">White (#fff)</string>
+	<string name="fg_override_white_red">White-red (#faa)</string>
+	<string name="fg_override_red">Red (#f00)</string>
+	<string name="fg_override_dark_red">Dark-red (#800)</string>
+	<string name="fg_override_blue">Blue (#00f)</string>
+	<string name="fg_override_dark_blue">Dark-blue (#008)</string>
+	<string name="fg_override_yellow">Yellow (#ff0)</string>
+	<string name="fg_override_dark_yellow">Dark-Yellow (#880)</string>
+	<string name="fg_override_offwhite">Offwhite (#aaa)</string>
+	<string name="fg_override_grey">Grey (#bbb)</string>
+	<string name="fg_override_darkgrey">Dark-Grey (#888)</string>
+	<string name="fg_override_darkergrey">Darker-Grey (#444)</string>
+	<string name="fg_override_black">Black (#000)</string>
+	<string name="preference_key_fg_override">fg_override_preference</string>
+	<string name="fg_override_pref_label">Foreground override</string>
+
+	<string-array name="fg_override_options">
+		<item>@string/fg_override_disabled</item>
+		<item>@string/fg_override_white</item>
+		<item>@string/fg_override_white_red</item>
+		<item>@string/fg_override_red</item>
+		<item>@string/fg_override_dark_red</item>
+		<item>@string/fg_override_blue</item>
+		<item>@string/fg_override_dark_blue</item>
+		<item>@string/fg_override_yellow</item>
+		<item>@string/fg_override_dark_yellow</item>
+		<item>@string/fg_override_offwhite</item>
+		<item>@string/fg_override_grey</item>
+		<item>@string/fg_override_darkgrey</item>
+		<item>@string/fg_override_darkergrey</item>
+		<item>@string/fg_override_black</item>
+	</string-array>
+
+	<string name="preference_key_log_webview_console_to_file">log_webview_to_file</string>
+	<string name="log_webview_console_to_file_pref_label">Log WebView console to file</string>
+	<string name="log_webview_to_file_disabled">Disabled</string>
+	<string name="log_webview_to_file_enabled">Enabled</string>
+	<string name="pref_title_debug">Debug</string>
+	<string name="pref_key_download_webview_logs">download_webview_logs</string>
+	<string name="download_webview_logs_pref_label">Download WebView logs file</string>
+	<string name="download_webview_logs_pref_summary">Generates a file containing AlexCalc\'s WebView console logs. Must have enabled WebView logging and performed some calculations first.</string>
+	<string name="webview_logs_download_filename">alexcalc_webview_console.log</string>
+	<string name="webview_logs_share_title">Export AlexCalc WebView logs to...</string>
+	<string name="failed_to_save_file">Failed to save file</string>
+	<string name="file_written_successfully">File written successfully</string>
+	<string name="pref_key_share_webview_logs">share_webview_logs</string>
+	<string name="share_webview_logs_pref_label">Share WebView logs file</string>
+	<string name="share_webview_logs_pref_summary">Open the \"share file\" dialog to share this file with another app, or save to device if your phone supports it.</string>
+	<string-array name="log_webview_console_to_file_options">
+		<item>@string/log_webview_to_file_disabled</item>
+		<item>@string/log_webview_to_file_enabled</item>
+	</string-array>
+
+	<string name="preference_key_output_display_type">output_display_type</string>
+	<string name="output_display_type_latex_only_default">LaTeX only (default)</string>
+	<string name="output_display_type_latex_and_plaintext">LaTeX and plaintext</string>
+	<string name="output_display_type_plaintext_only">Plaintext only</string>
+	<string-array name="output_display_type_options">
+		<item>@string/output_display_type_latex_only_default</item>
+		<item>@string/output_display_type_latex_and_plaintext</item>
+		<item>@string/output_display_type_plaintext_only</item>
+	</string-array>
+	<string name="output_display_type_key_label">Output display type</string>
+
+    <string name="preference_key_output_display_height_dp">output_display_min_height_dp</string>
+	<string name="preference_key_output_display_height_dp_title">Output Display Minimum Height</string>
+	<string name="output_display_height_option_label_default">Default (75 dp)</string>
+	<string name="output_display_height_option_label_340dp">340 dp</string>
+	<string name="output_display_height_option_value_default">0</string>
+	<string name="output_display_height_option_value_340dp">340</string>
+	<string name="preference_output_display_height_dp_summary">(Only affects small screen sizes)</string>
+	<string-array name="output_display_height_options_labels">
+		<item>@string/output_display_height_option_label_default</item>
+		<item>@string/output_display_height_option_label_340dp</item>
+	</string-array>
+	<string-array name="output_display_height_options_values">
+		<item>@string/output_display_height_option_value_default</item>
+		<item>@string/output_display_height_option_value_340dp</item>
+	</string-array>
+
+	<string name="preference_key_small_input_buttons">preference_key_small_input_buttons</string>
+	<string name="preference_key_small_input_buttons_title">Hide some input buttons</string>
+	<string name="preference_key_small_input_buttons_summary">Hide some or all of the on-screen buttons, to instead use the text input and the on-screen keyboard.\nUseful for small screen sizes.</string>
+	<string name="small_input_buttons_entry_label_full">Show all buttons (default)</string>
+	<string name="small_input_buttons_entry_label_minimal">Minimal (only show buttons that can not be entered via the on-screen keyboard)</string>
+	<string name="small_input_buttons_entry_label_none">Show no buttons</string>
+	<string name="small_input_buttons_entry_value_full">small_buttons_full</string>
+	<string name="small_input_buttons_entry_value_minimal">small_buttons_minimal</string>
+	<string name="small_input_buttons_entry_value_none">small_buttons_none</string>
+	<string-array name="small_input_buttons_entries_labels">
+		<item>@string/small_input_buttons_entry_label_full</item>
+		<item>@string/small_input_buttons_entry_label_minimal</item>
+		<item>@string/small_input_buttons_entry_label_none</item>
+	</string-array>
+	<string-array name="small_input_buttons_entries_values">
+		<item>@string/small_input_buttons_entry_value_full</item>
+		<item>@string/small_input_buttons_entry_value_minimal</item>
+		<item>@string/small_input_buttons_entry_value_none</item>
+	</string-array>
 </resources>

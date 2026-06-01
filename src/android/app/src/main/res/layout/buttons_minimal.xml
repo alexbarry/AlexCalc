@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:columnCount="4">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_clear"
+        style="@style/AlexCalcButtonImportant"
+        android:text="@string/clear" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_alt"
+        style="@style/AlexCalcButtonMeta"
+        android:text="@string/alt" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_var"
+        style="@style/AlexCalcButtonVar"
+        android:text="@string/var" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_up"
+        style="@style/AlexCalcButtonMeta"
+        android:text="@string/arrow_up" />
+
+        <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_polar"
+        style="@style/AlexCalcButtonMeta"
+        android:text="@string/polar" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_degree"
+        style="@style/AlexCalcButtonMeta"
+        android:text="@string/degree" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_units"
+        style="@style/AlexCalcButtonVar"
+        android:text="@string/units" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_down"
+        style="@style/AlexCalcButtonMeta"
+        android:text="@string/arrow_down" />
+
+    </GridLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
