@@ -270,7 +270,7 @@ Terms of use: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EX
 	<string name="preference_key_small_input_buttons_summary">Hide some or all of the on-screen buttons, to instead use the text input and the on-screen keyboard.\nUseful for small screen sizes.</string>
 	<string name="small_input_buttons_entry_label_full">Show all buttons (default)</string>
 	<string name="small_input_buttons_entry_label_minimal">Minimal (only show buttons that can not be entered via the on-screen keyboard)</string>
-	<string name="small_input_buttons_entry_label_none">None</string>
+	<string name="small_input_buttons_entry_label_none">Show no buttons</string>
 	<string name="small_input_buttons_entry_value_full">small_buttons_full</string>
 	<string name="small_input_buttons_entry_value_minimal">small_buttons_minimal</string>
 	<string name="small_input_buttons_entry_value_none">small_buttons_none</string>
