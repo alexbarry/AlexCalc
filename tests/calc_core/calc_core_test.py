@@ -628,12 +628,13 @@ print_all = False
 #print_all = True
 
 def calc_diff_frac(a,b):
-	if a == 0: return a == b
+	if a == 0: raise Exception()
 	return abs(a - b)/a
 
 def within_frac(a,b, frac):
 	if isinstance(b,Exception): return False
-	return calc_diff_frac(a,b) < frac
+	elif a == 0: return a == b
+	else: return calc_diff_frac(a,b) < frac
 
 print("Starting to run up to %d normal tests..." % len(tests))
 for test_idx, test_params in enumerate(tests):
