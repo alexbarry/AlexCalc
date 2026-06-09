@@ -34,6 +34,9 @@ class bcolors:
 def cos_grad(x):
 	return math.cos(x/200*math.pi)
 
+def sin_grad(x):
+	return math.sin(x/200*math.pi)
+
 tests = [
 		( '0.6',                           0.6),
 		( '.6',                            0.6),
@@ -233,6 +236,10 @@ tests = [
 		( 'cos(200deg0\')',   cos_grad(200), 'gradian'),
 		( "cos(200deg0'0'')", cos_grad(200), 'gradian'),
 		( 'cos(200deg0\'0")', cos_grad(200), 'gradian'),
+		( 'cos(200deg30\'0")', cos_grad(200.5), 'gradian'),
+		( 'cos(0deg10\'12")', cos_grad(0 + 10/60 + 12/60/60), 'gradian'),
+		( 'cos(400deg10\'12")', cos_grad(0 + 10/60 + 12/60/60), 'gradian'),
+		( 'sin(0deg10\'12")', sin_grad(0 + 10/60 + 12/60/60), 'gradian'),
 
 		( '30\'', 0.5, 'gradian'),
 		( '30\'', 0.5, 'degree'),
