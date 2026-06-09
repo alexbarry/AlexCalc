@@ -150,7 +150,7 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 	if (group_idx != result.size()) {
 		//std::cerr << "regex had " << result.size() << " matched groups, group_idx is " << group_idx << std::endl;
 		std::cerr << "regex had " << result.size() << " matched groups, group_idx is " << group_idx << std::endl;
-		throw new InvalidInputException("internal error: match groups and result size do not match", 0);
+		throw InvalidInputException("internal error: match groups and result size do not match", 0);
 	}
 
 	// if this is true, then the value does not have an angle
@@ -261,7 +261,7 @@ calc_float_t parse_float_str(std::string str) {
 		// though it may be cleaner to have the parser remove trailing whitespace
 	} else {
 		//std::cerr << "ending is " << ending << ", expected NULL" << std::endl;
-		throw new InvalidInputException(std::string("Could not convert string to float: \"") + str + "\"", 0);
+		throw InvalidInputException(std::string("Could not convert string to float: \"") + str + "\"", 0);
 	}
 	return val;
 }

@@ -602,9 +602,7 @@ static angle_op_func_t get_angle_op_func(angle_mode_t angle_mode) {
 		case ANGLE_MODE_GRADIAN: return angle_op_func_grad; 
 	}
 	// TODO define a new internal error exception
-	// TODO fix the way exceptions' memory is allocated, this is a relic from
-	// when I was learning C++ and thought it was like Java
-	throw new InvalidInputException("internal error: unhandled angle mode type", 0);
+	throw InvalidInputException("internal error: unhandled angle mode type", 0);
 }
 
 val_t neg_vals( std::vector<val_t> vals ) {
