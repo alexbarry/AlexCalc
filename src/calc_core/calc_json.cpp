@@ -94,11 +94,7 @@ void write_val_to_json_str(char *str_output, int str_output_len,
                            const OutputInfo *output_info,
                            const CalcData *calcData) {
 	struct calc_fmt_params params = get_default_params();
-	const std::vector<UnitInfoInput> *desired_units = nullptr;
-	if (output_info != nullptr) {
-		desired_units = &output_info->output_unit_str;
-	}
-	std::string nice_str = val_to_latex(&val, params, calcData, desired_units, &output_info->unit);
+	std::string nice_str = val_to_latex(&val, params, calcData, output_info);
 
 	std::string re_str = calc_float_to_json_str(val.re, decimal_places);
 	std::string im_str = calc_float_to_json_str(val.im, decimal_places);

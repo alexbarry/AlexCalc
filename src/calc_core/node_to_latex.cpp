@@ -557,9 +557,14 @@ std::string raw_units_to_latex(const unit_dim_t &unit_dim) {
 std::string val_to_latex(const val_t *val_arg,
                          const struct calc_fmt_params &params,
                          const CalcData *calcData,
-                         const std::vector<UnitInfoInput> *desired_units,
-                         const unit_t                     *desired_units_val) {
+                         const OutputInfo *output_info) {
 
+	const std::vector<UnitInfoInput> *desired_units = nullptr;
+	const unit_t *desired_units_val = nullptr;
+	if (output_info != nullptr) {
+		desired_units     = &output_info->output_unit_str;
+		desired_units_val = &output_info->unit;
+	}
 
 	calc_float_t unit_scale_fac = 1.0;
 	std::string unit_str_latex;
