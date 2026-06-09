@@ -12,7 +12,8 @@
 #include "calc_units.h"
 #include "calc_core_exceptions.h"
 
-#define MAX_DECIMAL_PLACES (9)
+#define MAX_DECIMAL_PLACES (20)
+#define DEFAULT_DECIMAL_PLACES (9)
 
 
 extern const char VAR_NAME_ANS[];

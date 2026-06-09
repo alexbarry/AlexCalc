@@ -1264,7 +1264,7 @@ struct calc_fmt_params get_default_params(void) {
 	return {
 		.exp_format         = EXP_FMT_NORMAL,
 		.fixed_decimal_places = false,
-		.max_decimal_places = MAX_DECIMAL_PLACES,
+		.max_decimal_places = DEFAULT_DECIMAL_PLACES,
 	};
 }
 

@@ -6,6 +6,14 @@ import re
 import sys
 import math
 
+# NOTE: default is currently 9 decimal places.
+# This overrides it, except in some tests where I explicitly set it to 9.
+# But I've now realized that it would probably be better for most tests
+# to compare string output exactly to expected output formatted as '%.9f'.
+# Currently I convert the value to a float and check if it is within 1e-12 or so
+DEFAULT_DECIMAL_PLACES = 20
+#DEFAULT_DECIMAL_PLACES = 9
+
 NEG_SYMB = r'\text{-}'
 
 calc_bin_file = sys.argv[1]
@@ -499,6 +507,8 @@ def python_solve_test(test):
 
 def run_test(test, cmds=None, parse_float=True):
 	if not cmds: cmds = []
+	if not any(cmd.startswith('decimal_places') for cmd in cmds):
+		cmds.append('decimal_places %d' % DEFAULT_DECIMAL_PLACES)
 	#py_answer = python_solve_test( test )
 
 	p = subprocess.Popen( calc_bin_file, stdin=subprocess.PIPE,
@@ -528,6 +538,9 @@ def run_test(test, cmds=None, parse_float=True):
 		elif cmd == 'gradian':
 			if output_line != cmd_gradian_expected_output:
 				raise Exception('output_str from :gradian did not match expected: %r' % output_line )
+		elif cmd.startswith('decimal_places'):
+			if not output_line.startswith('Output decimal places is now: '):
+				raise Exception()
 		else:
 			print('Unsure how to validate cmd %r' % cmd)
 	if len(output) < 2:

@@ -77,6 +77,13 @@ int main(void) {
 			} else if (cmd == "to_latex") {
 				to_latex = !to_latex;
 				std::cout << "Output to latex is now: " << to_latex << std::endl;
+			} else if (cmd == "decimal_places") {
+				try {
+					params.max_decimal_places = std::stoi(args);
+					std::cout << "Output decimal places is now: " << params.max_decimal_places << std::endl;
+				} catch (std::invalid_argument &ex) {
+					std::cerr << "Invalid param to :decimal_places, expected int" << std::endl;
+				}
 			} else if (cmd == "vars") {
 				calcData.print_vars();
 			} else if (cmd == "cursor") {
