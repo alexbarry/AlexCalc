@@ -1084,6 +1084,10 @@ std::string node_to_latex(const InputInfo *parse_info) {
 			output += input_units_to_latex(parse_info->calcData, &parse_info->to_unit);
 		}
 		output += ")";
+	} else if (parse_info->special_output_unit) {
+		output += "\\enspace (\\small{\\textit{to:}}\\normalsize\\;";
+		output += special_output_unit_to_latex(parse_info->special_output_unit.value());
+		output += ")";
 	}
 
 	if (parse_info->has_sto) {

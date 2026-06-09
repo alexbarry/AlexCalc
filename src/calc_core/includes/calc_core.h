@@ -5,6 +5,7 @@
 
 #include<string>
 #include<vector>
+#include<optional>
 // For debugging only
 #include<unordered_map>
 
@@ -292,6 +293,7 @@ class InputInfo {
 
     std::string sto_var_name;
 	std::vector<UnitInfoInput> to_unit;
+	std::optional<std::string> special_output_unit = std::nullopt;
     OutputInfo eval(CalcData *calcData);
 	const CalcData *calcData;
 
@@ -307,6 +309,8 @@ class OutputInfo {
 	unit_t unit;
 	std::vector<UnitInfoInputAry> units_in_input;
 	std::vector<UnitInfoInput> output_unit_str;
+
+	std::optional<std::string> special_output_unit = std::nullopt;
 	std::string to_string(void) const;
 };
 
@@ -408,5 +412,7 @@ int get_pow_exp_str(std::string val_str);
 
 calc_float_t convert_angle_val_inv(calc_float_t arg, angle_mode_t angle_mode);
 std::string angle_mode_to_str(angle_mode_t angle_mode);
+
+bool is_special_output_unit(const std::string &to_unit);
 
 #endif

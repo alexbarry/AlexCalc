@@ -1341,9 +1341,13 @@ bool is_all_whitespace(const std::string &str_input) {
 }
 
 
+// TODO remove return code here,
+// since `to_units` or `special_output_unit_out` can be set,
+// but currently return code only indicates if `to_units` is set
 bool calc_check_for_to_unit(const std::string &str_input,
                             std::string *expression_out,
-                            std::vector<UnitInfoInput> *to_units) {
+                            std::vector<UnitInfoInput> *to_units,
+                            std::optional<std::string> *special_output_unit_out) {
 	static const std::regex to_unit_regex( //"^"
 	                                      "(.*)"
 	                                      "\\bto\\b"
@@ -1352,9 +1356,11 @@ bool calc_check_for_to_unit(const std::string &str_input,
 	                                        "(?:"
 	                                          "(?:"
 	                                             // for non WIP, it should look like this
-	                                             //"[a-zA-Z_]*[0-9a-zA-Z_]+"
+	                                             // (at least one char)
+	                                             //"[a-zA-Z_]*[0-9a-zA-Z_]+['\"]*"
 	                                             // but for WIP, it looks like this:
-	                                             "[a-zA-Z_]*[0-9a-zA-Z_]*"
+	                                             // (0 or more char)
+	                                             "[a-zA-Z_]*[0-9a-zA-Z_]*['\"]*"
 	                                          ")"
 	                                          "(?:"
 	                                             "\\^(?:-?[0-9]+)"
@@ -1376,6 +1382,11 @@ bool calc_check_for_to_unit(const std::string &str_input,
 
 	*expression_out = result.str(1);
 	std::string to_units_str = result.str(2);
+
+	if (is_special_output_unit(to_units_str)) {
+		*special_output_unit_out = to_units_str;
+		return false;
+	}
 
 
 	if (!is_all_whitespace(to_units_str)) {
@@ -1418,10 +1429,15 @@ InputInfo calc_parse( std::string str_input,
 		std::string expression;
 		std::string result_unit_selection;
 		std::vector<UnitInfoInput> to_units;
-		info.has_to_unit = calc_check_for_to_unit(str_input, &expression, &to_units);
+		std::optional<std::string> special_output_unit = std::nullopt;
+		info.has_to_unit = calc_check_for_to_unit(str_input, &expression, &to_units, &special_output_unit);
 		if (info.has_to_unit) {
 			str_input = expression;
 			info.to_unit = to_units;
+		}
+		if (special_output_unit) {
+			str_input = expression;
+			info.special_output_unit = special_output_unit;
 		}
 	}
 

@@ -1556,6 +1556,18 @@ std::string UnitInfoInputAry::to_string(void) const {
 	return output;
 }
 
+bool is_special_output_unit(const std::string &to_unit) {
+	if (to_unit == "deg") {
+		return true;
+	} else if (to_unit == "deg'") {
+		return true;
+	} else if (to_unit == "deg''" || to_unit == "deg\"") {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 
 OutputInfo InputInfo::eval(CalcData *calcData) {
 	OutputInfo output;
@@ -1576,6 +1588,10 @@ OutputInfo InputInfo::eval(CalcData *calcData) {
 		}
 
 		calcData->set_var(this->sto_var_name, output.val);
+	}
+
+	if (this->special_output_unit) {
+		output.special_output_unit = this->special_output_unit;
 	}
 
 	if (this->has_to_unit) {
