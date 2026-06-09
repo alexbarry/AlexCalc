@@ -500,6 +500,9 @@ tests_for_units = [
 	( '1 atm', 101325, 'Pa'),
 ]
 
+tests_str_output = [
+]
+
 def python_solve_test(test):
 	test = re.sub( r'\^', r'**', test )
 	return eval(test)
@@ -538,6 +541,9 @@ def run_test(test, cmds=None, parse_float=True):
 		elif cmd == 'gradian':
 			if output_line != cmd_gradian_expected_output:
 				raise Exception('output_str from :gradian did not match expected: %r' % output_line )
+		elif cmd == 'to_latex_val':
+			if output_line != 'Output to_latex_val is now: 1':
+				raise Exception()
 		elif cmd.startswith('decimal_places'):
 			if not output_line.startswith('Output decimal places is now: '):
 				raise Exception()
@@ -728,6 +734,17 @@ for test_idx, (str_input, expected_output_val, expected_output_unit) in enumerat
 		failed_tests.append( ('(test for units) %r' % str_input, test_idx, expected_output, actual_output))
 	tests_run.append( (test, test_idx))
 
+print('Checking that %d "tests_str_output" pass...' % len(tests_str_output))
+for test_idx, (str_input, expected_output) in enumerate(tests_str_output):
+	cmds = [
+		'to_latex_val',
+		'decimal_places %d' % tests_str_output_decimal_places,
+	]
+	actual_output, memory_leak, output_err = run_test(str_input, cmds=cmds, parse_float=False)
+	if actual_output != expected_output:
+		failed_tests.append( ('(test str output %d) %r' % (test_idx, str_input), test_idx, expected_output, actual_output))
+	tests_run.append( (test, test_idx))
+
 rc = 0
 
 total_test_count = len(tests_run)
@@ -749,7 +766,11 @@ if failed_tests:
 		expected = str(expected)
 		received = str(received)
 		print('Test idx %3d failed' % test_idx)
-		off_by_frac = calc_diff_frac(float(expected), float(received))
+		off_by_frac = None
+		try:
+			off_by_frac = calc_diff_frac(float(expected), float(received))
+		except:
+			pass
 		if len(expected) < 20 and len(received) < 20:
 			print( '%-60s expected "%s", actual "%s" (off by frac: %r)' % ( test, expected, received, off_by_frac ) )
 		else:

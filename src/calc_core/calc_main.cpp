@@ -26,6 +26,7 @@ int main(void) {
 
 	bool parse_only = false;
 	bool to_latex = false;
+	bool to_latex_val = false;
 	
 	bool echo      = false;
 	bool print_eof = false;
@@ -77,6 +78,9 @@ int main(void) {
 			} else if (cmd == "to_latex") {
 				to_latex = !to_latex;
 				std::cout << "Output to latex is now: " << to_latex << std::endl;
+			} else if (cmd == "to_latex_val") {
+				to_latex_val = !to_latex_val;
+				std::cout << "Output to_latex_val is now: " << to_latex_val << std::endl;
 			} else if (cmd == "decimal_places") {
 				try {
 					params.max_decimal_places = std::stoi(args);
@@ -195,7 +199,13 @@ int main(void) {
 			if (output.output_unit_str.size() > 0) {
 				desired_unit = &output.unit;
 			}
-			std::cout << val_to_string(&output.val, params, desired_unit);
+
+			if (!to_latex_val) {
+				std::cout << val_to_string(&output.val, params, desired_unit);
+			} else {
+				std::string nice_str = val_to_latex(&output.val, params, &calcData, &output);
+				std::cout << nice_str;
+			}
  			if (output.output_unit_str.size() > 0) {
 				std::cout << " " << unit_info_input_vec_to_string(&output.output_unit_str);
 			}
