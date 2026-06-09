@@ -17,7 +17,7 @@ list(APPEND COMPILE_OPTS
 	"-Wno-error=sign-compare"
 	"-O3"
 	"-g"
-	"-std=c++11"
+	"-std=c++17"
 )
 
 add_compile_options("${COMPILE_OPTS}")
