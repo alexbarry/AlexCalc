@@ -521,7 +521,54 @@ tests_for_units = [
 	( '1 atm', 101325, 'Pa'),
 ]
 
+DEG_SYMB = r'^\circ'
+DEG_MIN_SEC_SEP = r'\,'
+MIN_SYMB = '\''
+SEC_SYMB = '\'\''
+
+def fmt_deg_min_sec(d, m, s):
+	if False:
+		d = str(d)
+		m = str(m)
+		s = str(s)
+
+	output = d + DEG_SYMB
+	if m != 0 or s != 0:
+		output += DEG_MIN_SEC_SEP + m + MIN_SYMB
+		if s != 0:
+			output += DEG_MIN_SEC_SEP + s + SEC_SYMB
+	return output
+
+
+tests_str_output_decimal_places = 9
+fmt_str = lambda val: '%.*f' % (tests_str_output_decimal_places, val)
 tests_str_output = [
+	( '0', '0'),
+	( '0deg', '0'),
+	( '0deg to deg',       '0' + DEG_SYMB),
+	( '1deg to deg',       '1' + DEG_SYMB),
+	( '45deg to deg',     '45' + DEG_SYMB),
+	( '45deg30\'',     '45.5'),
+	( '45deg45\'',     '45.75'),
+	( '45deg15\'',     '45.25'),
+	( '-45deg15\'',     '-45.25'),
+
+	( '360deg', '360'),
+	( '360deg0\'', '360'),
+
+	( '360deg to deg', '360' + DEG_SYMB),
+	( '360deg0\' to deg', '360' + DEG_SYMB),
+	( '360deg0\'0\'\' to deg', '360' + DEG_SYMB),
+	( '360deg0\'0" to deg', '360' + DEG_SYMB),
+
+	( '30deg45\'15"',        fmt_str(30 + 45.0/60 + 15.0/60/60) ),
+	( '30deg45\'15" to deg', fmt_str(30 + 45.0/60 + 15.0/60/60) + DEG_SYMB ),
+	( '30deg45\'15" to deg\'\'', fmt_deg_min_sec('30', '45', '15') ),
+	( '0deg0\'1" to deg\'\'', fmt_deg_min_sec('0', '0', '1') ),
+	( '0deg0\'2" to deg\'\'', fmt_deg_min_sec('0', '0', '2') ),
+	( '0deg0\'59" to deg\'\'', fmt_deg_min_sec('0', '0', '59') ),
+	( '1deg0\'59" to deg\'\'', fmt_deg_min_sec('1', '0', '59') ),
+	( '13deg1\'59" to deg\'\'', fmt_deg_min_sec('13', '1', '59') ),
 ]
 
 def python_solve_test(test):

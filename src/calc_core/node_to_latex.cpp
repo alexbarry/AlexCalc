@@ -554,6 +554,84 @@ std::string raw_units_to_latex(const unit_dim_t &unit_dim) {
 	return output;
 }
 
+enum deg_min_sec_e {
+	SHOW_DEG,
+	SHOW_DEG_MIN,
+	SHOW_DEG_MIN_SEC,
+};
+
+std::string val_to_latex_deg_min_sec(calc_float_t val,
+                                     const struct calc_fmt_params &params,
+                                     enum deg_min_sec_e deg_min_sec) {
+	calc_float_t degs = val;
+	calc_float_t mins = 0.0;
+	calc_float_t secs = 0.0;
+
+	if (deg_min_sec == SHOW_DEG) {
+		// do nothing
+	} else {
+		calc_float_t degs_int;
+		calc_float_t degs_decimal = std::modf(degs, &degs_int);
+		//degs_int = std::floor(degs);
+		//calc_float_t degs_decimal = degs - degs_int;
+
+		degs = degs_int;
+		mins = degs_decimal * 60;
+
+		if (deg_min_sec == SHOW_DEG_MIN) {
+			// keep mins as-is
+		} else if (deg_min_sec == SHOW_DEG_MIN_SEC) {
+			calc_float_t mins_int;
+			calc_float_t mins_decimal = std::modf(mins, &mins_int);
+			//mins_int = std::floor(mins);
+			//calc_float_t mins_decimal = mins - mins_int;
+			mins = mins_int;
+			secs = mins_decimal * 60;
+		} else {
+			throw BaseCalcException("unhandled deg_min_sec value");
+		}
+	}
+
+	std::string output = flt_to_latex(degs, params);
+	output += "^\\circ";
+	if (mins != 0 || secs != 0) {
+		output += "\\,";
+		output += flt_to_latex(mins, params);
+		output += "'";
+		if (secs != 0) {
+			output += "\\,";
+			output += flt_to_latex(secs, params);
+			output += "''";
+		}
+	}
+
+	return output;
+}
+
+std::string val_to_latex_special_output(const val_t &val,
+                                        const struct calc_fmt_params &params,
+                                        const std::string &special_output_unit) {
+	if (special_output_unit == "deg") {
+		if (val.im != 0) {
+			throw new InvalidInputException("can not convert to degrees with imaginary value present", 0);
+		}
+		return val_to_latex_deg_min_sec(val.re, params, SHOW_DEG);
+	} else if (special_output_unit == "deg'") {
+		if (val.im != 0) {
+			throw new InvalidInputException("can not convert to degrees+minutes with imaginary value present", 0);
+		}
+		return val_to_latex_deg_min_sec(val.re, params, SHOW_DEG_MIN);
+	} else if (special_output_unit == "deg''" || special_output_unit == "deg\"") {
+		if (val.im != 0) {
+			throw new InvalidInputException("can not convert to degrees+minutes+seconds with imaginary value present", 0);
+		}
+		return val_to_latex_deg_min_sec(val.re, params, SHOW_DEG_MIN_SEC);
+	} else {
+		throw BaseCalcException("unhandled special_output");
+	}
+}
+
+// TODO this is what should convert output to deg/min or deg/min/sec?
 std::string val_to_latex(const val_t *val_arg,
                          const struct calc_fmt_params &params,
                          const CalcData *calcData,
@@ -588,6 +666,10 @@ std::string val_to_latex(const val_t *val_arg,
 	val_t val = *val_arg;
 	val.re /= unit_scale_fac;
 	val.im /= unit_scale_fac;
+
+	if (output_info->special_output_unit.has_value()) {
+		return val_to_latex_special_output(val, params, *output_info->special_output_unit);
+	}
 	
 	if (!calcData->polar) {
 		output = val_to_latex_rect(&val, params, unit_str_latex.size() > 0);
@@ -1063,6 +1145,19 @@ std::string raw_node_to_latex(Node *n, const InputInfo *info)  {
 
 std::string latex_sto_suffix(const InputInfo *info) {
 	return " \\rightarrow " + name_to_latex(info->sto_var_name);
+}
+
+std::string special_output_unit_to_latex(const std::string &val) {
+	if (val == "deg") {
+		return "^\\circ";
+	} else if (val == "deg'") {
+		return "^\\circ \\,'";
+	} else if (val == "deg''" || val == "deg\"") {
+		return "^\\circ \\, ' \\, ''";
+	} else {
+		// TODO log an error here, this is unexpected
+		return val;
+	}
 }
 
 std::string node_to_latex(const InputInfo *parse_info) {
