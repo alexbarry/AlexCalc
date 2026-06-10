@@ -4,6 +4,7 @@
 #include<cstdlib>
 #include<sstream>
 #include<vector>
+#include<format>
 #include<list>
 #include<iostream>
 #include<regex>
@@ -277,11 +278,19 @@ calc_float_t parse_float_w_optional_deg_str(std::string str) {
 		}
 
 		if (deg_min_sec.min.size() > 0) {
-			val += parse_float_str(deg_min_sec.min)/60;
+			calc_float_t min_val = parse_float_str(deg_min_sec.min);
+			if (min_val < 0 || min_val >= 60) {
+				throw InvalidInputException(std::format("minutes must be between 0 and 60, received {} from: {}", min_val, str), 0);
+			}
+			val += min_val/60;
 		}
 
 		if (deg_min_sec.sec.size() > 0) {
-			val += parse_float_str(deg_min_sec.sec)/60/60;
+			calc_float_t sec = parse_float_str(deg_min_sec.sec);
+			if (sec < 0 || sec >= 60) {
+				throw InvalidInputException(std::format("seconds must be between 0 and 60, received {} from: {}", sec, str), 0);
+			}
+			val += sec/60/60;
 		}
 
 		return val;

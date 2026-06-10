@@ -225,7 +225,6 @@ tests = [
 		( "200deg",        200.0,             'gradian'),
 		( "200deg0'",      200.0,             'gradian'),
 		( "200deg30'",     200.5,             'gradian'),
-		( "200deg60'",     201.0,             'gradian'),
 		( "200deg30'30''", 200 + 30/60 + 30/60/60, 'gradian'),
 		( '200deg30\'30"', 200 + 30/60 + 30/60/60, 'gradian'),
 		( '200deg30\'20"', 200 + 30/60 + 20/60/60, 'gradian'),
@@ -489,6 +488,12 @@ err_tests = [
 	'6e',
 
 	'',
+
+	"0deg60'",
+	"180deg60'",
+	"180deg360'",
+	"180deg360''",
+	"180deg360\"",
 ]
 
 # Calling these "unit tests" would be confusing, given that everything here is a "unit test"
