@@ -67,12 +67,41 @@ class ValInfo {
 	"(?:[eE]-?[0-9]+)?" /* optional exponent */ \
 	")"
 
+#define FLOAT_NO_EXP_PATTERN \
+	"(?:" \
+	"[0-9]*" \
+	"(?:\\.[0-9]+)?"   /* optional decimal */ \
+	")"
 
 #define DEGREE_PATTERN "deg"
 #define MINUTE_PATTERN "'(?!')"
 #define SECOND_PATTERN "(?:(?:'')|(?:\"))"
 
+// Note: second must be first, since minutes (') are a subset of seconds ('')
 #define DEG_MIN_SEC_PATTERN "(?:" DEGREE_PATTERN "|" SECOND_PATTERN "|" MINUTE_PATTERN ")"
+
+
+#define FLOAT_DEG "(?:" FLOAT_NO_EXP_PATTERN "\\s*" DEGREE_PATTERN ")"
+#define FLOAT_MIN "(?:" FLOAT_NO_EXP_PATTERN "\\s*" MINUTE_PATTERN ")"
+#define FLOAT_SEC "(?:" FLOAT_NO_EXP_PATTERN "\\s*" SECOND_PATTERN ")"
+
+#define DEG_MIN_SEC_W_FLOAT_PATTERN \
+	"(?:" \
+		"(?:" FLOAT_DEG "\\s*" FLOAT_SEC ")" \
+		"|" "(?:" FLOAT_DEG "\\s*" FLOAT_MIN "?" "\\s*" FLOAT_SEC "?" ")" \
+	")"
+
+#if 0
+#define DEG_MIN_SEC_W_FLOAT_PATTERN \
+	"(?:" \
+		"(?:" FLOAT_DEG "\\s*" FLOAT_MIN "?" "\\s*" FLOAT_SEC "?" ")" \
+		// I don't think I should support standalone min and sec for now, could be \
+		// confused with feet and inches.
+		"|" "(?:" FLOAT_MIN "\\s*" FLOAT_SEC "?" ")" \
+		"|" "(?:" FLOAT_SEC ")" \
+	")"
+#endif
+
 
 bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, std::unique_ptr<ValInfo> *val_info_out, const parse_params_s *params)
 {
@@ -86,7 +115,7 @@ bool parse_value( std::string *str_input, int *input_pos, InputInfo *info_out, s
 	                                             "(?:"
 	                                             "(?:"
 	                                             //"(?=.)" // note that this is necessary to avoid matching an empty string,
-	                                                 "(?:" FLOAT_PATTERN "\\s*" DEG_MIN_SEC_PATTERN "){1,3}"
+	                                                 DEG_MIN_SEC_W_FLOAT_PATTERN
 	                                                 "\\s*"
 #if 0
 	                                                      // which results in an infinite loop.
@@ -273,6 +302,8 @@ calc_float_t parse_float_w_optional_deg_str(std::string str) {
 	if (separate_deg_min_sec(str, &deg_min_sec)) {
 		//std::cerr << "found deg/min/sec with deg=" << deg_min_sec.deg << ", min=" << deg_min_sec.min << ", sec=" << deg_min_sec.sec << std::endl;
 		calc_float_t val = 0;
+		// Note: currently degrees are mandatory,
+		// but the check for it is elsewhere.
 		if (deg_min_sec.deg.size() > 0) {
 			val += parse_float_str(deg_min_sec.deg);
 		}
