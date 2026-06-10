@@ -47,6 +47,7 @@ list(APPEND EMCC_COMPILE_OPTS
 	"-Wall"
 	"-Werror"
 	"-Wno-error=cpp"
+	"-std=c++20"
 	# TODO this doesn't seem to be needed, I guess emscripten doesn't
 	# check for the sign comparisons, even with -Werror set?
 	# "-Wno-error=sign-compare"
