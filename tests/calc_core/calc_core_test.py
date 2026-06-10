@@ -697,7 +697,10 @@ def run_test_for_unit(test, expected_output_val, expected_output_units):
 	calc_output, memory_leak, output_err = run_test(test, parse_float=False)
 
 	mag_val, unit_val = calc_output.split(' ', maxsplit=1)
-	mag_val = float(mag_val)
+	try:
+		mag_val = float(mag_val)
+	except ValueError:
+		pass
 
 	test_passed = (expected_output_val == mag_val and expected_output_units == unit_val)
 	if not test_passed:
