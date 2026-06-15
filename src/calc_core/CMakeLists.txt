@@ -15,7 +15,7 @@ set(BUILD_TYPE_LABEL "" CACHE STRING "Specifies the type of build")
 
 add_subdirectory("../calc_core_ui" out/calc_core_ui/)
 
-add_library(calc_core STATIC
+add_library(calc_core${BUILD_LIB_SUFFIX} STATIC
             calc_core.cpp
             calc_core_exceptions.cpp
             calc_parse.cpp
@@ -23,8 +23,8 @@ add_library(calc_core STATIC
             calc_units_organizer.cpp
             node_to_latex.cpp
             misc.cpp)
-target_include_directories(calc_core PUBLIC "includes")
-target_include_directories(calc_core PUBLIC "../calc_core_ui/")
+target_include_directories(calc_core${BUILD_LIB_SUFFIX} PUBLIC "includes")
+target_include_directories(calc_core${BUILD_LIB_SUFFIX} PUBLIC "../calc_core_ui/")
 
 string(TIMESTAMP BUILD_DATETIME "%Y-%m-%d %H:%M:%S%z")
 
@@ -39,6 +39,9 @@ execute_process(
 # e.g. github pages
 add_compile_definitions(ALEXCALC_BUILD_INFO="Built on ${BUILD_DATETIME}, version ${GIT_HASH}, label \\\"${BUILD_TYPE_LABEL}\\\"")
 
-add_library(calc_json STATIC
+add_library(calc_json${BUILD_LIB_SUFFIX} STATIC
             calc_json.cpp)
-target_link_libraries(calc_json calc_core calc_core_ui)
+target_link_libraries(calc_json${BUILD_LIB_SUFFIX}
+	calc_core${BUILD_LIB_SUFFIX}
+	calc_core_ui${BUILD_LIB_SUFFIX}
+)
