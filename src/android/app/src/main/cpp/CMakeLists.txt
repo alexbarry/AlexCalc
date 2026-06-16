@@ -27,3 +27,41 @@ target_link_libraries(calc_android_jni
                       android
                       log)
 
+include(FetchContent)
+
+FetchContent_Declare(
+	calc_android_jni_experimental
+	GIT_REPOSITORY https://github.com/alexbarry/AlexCalc.git
+	GIT_TAG main-experimental
+)
+
+FetchContent_GetProperties(calc_android_jni_experimental)
+
+if (true)
+
+
+	FetchContent_Populate(calc_android_jni_experimental)
+
+	SET(exp_src "${calc_android_jni_experimental_SOURCE_DIR}/src/calc_core")
+	SET(exp_bin "${calc_android_jni_experimental_BINARY_DIR}")
+	message("calling add_subdirectory with exp_src=${exp_src}; exp_bin=${exp_bin}")
+
+	set(BUILD_LIB_SUFFIX "-experimental")
+
+	# All the CMake libraries defined in this subdirectory should
+	# have -experimental appended to them.
+	add_subdirectory(${exp_src}
+	                 ${exp_bin})
+
+	# Re-build this file, but it will reference
+	# the headers defined in the experimental branch.
+	# (And be linked against the experimental binary)
+	add_library(calc_android_jni-experimental SHARED
+			calc_android_jni.cpp)
+
+	target_link_libraries(calc_android_jni-experimental
+	                      calc_json-experimental
+	                      android
+	                      log)
+
+endif()
