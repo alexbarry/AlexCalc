@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.12.2)
 
 set(SRC_DIR "../../../../../")
 
+set(CMAKE_CXX_STANDARD 20)
+
 add_subdirectory("${SRC_DIR}/calc_core" derp_out/calc_core)
 
 list(APPEND COMPILE_OPTS
