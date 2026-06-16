@@ -284,4 +284,22 @@ Terms of use: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EX
 		<item>@string/small_input_buttons_entry_value_minimal</item>
 		<item>@string/small_input_buttons_entry_value_none</item>
 	</string-array>
+
+
+	<string name="preference_key_experimental_mode">pref_key_experimental_mode</string>
+	<string name="experimental_mode_pref_title">Enable experimental features</string>
+	<string name="experimental_mode_label_stable">Stable (default)</string>
+	<string name="experimental_mode_label_experimental">Experimental</string>
+	<string name="experimental_mode_value_stable">stable</string>
+	<string name="experimental_mode_value_experimental">experimental</string>
+	<string name="experimental_mode_pref_summary">Enable some experimental features. This adds new functionality but may introduce bugs. If you enable this and find bugs, please let the developer know.</string>
+
+	<string-array name="experimental_mode_pref_options_labels">
+		<item>@string/experimental_mode_label_stable</item>
+		<item>@string/experimental_mode_label_experimental</item>
+	</string-array>
+	<string-array name="experimental_mode_pref_options_values">
+		<item>@string/experimental_mode_value_stable</item>
+		<item>@string/experimental_mode_value_experimental</item>
+	</string-array>
 </resources>

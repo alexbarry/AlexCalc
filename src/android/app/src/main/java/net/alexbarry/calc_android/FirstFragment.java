@@ -408,6 +408,20 @@ public class FirstFragment extends Fragment {
 		final Context context = getContext();
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
+		// Note that if this setting changes, CalcAndroid restarts the activity.
+		final String experimentalModeDefaultPrefVal = getString(R.string.experimental_mode_value_stable);
+		String experimentalModePref = prefs.getString(getString(R.string.preference_key_experimental_mode), experimentalModeDefaultPrefVal);
+		CalcAndroid.LibType libType = CalcAndroid.LibType.STABLE;
+		if (experimentalModePref.equals(experimentalModeDefaultPrefVal)) {
+			// do nothing, keep libType as stable (default)
+		} else if (experimentalModePref.equals(getString(R.string.experimental_mode_value_experimental))) {
+			libType = CalcAndroid.LibType.EXPERIMENTAL;
+		} else {
+			Log.e(TAG, String.format("unhandled experimental mode pref \"%s\"", experimentalModePref));
+		}
+		Log.i(TAG, String.format("Experimental mode pref (%s), causing libType %s", experimentalModePref, libType.name()));
+
+
 		final String smallInputButtonsDefault = getString(R.string.small_input_buttons_entry_value_full);
 		String smallInputButtons = prefs.getString(getString(R.string.preference_key_small_input_buttons), smallInputButtonsDefault);
 		boolean smallInputButtonsEnabled = !smallInputButtons.equals(smallInputButtonsDefault);
@@ -537,10 +551,12 @@ public class FirstFragment extends Fragment {
         this.calcButtonsHelper = new CalcButtonsHelper(buttonCallback);
 		this.calcButtonsHelper.viewReady(getContext(), view);
 		this.varPopupHelper.init(requireActivity());
-		this.unitSelectorHelper.init(requireActivity());
 
 		this.calcAndroid = new CalcAndroid();
-		this.calcAndroid.init();
+		// Note that this restarts the activity if libType changed.
+		this.calcAndroid.init(getContext(), libType);
+
+		this.unitSelectorHelper.init(requireActivity());
 
 		if (this.savedState != null) {
 			loadPersistentState(this.savedState);

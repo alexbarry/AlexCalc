@@ -1,6 +1,9 @@
 package net.alexbarry.calc_android;
 
+import android.content.Context;
 import android.util.Log;
+import com.jakewharton.processphoenix.ProcessPhoenix;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,6 +20,10 @@ public class CalcAndroid {
     private static final String TAG = "CalcAndroid";
 
     public static final String VAR_NAME_ANS = "ans";
+	//private static Optional<CalcAndroid.LibType> loadedLibType = Optional.empty();
+
+	private static boolean loadedLibTypeIsSet = false;
+	private static CalcAndroid.LibType loadedLibType;
 
     public static class CalcData {
 		public boolean is_degree = false;
@@ -134,7 +141,13 @@ public class CalcAndroid {
 	}
 
 	static {
-		System.loadLibrary("calc_android_jni");
+		// Note: this is done in #init() now.
+		//System.loadLibrary("calc_android_jni");
+	}
+
+	enum LibType {
+		STABLE,
+		EXPERIMENTAL,
 	}
 
 	private boolean polar  = false;
@@ -189,7 +202,17 @@ public class CalcAndroid {
 
 	private long calcData_ptr = 0;
 
-	public void init() {
+	public void init(Context context, LibType libType) {
+		switch (libType) {
+			case STABLE:       System.loadLibrary("calc_android_jni"); break;
+			case EXPERIMENTAL: System.loadLibrary("calc_android_jni-experimental"); break;
+		}
+		if (CalcAndroid.loadedLibTypeIsSet && CalcAndroid.loadedLibType != libType) {
+			ProcessPhoenix.triggerRebirth(context);
+		}
+		CalcAndroid.loadedLibType = libType;
+		CalcAndroid.loadedLibTypeIsSet = true;
+
 		this.calcData_ptr = this.jniInit();
 	}
 
