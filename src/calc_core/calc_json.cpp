@@ -311,9 +311,9 @@ int alexcalc_to_latex(const char *str_input,
 
 static std::string angle_mode_to_json_enum(angle_mode_t angle_mode) {
 	switch(angle_mode) {
-		case ANGLE_MODE_RADIAN:  return "rad";
-		case ANGLE_MODE_DEGREE:  return "degree";
-		case ANGLE_MODE_GRADIAN: return "grad";
+		case ANGLE_MODE_RADIAN:  return ANGLE_MODE_STR_RADIAN;
+		case ANGLE_MODE_DEGREE:  return ANGLE_MODE_STR_DEGREE;
+		case ANGLE_MODE_GRADIAN: return ANGLE_MODE_STR_GRADIAN;
 	}
 }
 
