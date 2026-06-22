@@ -6,6 +6,7 @@
 #include<iostream>
 #include<memory>
 
+#include "calc_core_public.h"
 #include "calc_json.h"
 
 extern "C" {
@@ -25,10 +26,10 @@ Java_net_alexbarry_calc_1android_CalcAndroid_jniToLatex( JNIEnv* env, jobject th
                                                          jboolean parse_wip,
                                                          jint  cursor_pos);
 
-JNIEXPORT void JNICALL
+JNIEXPORT jint JNICALL
 Java_net_alexbarry_calc_1android_CalcAndroid_jniStateSet( JNIEnv* env, jobject thiz, jlong calcData_ptr_long,
                                                          jboolean polar,
-                                                         jboolean degree);
+                                                         jstring angle_mode_str);
 
 
 JNIEXPORT jstring JNICALL
@@ -127,12 +128,16 @@ Java_net_alexbarry_calc_1android_CalcAndroid_jniToLatex( JNIEnv* env, jobject th
 	}
 }
 
-JNIEXPORT void JNICALL
+JNIEXPORT jint JNICALL
 Java_net_alexbarry_calc_1android_CalcAndroid_jniStateSet( JNIEnv* env, jobject thiz, jlong calcData_ptr_long,
                                                          jboolean polar,
-                                                         jboolean degree) {
+                                                         jstring angle_mode_jstr) {
 	void *calcData_ptr = (void*)calcData_ptr_long;
-	alexcalc_data_state_set(calcData_ptr, polar, degree);
+	jboolean isCopy;
+    const char *angle_mode_str = env->GetStringUTFChars(angle_mode_jstr, &isCopy);
+	jint rc = alexcalc_data_state_set(calcData_ptr, polar, angle_mode_str);
+	env->ReleaseStringUTFChars(angle_mode_jstr, angle_mode_str);
+	return rc;
 }
 
 JNIEXPORT jstring JNICALL

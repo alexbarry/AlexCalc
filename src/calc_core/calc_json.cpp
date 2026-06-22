@@ -334,12 +334,19 @@ int alexcalc_calcdata_to_json(void *calc_ptr, char *str_output_arg, int str_outp
 	return 0;
 }
 
-int alexcalc_data_state_set(void *calc_ptr, bool polar, bool degree) noexcept {
+int alexcalc_data_state_set(void *calc_ptr, bool polar, const char *angle_mode_str) noexcept {
 	CalcState *calcState = (CalcState*)calc_ptr;
 	CalcData *calcData = calcState->calcData;
 	if (calcData == nullptr) { return -1; }
 	calcData->polar  = polar;
-	calcData->degree = degree;
+	if (strcmp(angle_mode_str, ANGLE_MODE_STR_RADIAN) == 0) {
+		calcData->degree = false;
+	} else if (strcmp(angle_mode_str, ANGLE_MODE_STR_DEGREE) == 0) {
+		calcData->degree = true;
+	} else {
+		std::cerr << __func__ << ": unhandled angle_mode_str: \"" << angle_mode_str << "\"" << std::endl;
+		return -1;
+	}
 	std::cout << "Setting calcData polar:" << calcData->polar << ", degree: " << calcData->degree << std::endl;
 	return 0;
 }

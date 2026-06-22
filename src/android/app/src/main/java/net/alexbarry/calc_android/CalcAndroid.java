@@ -294,14 +294,25 @@ public class CalcAndroid {
 		return calcOutput.getString("val_str");
 	}
 
+	private String getAngleMode() {
+		if (this.degree) { return "degree"; }
+		else { return "radian"; }
+	}
+
 	public void setPolar(boolean polar) {
 		this.polar = polar;
-		this.jniStateSet(calcData_ptr, this.polar, this.degree);
+		int rc = this.jniStateSet(calcData_ptr, this.polar, getAngleMode());
+		if (rc != 0) {
+			throw new RuntimeException(String.format("jniStateSet returned rc=%d", rc));
+		}
 	}
 
 	public void setDegree(boolean degree) {
 		this.degree = degree;
-		this.jniStateSet(calcData_ptr, this.polar, this.degree);
+		int rc = this.jniStateSet(calcData_ptr, this.polar, getAngleMode());
+		if (rc != 0) {
+			throw new RuntimeException(String.format("jniStateSet returned rc=%d", rc));
+		}
 	}
 
 	private JSONObject getCalcdataJson() throws JSONException {
@@ -400,7 +411,7 @@ public class CalcAndroid {
 	private native void jniDelete(long calcData_ptr);
 	private native String jniCalc(long calcData_ptr, String str_input);
 	private native String jniToLatex(long calcData_ptr, String str_input, boolean parse_wip, int cursor_pos);
-	private native String jniStateSet(long calcData_ptr, boolean polar, boolean degree);
+	private native int jniStateSet(long calcData_ptr, boolean polar, String angle_mode);
 	private native String jniGetCalcDataJsonStr(long calcData_ptr);
 	private native void jniAddRecentlyUsedUnit(long calcData_ptr, String unit_str);
 	private native String jniGetRecentlyUsedUnitsJson(long calcData_ptr);
