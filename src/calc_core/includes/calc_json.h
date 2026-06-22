@@ -1,6 +1,7 @@
 #ifndef  CALC_JSON_H_
 #define CALC_JSON_H_
 
+#include "calc_core_public.h"
 //
 extern "C" {
 

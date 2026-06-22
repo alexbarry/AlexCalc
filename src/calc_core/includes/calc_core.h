@@ -9,6 +9,7 @@
 // For debugging only
 #include<unordered_map>
 
+#include "calc_core_public.h"
 #include "calc_core_types.h"
 #include "calc_units.h"
 #include "calc_core_exceptions.h"
@@ -26,9 +27,6 @@ enum angle_mode_e {
 };
 typedef enum angle_mode_e angle_mode_t;
 
-#define ANGLE_MODE_STR_RADIAN ("radian")
-#define ANGLE_MODE_STR_DEGREE ("degree")
-#define ANGLE_MODE_STR_GRADIAN ("gradian")
 
 class NodeOp;
 class CalcData;
