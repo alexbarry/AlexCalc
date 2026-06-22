@@ -28,11 +28,15 @@ public class CalcAndroid {
 	// Must match the ones defined in calc_core_public.h
 	private static final String ANGLE_MODE_STR_RADIAN = "radian";
 	private static final String ANGLE_MODE_STR_DEGREE = "degree";
+	private static final String ANGLE_MODE_STR_GRADIAN = "gradian";
+
+	private LibType libType;
 
 	public static String angleModeToString(AngleMode angleMode) {
 		switch (angleMode) {
 			case RADIAN: return ANGLE_MODE_STR_RADIAN;
 			case DEGREE: return ANGLE_MODE_STR_DEGREE;
+			case GRADIAN: return ANGLE_MODE_STR_GRADIAN;
 		}
 		throw new RuntimeException(String.format("unhandled angle mode: %d", angleMode.ordinal()));
 	}
@@ -42,6 +46,8 @@ public class CalcAndroid {
 			return AngleMode.RADIAN;
 		} else if (angleModeStr.equals(ANGLE_MODE_STR_DEGREE)) {
 			return AngleMode.DEGREE;
+		} else if (angleModeStr.equals(ANGLE_MODE_STR_GRADIAN)) {
+			return AngleMode.GRADIAN;
 		} else {
 			throw new RuntimeException(String.format("unhandled angle mode: %d", angleModeStr));
 		}
@@ -51,6 +57,7 @@ public class CalcAndroid {
 		switch (angleMode) {
 			case RADIAN: return "Angle mode is now \"radian\", sin(2*pi) = 0";
 			case DEGREE: return "Angle mode is now \"degree\", sin(360) = 0";
+			case GRADIAN: return "Angle mode is now \"gradian\", sin(400) = 0";
 			default:
 				return String.format("Unhandled angle mode \"%s\" (%d)", this.angleMode.name(), this.angleMode.ordinal());
 		}
@@ -58,7 +65,8 @@ public class CalcAndroid {
 
 	enum AngleMode {
 		RADIAN,
-		DEGREE
+		DEGREE,
+		GRADIAN
 	}
 
 	public static class CalcData {
@@ -189,6 +197,12 @@ public class CalcAndroid {
 	private boolean polar  = false;
 	private AngleMode angleMode = AngleMode.RADIAN;
 
+	interface Callback {
+		public void add_err_msg(String msg);
+	}
+
+	Callback callback;
+
 	/*
 	public static String getUnitInfo() {
 		return jniGetUnitInfo();
@@ -250,6 +264,7 @@ public class CalcAndroid {
 		CalcAndroid.loadedLibTypeIsSet = true;
 
 		this.calcData_ptr = this.jniInit();
+		this.libType = libType;
 	}
 
 	public void delete() {
@@ -342,7 +357,28 @@ public class CalcAndroid {
 		}
 	}
 
+	public boolean angleModeSupported(AngleMode angleMode) {
+		// TODO a C++ API call would make more sense for this
+		if (angleMode == AngleMode.RADIAN ||
+			angleMode == AngleMode.DEGREE) {
+			return true;
+		}
+		if (angleMode == AngleMode.GRADIAN) {
+			return experimentalModeEnabled();
+		}
+
+		return false;
+	}
+
+	public boolean experimentalModeEnabled() {
+		return this.libType == LibType.EXPERIMENTAL;
+	}
+
 	public void setAngleMode(AngleMode angleMode) {
+		if (!angleModeSupported(angleMode)) {
+			callback.add_err_msg(String.format("Angle mode \"%s\" not supported, falling back to radians", angleMode.name()));
+			angleMode = AngleMode.RADIAN;
+		}
 		this.angleMode = angleMode;
 		int rc = this.jniStateSet(calcData_ptr, this.polar, getAngleModeStr());
 		if (rc != 0) {
@@ -367,6 +403,8 @@ public class CalcAndroid {
 				calcData.angleMode = AngleMode.RADIAN;
 			} else if (angleModeStr.equals(ANGLE_MODE_STR_DEGREE)) {
 				calcData.angleMode = AngleMode.DEGREE;
+			} else if (angleModeStr.equals(ANGLE_MODE_STR_GRADIAN)) {
+				calcData.angleMode = AngleMode.GRADIAN;
 			} else {
 				throw new RuntimeException(String.format("unhandled angle string from calcdata json: \"%s\"", angleModeStr));
 			}

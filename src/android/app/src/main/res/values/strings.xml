@@ -21,6 +21,7 @@
 	<string name="rect">rect</string>
 	<string name="degree">degree</string>
 	<string name="radian">radian</string>
+	<string name="gradian">gradian</string>
 	<string name="alt">alt</string>
 	<string name="log10">log<sub>10</sub></string>
 	<string name="sin">sin</string>

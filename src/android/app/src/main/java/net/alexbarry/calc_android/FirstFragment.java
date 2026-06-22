@@ -222,10 +222,12 @@ public class FirstFragment extends Fragment {
 				case SET_RECT:    calcAndroid.setPolar(false);  break;
 				case SET_DEGREES: setAngleMode(CalcAndroid.AngleMode.DEGREE);  break;
 				case SET_RADIANS: setAngleMode(CalcAndroid.AngleMode.RADIAN);  break;
+				case SET_GRADIANS: setAngleMode(CalcAndroid.AngleMode.GRADIAN);  break;
 			}
 
 			if (event == CalcButtonsHelper.CallbackEvent.SET_RADIANS ||
-					event == CalcButtonsHelper.CallbackEvent.SET_DEGREES) {
+				event == CalcButtonsHelper.CallbackEvent.SET_DEGREES ||
+				event == CalcButtonsHelper.CallbackEvent.SET_GRADIANS) {
 				// do nothing
 			} else if (event == CalcButtonsHelper.CallbackEvent.SET_POLAR ||
 					event == CalcButtonsHelper.CallbackEvent.SET_RECT) {
@@ -554,8 +556,15 @@ public class FirstFragment extends Fragment {
 		this.varPopupHelper.init(requireActivity());
 
 		this.calcAndroid = new CalcAndroid();
+		calcAndroid.callback = new CalcAndroid.Callback() {
+			@Override
+			public void add_err_msg(String msg) {
+				calcOutputDisplayHelper.addOutputLineErr(msg);
+			}
+		};
 		// Note that this restarts the activity if libType changed.
 		this.calcAndroid.init(getContext(), libType);
+		this.calcButtonsHelper.experimentalModeEnabled = calcAndroid.experimentalModeEnabled();
 
 		this.unitSelectorHelper.init(requireActivity());
 
@@ -853,6 +862,10 @@ public class FirstFragment extends Fragment {
 
 	void loadPersistentState(PersistentState state) {
 		Log.d(TAG, "loadPersistentState");
+		if (!calcAndroid.angleModeSupported(state.angleMode)) {
+			addErr(String.format("Angle mode \"%s\" not supported, falling back to radians", state.angleMode.name()));
+			state.angleMode = CalcAndroid.AngleMode.RADIAN;
+		}
 		calcAndroid.setAngleMode(state.angleMode);
 		calcAndroid.setPolar(state.is_polar);
 		calcAndroid.setVars(state.vars);

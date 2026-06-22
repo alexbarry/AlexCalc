@@ -21,7 +21,9 @@ public class CalcButtonsHelper {
     // actually now I'm adding whitespace before and after every unit, so that's good enough
     private static final String TO_UNITS_TOKEN = "to";
 
-    public enum CallbackEvent {
+	public boolean experimentalModeEnabled = false;
+
+	public enum CallbackEvent {
 		CLEAR,
         CLEAR_SCREEN,
 		BKSP,
@@ -42,6 +44,7 @@ public class CalcButtonsHelper {
 		SET_RECT,
 		SET_DEGREES,
 		SET_RADIANS,
+		SET_GRADIANS,
     }
 
 	public enum HapticSetting {
@@ -436,7 +439,14 @@ public class CalcButtonsHelper {
 	private CalcAndroid.AngleMode nextAngleMode(CalcAndroid.AngleMode angleMode) {
 		switch (angleMode) {
 			case RADIAN: return CalcAndroid.AngleMode.DEGREE;
-			case DEGREE: return CalcAndroid.AngleMode.RADIAN;
+			case DEGREE:
+				if (experimentalModeEnabled) {
+					return CalcAndroid.AngleMode.GRADIAN;
+				} else {
+					return CalcAndroid.AngleMode.RADIAN;
+				}
+
+			case GRADIAN: return CalcAndroid.AngleMode.RADIAN;
 		}
 		throw new RuntimeException();
 	}
@@ -510,6 +520,9 @@ public class CalcButtonsHelper {
 					case DEGREE:
 						event = CallbackEvent.SET_DEGREES;
 						break;
+					case GRADIAN:
+						event = CallbackEvent.SET_GRADIANS;
+						break;
 					default:
 						throw new RuntimeException();
 				}
@@ -560,6 +573,9 @@ public class CalcButtonsHelper {
 			case DEGREE:
 				setButtonText(R.id.button_degree, R.string.degree);
 			break;
+			case GRADIAN:
+				setButtonText(R.id.button_degree, R.string.gradian);
+				break;
 		}
 	}
 
