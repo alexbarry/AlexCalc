@@ -41,8 +41,10 @@ public class PersistentStateDbHelper {
             public static final String COLUMN_NAME_PREF_NAME = "pref";
             public static final String COLUMN_NAME_PREF_VAL = "value";
 
-            public static final String PREF_DEGREE = "is_degree";
+            public static final String PREF_DEGREE_DEPRECATED = "is_degree";
             public static final String PREF_POLAR  = "is_polar";
+
+            public static final String PREF_ANGLE_MODE = "angle_mode";
         }
 
         public static class HistoryEntry implements BaseColumns {
@@ -187,14 +189,21 @@ public class PersistentStateDbHelper {
         long newRowId = db.insert(DbContract.RecentlyUsedUnitsEntry.TABLE_NAME, null, values);
     }
 
+    /*
     public void setDegree(boolean val) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        setPrefBoolean(db, DbContract.PrefEntry.PREF_DEGREE, val);
+        setPrefBoolean(db, DbContract.PrefEntry.PREF_DEGREE_DEPRECATED, val);
     }
+     */
 
     public void setPolar(boolean val) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         setPrefBoolean(db, DbContract.PrefEntry.PREF_POLAR, val);
+    }
+
+    public void setAngleMode(CalcAndroid.AngleMode angleMode) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        setPref(db, DbContract.PrefEntry.PREF_ANGLE_MODE, CalcAndroid.angleModeToString(angleMode));
     }
 
     private List<CalcHistoryHelper.HistoryEntry> getInputs(SQLiteDatabase db, int limit) {
@@ -384,10 +393,28 @@ public class PersistentStateDbHelper {
         state.vars = getVars(db);
         state.units = getRecentlyUsedUnits(db, NUM_RECENT_UNITS);
         state.is_polar = getPrefBoolean(db, DbContract.PrefEntry.PREF_POLAR, false);
-        state.is_degree = getPrefBoolean(db, DbContract.PrefEntry.PREF_DEGREE, false);
+        String angleModeStr = getPref(db, DbContract.PrefEntry.PREF_ANGLE_MODE, "");
+        if (angleModeStr.isEmpty()) {
+            boolean is_degree = getPrefBoolean(db, DbContract.PrefEntry.PREF_DEGREE_DEPRECATED, false);
+            if (!is_degree) {
+                state.angleMode = CalcAndroid.AngleMode.RADIAN;
+            } else {
+                state.angleMode = CalcAndroid.AngleMode.DEGREE;
+            }
+            Log.i(TAG, String.format("Angle mode str not found, falling back to is_degree (read %b --> %s)", is_degree, state.angleMode.name()));
+        } else {
+            try {
+                state.angleMode = CalcAndroid.angleModeFromString(angleModeStr);
+                Log.i(TAG, String.format("found angle mode str \"%s\", setting angle mode to %s", angleModeStr, state.angleMode.name()));
+            } catch (RuntimeException ex) {
+                // TODO show a warning to the user for this? Will happen if they downgrade app versions,
+                // or switch from experimental back to stable when in "gradians" mode.
+                Log.e(TAG, String.format("Could not parse angle mode str from persistent state \"%s\"", angleModeStr));
+            }
+        }
 
-        Log.d(TAG, String.format("loaded db state, polar:%b, degree:%b",
-                state.is_polar, state.is_degree));
+        Log.d(TAG, String.format("loaded db state, polar:%b, angleMode:%s",
+                state.is_polar, state.angleMode.name()));
 
         return state;
     }

@@ -305,6 +305,11 @@ int alexcalc_to_latex(const char *str_input,
 	return rc;
 }
 
+static std::string is_degree_to_angle_mode_json_enum(bool is_degree) {
+    if (is_degree) { return ANGLE_MODE_STR_DEGREE; }
+    else { return ANGLE_MODE_STR_RADIAN; }
+}
+
 int alexcalc_calcdata_to_json(void *calc_ptr, char *str_output_arg, int str_output_len) noexcept {
 	struct calc_fmt_params params = get_default_params();
 	//const int decimal_places = 6;
@@ -327,9 +332,10 @@ int alexcalc_calcdata_to_json(void *calc_ptr, char *str_output_arg, int str_outp
 	output += "],";
 
 	output += std::string("\"polar\": ")  + (calcData->polar  ? "true" : "false") + ",";
-	output += std::string("\"degree\": ") + (calcData->degree ? "true" : "false");
+    output += std::string("\"angle_mode\": ") + "\"" + is_degree_to_angle_mode_json_enum(calcData->degree) + "\"";
 
-	output += "}";
+
+    output += "}";
 	snprintf(str_output_arg, str_output_len, "%s", output.c_str());
 	return 0;
 }

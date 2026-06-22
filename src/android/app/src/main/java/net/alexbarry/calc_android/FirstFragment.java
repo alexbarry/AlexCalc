@@ -220,13 +220,14 @@ public class FirstFragment extends Fragment {
 			switch (event) {
 				case SET_POLAR:   calcAndroid.setPolar(true);   break;
 				case SET_RECT:    calcAndroid.setPolar(false);  break;
-				case SET_DEGREES: calcAndroid.setDegree(true);  break;
-				case SET_RADIANS: calcAndroid.setDegree(false); break;
+				case SET_DEGREES: setAngleMode(CalcAndroid.AngleMode.DEGREE);  break;
+				case SET_RADIANS: setAngleMode(CalcAndroid.AngleMode.RADIAN);  break;
 			}
 
 			if (event == CalcButtonsHelper.CallbackEvent.SET_RADIANS ||
-					event == CalcButtonsHelper.CallbackEvent.SET_DEGREES ||
-					event == CalcButtonsHelper.CallbackEvent.SET_POLAR ||
+					event == CalcButtonsHelper.CallbackEvent.SET_DEGREES) {
+				// do nothing
+			} else if (event == CalcButtonsHelper.CallbackEvent.SET_POLAR ||
 					event == CalcButtonsHelper.CallbackEvent.SET_RECT) {
 				Log.i(TAG, String.format("Input str is \"%s\", size:%d",
 						calcInputHelper.get_input_str(), calcInputHelper.get_input_str().length()));
@@ -601,6 +602,13 @@ public class FirstFragment extends Fragment {
 		return Optional.empty();
 	}
 
+	private void setAngleMode(CalcAndroid.AngleMode angleMode) {
+		Log.d(TAG, String.format("setAngleMode(angleMode=%s)", angleMode));
+		calcAndroid.setAngleMode(angleMode);
+		String angleModeMsg = calcAndroid.getAngleModeMsg(angleMode);
+		calcOutputDisplayHelper.addOutputLineMsg(angleModeMsg);
+		calcButtonsHelper.setAngleMode(angleMode);
+	}
 
     private void addToken(TokenType type, String token, boolean is_unit) {
 		calcInputHelper.add_token(type, token, is_unit);
@@ -761,7 +769,7 @@ public class FirstFragment extends Fragment {
 			}
 
 			CalcAndroid.CalcData calcData = calcAndroid.getCalcdata();
-			dbHelper.setDegree(calcData.is_degree);
+			dbHelper.setAngleMode(calcData.angleMode);
 			dbHelper.setPolar(calcData.is_polar);
 			Log.d(TAG, "done updating DB");
 		} catch (Exception ex) {
@@ -845,7 +853,7 @@ public class FirstFragment extends Fragment {
 
 	void loadPersistentState(PersistentState state) {
 		Log.d(TAG, "loadPersistentState");
-		calcAndroid.setDegree(state.is_degree);
+		calcAndroid.setAngleMode(state.angleMode);
 		calcAndroid.setPolar(state.is_polar);
 		calcAndroid.setVars(state.vars);
 		calcAndroid.setRecentlyUsedUnits(state.units);
@@ -854,7 +862,7 @@ public class FirstFragment extends Fragment {
 
 		// Note that this one doesn't work when the view is created
 		// calcOutputDisplayHelper.loadState(state.inputs);
-		calcButtonsHelper.setDegree(state.is_degree);
+		calcButtonsHelper.setAngleMode(state.angleMode);
 		calcButtonsHelper.setPolar(state.is_polar);
 		calcHistoryHelper.loadState(state.inputs);
 		calcInputHelper.setInputTokens(state.currentInput);
@@ -872,7 +880,7 @@ public class FirstFragment extends Fragment {
 		PersistentState state = new PersistentState();
 		CalcAndroid.CalcData calcData = calcAndroid.getCalcdata();
 		state.is_polar = calcData.is_polar;
-		state.is_degree = calcData.is_degree;
+		state.angleMode = calcData.angleMode;
 		state.units = calcAndroid.getRecentlyUsedUnits();
 		state.vars = calcAndroid.getVars();
 		state.inputs = calcHistoryHelper.getState();

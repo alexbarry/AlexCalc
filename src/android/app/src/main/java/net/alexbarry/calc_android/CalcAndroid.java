@@ -25,8 +25,44 @@ public class CalcAndroid {
 	private static boolean loadedLibTypeIsSet = false;
 	private static CalcAndroid.LibType loadedLibType;
 
-    public static class CalcData {
-		public boolean is_degree = false;
+	// Must match the ones defined in calc_core_public.h
+	private static final String ANGLE_MODE_STR_RADIAN = "radian";
+	private static final String ANGLE_MODE_STR_DEGREE = "degree";
+
+	public static String angleModeToString(AngleMode angleMode) {
+		switch (angleMode) {
+			case RADIAN: return ANGLE_MODE_STR_RADIAN;
+			case DEGREE: return ANGLE_MODE_STR_DEGREE;
+		}
+		throw new RuntimeException(String.format("unhandled angle mode: %d", angleMode.ordinal()));
+	}
+
+	public static AngleMode angleModeFromString(String angleModeStr) {
+		if (angleModeStr.equals(ANGLE_MODE_STR_RADIAN)) {
+			return AngleMode.RADIAN;
+		} else if (angleModeStr.equals(ANGLE_MODE_STR_DEGREE)) {
+			return AngleMode.DEGREE;
+		} else {
+			throw new RuntimeException(String.format("unhandled angle mode: %d", angleModeStr));
+		}
+	}
+
+	public String getAngleModeMsg(AngleMode angleMode) {
+		switch (angleMode) {
+			case RADIAN: return "Angle mode is now \"radian\", sin(2*pi) = 0";
+			case DEGREE: return "Angle mode is now \"degree\", sin(360) = 0";
+			default:
+				return String.format("Unhandled angle mode \"%s\" (%d)", this.angleMode.name(), this.angleMode.ordinal());
+		}
+	}
+
+	enum AngleMode {
+		RADIAN,
+		DEGREE
+	}
+
+	public static class CalcData {
+		public AngleMode angleMode = AngleMode.RADIAN;
 		public boolean is_polar = false;
 		public SortedMap<String, String> vars;
 		public List<String> recentlyUsedUnits;
@@ -151,7 +187,7 @@ public class CalcAndroid {
 	}
 
 	private boolean polar  = false;
-	private boolean degree = false;
+	private AngleMode angleMode = AngleMode.RADIAN;
 
 	/*
 	public static String getUnitInfo() {
@@ -294,22 +330,21 @@ public class CalcAndroid {
 		return calcOutput.getString("val_str");
 	}
 
-	private String getAngleMode() {
-		if (this.degree) { return "degree"; }
-		else { return "radian"; }
+	private String getAngleModeStr() {
+		return angleModeToString(this.angleMode);
 	}
 
 	public void setPolar(boolean polar) {
 		this.polar = polar;
-		int rc = this.jniStateSet(calcData_ptr, this.polar, getAngleMode());
+		int rc = this.jniStateSet(calcData_ptr, this.polar, getAngleModeStr());
 		if (rc != 0) {
 			throw new RuntimeException(String.format("jniStateSet returned rc=%d", rc));
 		}
 	}
 
-	public void setDegree(boolean degree) {
-		this.degree = degree;
-		int rc = this.jniStateSet(calcData_ptr, this.polar, getAngleMode());
+	public void setAngleMode(AngleMode angleMode) {
+		this.angleMode = angleMode;
+		int rc = this.jniStateSet(calcData_ptr, this.polar, getAngleModeStr());
 		if (rc != 0) {
 			throw new RuntimeException(String.format("jniStateSet returned rc=%d", rc));
 		}
@@ -327,7 +362,14 @@ public class CalcAndroid {
 			calcData.vars = getVarsFromCalcdataJson(calcDataJson);
 			calcData.recentlyUsedUnits = getRecentlyUsedUnits();
 			calcData.is_polar = calcDataJson.getBoolean("polar");
-			calcData.is_degree = calcDataJson.getBoolean("degree");
+			String angleModeStr = calcDataJson.getString("angle_mode");
+			if (angleModeStr.equals(ANGLE_MODE_STR_RADIAN)) {
+				calcData.angleMode = AngleMode.RADIAN;
+			} else if (angleModeStr.equals(ANGLE_MODE_STR_DEGREE)) {
+				calcData.angleMode = AngleMode.DEGREE;
+			} else {
+				throw new RuntimeException(String.format("unhandled angle string from calcdata json: \"%s\"", angleModeStr));
+			}
 		} catch (JSONException ex) {
 			Log.e(TAG, "JSONException in getCalcData", ex);
 		}

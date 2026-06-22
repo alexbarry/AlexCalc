@@ -29,7 +29,7 @@ public class PersistentStateFileHelper {
 
     private static final String TAG = "PersistentStateFileH";
 
-    private static final String KEY_IS_DEGREE_BOOL = "is_degree";
+    private static final String KEY_IS_DEGREE_BOOL_DEPRECATED = "is_degree";
     private static final String KEY_IS_POLAR_BOOL  = "is_polar";
 
     private static final String KEY_INPUT_TOKEN_VAL = "value";
@@ -62,7 +62,14 @@ public class PersistentStateFileHelper {
             Log.v(TAG, String.format("reading key %s", keyName));
             switch (keyName) {
                 case KEY_IS_POLAR_BOOL:  state.is_polar  = reader.nextBoolean(); break;
-                case KEY_IS_DEGREE_BOOL: state.is_degree = reader.nextBoolean(); break;
+                case KEY_IS_DEGREE_BOOL_DEPRECATED:
+                    boolean is_degree = reader.nextBoolean();
+                    if (!is_degree) {
+                        state.angleMode = CalcAndroid.AngleMode.RADIAN;
+                    } else {
+                        state.angleMode = CalcAndroid.AngleMode.DEGREE;
+                    }
+                    break;
                 case KEY_CURRENT_INPUT_TOKENS: state.currentInput = getInputTokenAry(reader); break;
                 case KEY_VARS_ARRAY:     state.vars      = getJsonVars(reader);  break;
                 case KEY_RECENTLY_USED_UNITS_ARRAY: state.units = getStringAry(reader); break;
@@ -214,7 +221,8 @@ public class PersistentStateFileHelper {
         JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream));
 
         writer.beginObject();
-        writer.name(KEY_IS_DEGREE_BOOL).value(state.is_degree);
+        boolean is_degree = (state.angleMode == CalcAndroid.AngleMode.DEGREE);
+        writer.name(KEY_IS_DEGREE_BOOL_DEPRECATED).value(is_degree);
         writer.name(KEY_IS_POLAR_BOOL) .value(state.is_polar);
 
         writer.name(KEY_CURRENT_INPUT_TOKENS);

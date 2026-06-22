@@ -11,7 +11,7 @@ public class PersistentState {
     public SortedMap<String, String> vars   = new TreeMap<>();
     public List<String>              units  = new ArrayList<>();
     public boolean is_polar = false;
-    public boolean is_degree = false;
+    public CalcAndroid.AngleMode angleMode = CalcAndroid.AngleMode.RADIAN;
 
     // These aren't really needed to be stored over app close/opens, but
     // should maybe be saved when the app toggles between horizontal/vertical mode?

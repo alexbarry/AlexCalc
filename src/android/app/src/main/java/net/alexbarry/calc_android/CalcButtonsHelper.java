@@ -122,7 +122,7 @@ public class CalcButtonsHelper {
 
 	private boolean alt_state = false;
 	private boolean inv_state = false;
-	private boolean is_degree = false;
+	private CalcAndroid.AngleMode angleMode = CalcAndroid.AngleMode.RADIAN;
 	private boolean is_polar  = false;
 
     private Context context;
@@ -271,8 +271,8 @@ public class CalcButtonsHelper {
         this.addButtonListeners();
     }
 
-	public void setDegree(boolean is_degree) {
-    	this.is_degree = is_degree;
+	public void setAngleMode(CalcAndroid.AngleMode angleMode) {
+		this.angleMode = angleMode;
 		updateDegreeRadBtnText();
 	}
 
@@ -433,6 +433,14 @@ public class CalcButtonsHelper {
         }
     }
 
+	private CalcAndroid.AngleMode nextAngleMode(CalcAndroid.AngleMode angleMode) {
+		switch (angleMode) {
+			case RADIAN: return CalcAndroid.AngleMode.DEGREE;
+			case DEGREE: return CalcAndroid.AngleMode.RADIAN;
+		}
+		throw new RuntimeException();
+	}
+
     private void sendButtonEventToCallback(ButtonId btn_id) {
 		switch(btn_id) {
 			case ENTER:  callback.onEvent(CallbackEvent.ENTER);      return;
@@ -492,12 +500,18 @@ public class CalcButtonsHelper {
 			}
 
 			case DEGREE_RAD: {
-				this.is_degree = !this.is_degree;
+				//this.is_degree = !this.is_degree;
+				this.angleMode = nextAngleMode(this.angleMode);
 				CallbackEvent event;
-				if (this.is_degree) {
-					event = CallbackEvent.SET_DEGREES;
-				} else {
-					event = CallbackEvent.SET_RADIANS;
+				switch (this.angleMode) {
+					case RADIAN:
+						event = CallbackEvent.SET_RADIANS;
+						break;
+					case DEGREE:
+						event = CallbackEvent.SET_DEGREES;
+						break;
+					default:
+						throw new RuntimeException();
 				}
 				updateDegreeRadBtnText();
                 callback.onEvent(event);
@@ -539,10 +553,13 @@ public class CalcButtonsHelper {
 	}
 
 	private void updateDegreeRadBtnText() {
-		if (!this.is_degree) {
-			setButtonText(R.id.button_degree, R.string.degree);
-		} else {
-			setButtonText(R.id.button_degree, R.string.radian);
+		switch (this.angleMode) {
+			case RADIAN:
+				setButtonText(R.id.button_degree, R.string.radian);
+			break;
+			case DEGREE:
+				setButtonText(R.id.button_degree, R.string.degree);
+			break;
 		}
 	}
 
