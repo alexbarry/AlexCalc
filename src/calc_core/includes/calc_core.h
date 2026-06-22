@@ -8,6 +8,7 @@
 // For debugging only
 #include<unordered_map>
 
+#include "calc_core_public.h"
 #include "calc_core_types.h"
 #include "calc_units.h"
 #include "calc_core_exceptions.h"
