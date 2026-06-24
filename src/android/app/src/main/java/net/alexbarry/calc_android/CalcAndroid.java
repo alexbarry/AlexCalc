@@ -336,7 +336,10 @@ public class CalcAndroid {
 	}
 
 	public String to_latex(String str_input, boolean parse_wip, int cursor_pos) {
-		return this.jniToLatex(this.calcData_ptr, str_input, parse_wip, cursor_pos);
+		Log.d(TAG, String.format("to_latex(=\"%s\", parse_wip=%b, cursor_pos=%d)", str_input, parse_wip, cursor_pos));
+		String output =  this.jniToLatex(this.calcData_ptr, str_input, parse_wip, cursor_pos);
+		Log.d(TAG, String.format("to_latex(=\"%s\", parse_wip=%b, cursor_pos=%d) --> \"%s\"", str_input, parse_wip, cursor_pos, output));
+		return output;
 	}
 
 	public String format_output(Value val) throws JSONException {
