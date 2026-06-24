@@ -283,7 +283,15 @@ int alexcalc_to_latex_once(const char *str_input,
 	std::cout << "Parsed \"" << str_input << "\" to: " << input_info.n->to_string() << ", ";
 	std::cout << std::endl;
 
-	std::string latex = node_to_latex(&input_info);
+	std::string latex;
+	try {
+		latex = node_to_latex(&input_info);
+	} catch(const BaseCalcException &e ) {
+		std::cerr << "BaseCalcException when converting node to latex: " << e.msg << std::endl;
+		delete input_info.n;
+		return -2;
+	}
+
 	delete input_info.n;
 	std::cout << "converted node into latex: " << latex;
 	std::cout << std::endl;
