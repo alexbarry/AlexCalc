@@ -556,10 +556,11 @@ bool parse_wip_valvar_token(std::string *str_input,
 	std::string find_str = "deg";
 	std::string repl_str = "^\\circ";
 	auto deg_idx = wip_token_str.find(find_str);
+	const auto wip_token_str_orig = wip_token_str;
 	if (deg_idx != std::string::npos) {
 		wip_token_str.replace(deg_idx, find_str.size(), repl_str);
 		std::string l_part = wip_token_str.substr(0,deg_idx);
-		std::string r_part = wip_token_str.substr(deg_idx + find_str.size());
+		std::string r_part = wip_token_str.substr(deg_idx + repl_str.size());
 		token_info_out->orig_pieces.push_back(l_part);
 		token_info_out->orig_pieces.push_back(find_str);
 		token_info_out->orig_pieces.push_back(r_part);
@@ -572,7 +573,7 @@ bool parse_wip_valvar_token(std::string *str_input,
 
 	//std::string wip_units_str = result.str(3);
 	cursor_pos_info_out->base_val_start_pos = *input_pos;
-	cursor_pos_info_out->base_val_end_pos   = *input_pos + wip_token_str.size() - 1;
+	cursor_pos_info_out->base_val_end_pos   = *input_pos + wip_token_str_orig.size() - 1;
 	int unit_input_pos = *input_pos + wip_token_str.size() + whitespace_between_val_and_unit.size();
 
 	/* remove the match from str_input */
