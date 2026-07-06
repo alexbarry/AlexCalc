@@ -215,7 +215,13 @@ public class FirstFragment extends Fragment {
 					clearLatexWipDisplay();
 			}
 
-
+			switch (event) {
+				case DIGIT_DEG:
+				case DIGIT_MIN:
+				case DIGIT_SEC:
+					handleDegMinSecBtnPressed(event);
+					break;
+			}
 
 			switch (event) {
 				case SET_POLAR:   calcAndroid.setPolar(true);   break;
@@ -264,7 +270,57 @@ public class FirstFragment extends Fragment {
 		public void onTokenAdd(TokenType type, String token) {
 			addToken(type, token, false);
 		}
+
+		@Override
+		public boolean checkButtonAllowed(CalcButtonsHelper.ButtonId btnId) {
+			if (btnId == CalcButtonsHelper.ButtonId.DEG_MIN_SEC) {
+				CalcAndroid.AngleMode angleMode = calcAndroid.getCalcdata().angleMode;
+				if (angleMode == CalcAndroid.AngleMode.DEGREE || angleMode == CalcAndroid.AngleMode.GRADIAN) {
+					return true;
+				} else {
+					calcOutputDisplayHelper.addOutputLineErr(getString(R.string.insert_deg_min_sec_in_radians));
+					return false;
+				}
+			} else {
+				return true;
+			}
+		}
+
+		@Override
+		public String getPrevInputToken() {
+			CalcInputHelper.InputToken token = calcInputHelper.get_prev_token();
+			return token != null ? token.token : null;
+		}
 	};
+
+	private void handleDegMinSecBtnPressed(CalcButtonsHelper.CallbackEvent event) {
+		final String TOKEN_STR_DEG = "deg";
+		final String TOKEN_STR_MIN = "'";
+		final String TOKEN_STR_SEC = "\"";
+
+		String tokenStr;
+		switch (event) {
+			case DIGIT_DEG: tokenStr = TOKEN_STR_DEG; break;
+			case DIGIT_MIN: tokenStr = TOKEN_STR_MIN; break;
+			case DIGIT_SEC: tokenStr = TOKEN_STR_SEC; break;
+			default:
+				return;
+		}
+
+		// TODO this doesn't work, need to reset deg min sec state on enter, other buttons pressed?
+		CalcInputHelper.InputToken prevInputToken = calcInputHelper.get_prev_token();
+		Log.i(TAG, String.format("handleDegMinSec, prevInputToken is %s", prevInputToken == null ? "null" : prevInputToken.token));
+		if (prevInputToken != null) {
+			if (prevInputToken.token.equals(TOKEN_STR_DEG) ||
+			    prevInputToken.token.equals(TOKEN_STR_MIN) ||
+			    prevInputToken.token.equals(TOKEN_STR_SEC)) {
+				Log.i(TAG, String.format("handleDegMinSec, calling bksp..."));
+				calcInputHelper.backspace();
+			}
+		}
+
+		addToken(TokenType.DIGIT, tokenStr, false);
+	}
 
 	// This textWatcher is removed and re-added whenever the EditText is changed programmatically
 	// So the code is only executed when the user manually edits the text here
@@ -565,6 +621,7 @@ public class FirstFragment extends Fragment {
 		// Note that this restarts the activity if libType changed.
 		this.calcAndroid.init(getContext(), libType);
 		this.calcButtonsHelper.experimentalModeEnabled = calcAndroid.experimentalModeEnabled();
+		this.calcButtonsHelper.updateButtonsVisibility();
 
 		this.unitSelectorHelper.init(requireActivity());
 

@@ -294,6 +294,12 @@ Terms of use: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EX
 	<string name="experimental_mode_value_stable">stable</string>
 	<string name="experimental_mode_value_experimental">experimental</string>
 	<string name="experimental_mode_pref_summary">Enable some experimental features. This adds new functionality but may introduce bugs. If you enable this and find bugs, please let the developer know.</string>
+	<string name="btn_text_deg">\u00b0</string>
+	<string name="btn_text_deg_min">\u00b0 \'</string>
+	<string name="btn_text_deg_min_sec">\u00b0 \' \'\'</string>
+	<string name="btn_text_min">\'</string>
+	<string name="btn_text_sec">\'\'</string>
+	<string name="insert_deg_min_sec_in_radians">To insert degree/minute/second indicators, calculator must be in gradians or degrees mode. Press the button that says \'radian\' until it says \'degree\' or \'gradian\'</string>
 
 	<string-array name="experimental_mode_pref_options_labels">
 		<item>@string/experimental_mode_label_stable</item>

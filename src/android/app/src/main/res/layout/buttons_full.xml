@@ -19,6 +19,10 @@
             style="@style/AlexCalcButtonImportant"
             android:text="@string/bksp" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_deg_min_sec"
+            style="@style/AlexCalcButtonNum"
+            android:text="@string/btn_text_deg" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_up"

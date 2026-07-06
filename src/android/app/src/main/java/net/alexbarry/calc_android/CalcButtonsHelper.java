@@ -23,6 +23,29 @@ public class CalcButtonsHelper {
 
 	public boolean experimentalModeEnabled = false;
 
+	// originally I was going to add this state to
+	// update the buttons to show options after pressing "to (units)".
+	// But I'm not sure if the buttons should care strictly about
+	// previously pressed button, but rather the
+	// input that precedes cursor.
+	// This way, if you access previous input from history, or just
+	// move your cursor, you'll get the new options.
+	//private TokenInfo prevInputTokenSent = null;
+
+	private boolean prevInputTokenIsToUnits() {
+		//return this.prevInputTokenSent != null && prevInputTokenSent.token == TO_UNITS_TOKEN;
+		String prevInputToken = callback.getPrevInputToken();
+		return prevInputToken != null && prevInputToken.equals(TO_UNITS_TOKEN);
+	}
+
+	private DegMinSecState degMinSecState = DegMinSecState.DEG;
+
+	private enum DegMinSecState {
+		DEG,
+		MIN,
+		SEC,
+	}
+
 	public enum CallbackEvent {
 		CLEAR,
         CLEAR_SCREEN,
@@ -45,6 +68,10 @@ public class CalcButtonsHelper {
 		SET_DEGREES,
 		SET_RADIANS,
 		SET_GRADIANS,
+
+		DIGIT_DEG,
+		DIGIT_MIN,
+		DIGIT_SEC,
     }
 
 	public enum HapticSetting {
@@ -56,11 +83,19 @@ public class CalcButtonsHelper {
 	public interface ButtonCallback {
 		public void onEvent(CallbackEvent event);
 		public void onTokenAdd(TokenType type, String token);
+		public boolean checkButtonAllowed(ButtonId btnId);
+		public String getPrevInputToken();
 	}
 
-    private enum ButtonId {
+	private void onTokenAdd(TokenType type, String token) {
+		callback.onTokenAdd(type, token);
+		//this.prevInputTokenSent = new TokenInfo(type, token);
+	}
+
+    enum ButtonId {
         CLEAR,
         BKSP,
+		DEG_MIN_SEC,
         UP,
         LEFT,
         DOWN,
@@ -134,10 +169,15 @@ public class CalcButtonsHelper {
 
 	private HapticSetting hapticSetting = HapticSetting.FOLLOW_SYSTEM;
 
+	private final TokenInfo TOKEN_DEG = new TokenInfo(TokenType.DIGIT, "deg");
+	private final TokenInfo TOKEN_MIN = new TokenInfo(TokenType.DIGIT, "min");
+	private final TokenInfo TOKEN_SEC = new TokenInfo(TokenType.DIGIT, "sec");
+
     public CalcButtonsHelper(ButtonCallback callback) {
         this.callback = callback;
         button_id_to_android_layout_elem_id.put(ButtonId.CLEAR,         R.id.button_clear);
         button_id_to_android_layout_elem_id.put(ButtonId.BKSP,          R.id.button_bksp);
+		button_id_to_android_layout_elem_id.put(ButtonId.DEG_MIN_SEC,   R.id.button_deg_min_sec);
         button_id_to_android_layout_elem_id.put(ButtonId.UP,            R.id.button_up);
         button_id_to_android_layout_elem_id.put(ButtonId.LEFT,          R.id.button_left);
         button_id_to_android_layout_elem_id.put(ButtonId.DOWN,          R.id.button_down);
@@ -237,9 +277,12 @@ public class CalcButtonsHelper {
         button_id_to_token_func.put(ButtonId.NUM4,          getTokenStateless(new TokenInfo(TokenType.DIGIT,"4")));
         button_id_to_token_func.put(ButtonId.NUM5,          getTokenStateless(new TokenInfo(TokenType.DIGIT,"5")));
         button_id_to_token_func.put(ButtonId.NUM6,          getTokenStateless(new TokenInfo(TokenType.DIGIT,"6")));
-        button_id_to_token_func.put(ButtonId.NUM7,          getTokenStateless(new TokenInfo(TokenType.DIGIT,"7")));
-        button_id_to_token_func.put(ButtonId.NUM8,          getTokenStateless(new TokenInfo(TokenType.DIGIT,"8")));
-        button_id_to_token_func.put(ButtonId.NUM9,          getTokenStateless(new TokenInfo(TokenType.DIGIT,"9")));
+        //button_id_to_token_func.put(ButtonId.NUM7,          getTokenStateless(new TokenInfo(TokenType.DIGIT,"7")));
+		button_id_to_token_func.put(ButtonId.NUM7,          getTokenChangesOnToUnits(new TokenInfo(TokenType.DIGIT, "7"), new TokenInfo(TokenType.OTHER, " deg")));
+        //button_id_to_token_func.put(ButtonId.NUM8,          getTokenStateless(new TokenInfo(TokenType.DIGIT,"8")));
+		button_id_to_token_func.put(ButtonId.NUM8,          getTokenChangesOnToUnits(new TokenInfo(TokenType.DIGIT, "8"), new TokenInfo(TokenType.OTHER, " deg'")));
+        //button_id_to_token_func.put(ButtonId.NUM9,          getTokenStateless(new TokenInfo(TokenType.DIGIT,"9")));
+		button_id_to_token_func.put(ButtonId.NUM9,          getTokenChangesOnToUnits(new TokenInfo(TokenType.DIGIT, "9"), new TokenInfo(TokenType.OTHER, " deg''")));
 
         button_id_to_token_func.put(ButtonId.IMG_UNIT,      getTokenAlt(new TokenInfo(TokenType.VAR,"i"), new TokenInfo(TokenType.OTHER,"angle")));
         button_id_to_token_func.put(ButtonId.DECIMAL,       getTokenStateless(new TokenInfo(TokenType.DIGIT,".")));
@@ -263,7 +306,12 @@ public class CalcButtonsHelper {
         button_id_to_display_txt_func.put(ButtonId.RIGHT,         getStringAndroidAlt(R.string.arrow_right, R.string.arrow_end));
         button_id_to_display_txt_func.put(ButtonId.CLEAR,         getStringAndroidAlt(R.string.clear,       R.string.clear_screen));
         button_id_to_display_txt_func.put(ButtonId.BKSP,          getStringAndroidAlt(R.string.bksp,        R.string.delete));
-        button_id_to_display_txt_func.put(ButtonId.UNITS,         getStringAndroidAlt(R.string.units,       R.string.to_units));
+		button_id_to_display_txt_func.put(ButtonId.DEG_MIN_SEC,   getStringDegMinSec());
+		button_id_to_display_txt_func.put(ButtonId.UNITS,         getStringAndroidAlt(R.string.units,       R.string.to_units));
+
+		button_id_to_display_txt_func.put(ButtonId.NUM7,          getStringAndroidChangesOnToUnits(R.string.num7, R.string.btn_text_deg));
+        button_id_to_display_txt_func.put(ButtonId.NUM8,          getStringAndroidChangesOnToUnits(R.string.num8, R.string.btn_text_deg_min));
+		button_id_to_display_txt_func.put(ButtonId.NUM9,          getStringAndroidChangesOnToUnits(R.string.num9, R.string.btn_text_deg_min_sec));
 
 
     }
@@ -322,6 +370,44 @@ public class CalcButtonsHelper {
                 return s;
             }
         };
+	}
+
+	private Callable<TokenInfo> getTokenChangesOnToUnits(final TokenInfo normal, final  TokenInfo onToUnits) {
+		return new Callable<TokenInfo> () {
+			public TokenInfo call() {
+				if (CalcButtonsHelper.this.experimentalModeEnabled && CalcButtonsHelper.this.prevInputTokenIsToUnits()) {
+					return onToUnits;
+				} else {
+					return normal;
+				}
+			}
+		};
+	}
+
+	private Callable<String> getStringAndroidChangesOnToUnits(final int normal, final int onToUnits) {
+		return new Callable<String> () {
+			public String call() {
+				if (CalcButtonsHelper.this.experimentalModeEnabled && CalcButtonsHelper.this.prevInputTokenIsToUnits()) {
+					return context.getString(onToUnits);
+				} else {
+					return context.getString(normal);
+				}
+			}
+		};
+	}
+
+	private Callable<String> getStringDegMinSec() {
+		return new Callable<String> () {
+			public String call() {
+				switch (degMinSecState) {
+					case DEG: return context.getString(R.string.btn_text_deg);
+					case MIN: return context.getString(R.string.btn_text_min);
+					case SEC: return context.getString(R.string.btn_text_sec);
+				}
+				Log.e(TAG, "unhandled deg min sec state");
+				return context.getString(R.string.btn_text_deg);
+			}
+		};
 	}
 
 	private Callable<TokenInfo> getTokenInv(final TokenInfo normal, final TokenInfo inv) {
@@ -428,7 +514,12 @@ public class CalcButtonsHelper {
 
 
 	private void handleButtonEvent(ButtonId btn_id) {
+		if (!callback.checkButtonAllowed(btn_id)) {
+			return;
+		}
         sendButtonEventToCallback(btn_id);
+		Log.i(TAG, String.format("handleButtonEvent(btn_id=%s); prevInputTokenIsToUnits=%b", btn_id.name(), prevInputTokenIsToUnits()));
+		handleBtnPressDegMinSec(callback, btn_id);
         if (btn_id != ButtonId.INV && btn_id != ButtonId.ALT) {
             this.alt_state = false;
             this.inv_state = false;
@@ -453,48 +544,56 @@ public class CalcButtonsHelper {
 
     private void sendButtonEventToCallback(ButtonId btn_id) {
 		switch(btn_id) {
-			case ENTER:  callback.onEvent(CallbackEvent.ENTER);      return;
-			case VAR:    callback.onEvent(CallbackEvent.OPEN_VARS);  return;
+			case ENTER:
+				callback.onEvent(CallbackEvent.ENTER);
+				return;
+			case VAR:
+				callback.onEvent(CallbackEvent.OPEN_VARS);
+				return;
 			case UNITS:
-			    if (!this.alt_state) {
-			        callback.onEvent(CallbackEvent.OPEN_UNITS);
-                } else {
-			        callback.onTokenAdd(TokenType.OTHER, TO_UNITS_TOKEN);
-                }
-			    return;
+				if (!this.alt_state) {
+					callback.onEvent(CallbackEvent.OPEN_UNITS);
+				} else {
+					onTokenAdd(TokenType.OTHER, TO_UNITS_TOKEN);
+				}
+				return;
 
-            case CLEAR:
-                if (!this.alt_state) {
-                    callback.onEvent(CallbackEvent.CLEAR);
-                } else {
-                    callback.onEvent(CallbackEvent.CLEAR_SCREEN);
-                }
-                return;
+			case CLEAR:
+				if (!this.alt_state) {
+					callback.onEvent(CallbackEvent.CLEAR);
+				} else {
+					callback.onEvent(CallbackEvent.CLEAR_SCREEN);
+				}
+				return;
 
-            case BKSP:
-                if (!this.alt_state) {
-                    callback.onEvent(CallbackEvent.BKSP);
-                } else {
-                    callback.onEvent(CallbackEvent.DELETE);
-                }
-                 return;
+			case BKSP:
+				if (!this.alt_state) {
+					callback.onEvent(CallbackEvent.BKSP);
+				} else {
+					callback.onEvent(CallbackEvent.DELETE);
+				}
+				return;
 
-            case LEFT:
-                if (!this.alt_state) {
-                    callback.onEvent(CallbackEvent.LEFT);
-                } else {
-                    callback.onEvent(CallbackEvent.BEGIN);
-                }
-                return;
+			case LEFT:
+				if (!this.alt_state) {
+					callback.onEvent(CallbackEvent.LEFT);
+				} else {
+					callback.onEvent(CallbackEvent.BEGIN);
+				}
+				return;
 			case RIGHT:
-			    if (!this.alt_state) {
-			        callback.onEvent(CallbackEvent.RIGHT);
-                } else {
-			        callback.onEvent(CallbackEvent.END);
-                }
-                return;
-			case UP:     callback.onEvent(CallbackEvent.UP   );      return;
-			case DOWN:   callback.onEvent(CallbackEvent.DOWN );      return;
+				if (!this.alt_state) {
+					callback.onEvent(CallbackEvent.RIGHT);
+				} else {
+					callback.onEvent(CallbackEvent.END);
+				}
+				return;
+			case UP:
+				callback.onEvent(CallbackEvent.UP);
+				return;
+			case DOWN:
+				callback.onEvent(CallbackEvent.DOWN);
+				return;
 
 			case POLAR_RECT: {
 				this.is_polar = !this.is_polar;
@@ -527,7 +626,7 @@ public class CalcButtonsHelper {
 						throw new RuntimeException();
 				}
 				updateDegreeRadBtnText();
-                callback.onEvent(event);
+				callback.onEvent(event);
 				return;
 			}
 		}
@@ -535,7 +634,7 @@ public class CalcButtonsHelper {
 		if (button_id_to_token_func.containsKey(btn_id)) {
 			try {
 				TokenInfo info = button_id_to_token_func.get(btn_id).call();
-				callback.onTokenAdd(info.type, info.token);
+				onTokenAdd(info.type, info.token);
 			} catch (Exception ex) {
 				Log.e(TAG, "btn id " + btn_id + " caused exception", ex);
 			}
@@ -555,6 +654,48 @@ public class CalcButtonsHelper {
 		}
 
 		Log.e(TAG, "Unhandled button id: " + btn_id);
+	}
+
+	private TokenInfo getTokenFromBtnId(ButtonId btnId) {
+		try {
+			return button_id_to_token_func.get(btnId).call();
+		} catch (Exception ex) {
+			Log.e(TAG, String.format("handleBtnPressDegMinSec: button id %s caused exception", btnId));
+			return null;
+		}
+	}
+
+	private void handleBtnPressDegMinSec(ButtonCallback callback, ButtonId btnId) {
+		TokenInfo token = getTokenFromBtnId(btnId);
+
+		if (btnId == ButtonId.DEG_MIN_SEC) {
+			switch (degMinSecState) {
+				case DEG: {
+					callback.onEvent(CallbackEvent.DIGIT_DEG);
+					degMinSecState = DegMinSecState.MIN;
+					break;
+				}
+				case MIN: {
+					callback.onEvent(CallbackEvent.DIGIT_MIN);
+					degMinSecState = DegMinSecState.SEC;
+					break;
+				}
+				case SEC: {
+					callback.onEvent(CallbackEvent.DIGIT_SEC);
+					degMinSecState = DegMinSecState.DEG;
+					break;
+				}
+			}
+		} else if (token != null && token.type == TokenType.DIGIT) {
+			// do nothing.
+			// Main flow for entering degrees, minutes, seconds is to
+			// enter a number first, followed by degrees, then another number, then minutes, etc
+		} else if (btnId == ButtonId.BKSP || btnId == ButtonId.LEFT || btnId == ButtonId.RIGHT) {
+			// do nothing.
+			// Users can move cursor around without resetting deg/min/sec button.
+		} else {
+			this.degMinSecState = DegMinSecState.DEG;
+		}
 	}
 
 	private void updatePolarRectBtnText() {
@@ -611,6 +752,13 @@ public class CalcButtonsHelper {
 	public void setHapticSetting(HapticSetting hapticSetting) {
 		Log.i(TAG, String.format("setHapticSetting is now %s", hapticSetting));
 		this.hapticSetting = hapticSetting;
+	}
+
+	public void updateButtonsVisibility() {
+		//int androidBtnId = button_id_to_android_layout_elem_id.get(ButtonId.DEG_MIN_SEC);
+		int androidBtnId = R.id.button_deg_min_sec;
+		View button = view.findViewById(androidBtnId);
+		button.setVisibility(this.experimentalModeEnabled ? View.VISIBLE : View.INVISIBLE);
 	}
 
 }

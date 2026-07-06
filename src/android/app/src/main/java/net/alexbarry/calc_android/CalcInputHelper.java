@@ -27,7 +27,7 @@ public class CalcInputHelper {
     private List<InputToken> input_tokens = new ArrayList<>();
     int pos = 0;
 
-    private InputToken get_prev_token() {
+    public InputToken get_prev_token() {
         int prev_pos = this.pos - 1;
         if (0 <= prev_pos && prev_pos < input_tokens.size()) {
             return input_tokens.get(prev_pos);
