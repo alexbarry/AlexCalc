@@ -19,7 +19,9 @@ public class CalcButtonsHelper {
     // we don't want "1 mto ft", "1 m toft" or "1 mtoft"
 	//private static final String TO_UNITS_TOKEN = " to ";
     // actually now I'm adding whitespace before and after every unit, so that's good enough
-    private static final String TO_UNITS_TOKEN = "to";
+	// 2026-07-06 actually now that I added degrees/minutes/seconds, I don't support spaces
+	// yet between those, so I'm adding a space at the beginning of "to" again.
+    private static final String TO_UNITS_TOKEN = " to";
 
 	public boolean experimentalModeEnabled = false;
 

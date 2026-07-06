@@ -30,8 +30,8 @@ android {
         applicationId "net.alexbarry.calc_android"
         minSdkVersion 23
         targetSdkVersion 36
-        versionCode 22
-        versionName "1.0.18"
+        versionCode 23
+        versionName "1.0.19"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
