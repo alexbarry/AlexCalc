@@ -15,6 +15,18 @@ DEFAULT_DECIMAL_PLACES = 20
 #DEFAULT_DECIMAL_PLACES = 9
 
 NEG_SYMB = r'\text{-}'
+DEG_SYMB = r'^\circ'
+DEG_MIN_SEC_SEP = r'\,'
+MIN_SYMB = '\''
+SEC_SYMB = '\'\''
+
+TO_SYMB_START      = r'\enspace (\small{\textit{to unit:}}\normalsize\;'
+TO_SPEC_SYMB_START = r'\enspace (\small{\textit{to:}}\normalsize\;'
+EMPTY         = r'\square'
+TO_SYMB_END   = r')'
+L_PAREN = r'\left('
+R_PAREN = r'\right)'
+R_PAREN_OPEN = r'\right.'
 
 calc_bin_file = sys.argv[1]
 test_idx_to_run = set()
@@ -487,6 +499,15 @@ latex_tests = [
 	( '0.6',   2, r'0.' + cursor + r'6' ),
 	( '0.6',   3, r'0.6' + cursor),
 
+	('cos(90deg10"to', None, r'\cos' + L_PAREN + '90' + DEG_SYMB + " 10''" + R_PAREN + TO_SYMB_START + EMPTY + TO_SYMB_END ),
+
+	('cos(90deg10"to', 14, r'\cos' + L_PAREN + '90' + DEG_SYMB + "10\"" + R_PAREN_OPEN + TO_SYMB_START + EMPTY + TO_SYMB_END ),
+	('cos(90deg10" to', 15, r'\cos' + L_PAREN + '90' + DEG_SYMB + "10\"" + R_PAREN_OPEN + TO_SYMB_START + EMPTY + TO_SYMB_END ),
+
+	('cos(90deg10" to ', 16, r'\cos' + L_PAREN + '90' + DEG_SYMB + "10\"" + R_PAREN_OPEN + TO_SYMB_START + EMPTY + TO_SYMB_END ),
+	('cos(90deg10" to d', 17, r'\cos' + L_PAREN + '90' + DEG_SYMB + "10\"" + R_PAREN_OPEN + TO_SYMB_START + r'\text{d}' + TO_SYMB_END ),
+	('cos(90deg10" to de', 18, r'\cos' + L_PAREN + '90' + DEG_SYMB + "10\"" + R_PAREN_OPEN + TO_SYMB_START + r'\text{de}' + TO_SYMB_END ),
+	('cos(90deg10" to deg', 19, r'\cos' + L_PAREN + '90' + DEG_SYMB + "10\"" + R_PAREN_OPEN + TO_SPEC_SYMB_START + DEG_SYMB + TO_SYMB_END ),
 ]
 
 err_tests = [
@@ -520,11 +541,6 @@ tests_for_units = [
 	# TODO consider defaulting output to kPa when dimension is N/m
 	( '1 atm', 101325, 'Pa'),
 ]
-
-DEG_SYMB = r'^\circ'
-DEG_MIN_SEC_SEP = r'\,'
-MIN_SYMB = '\''
-SEC_SYMB = '\'\''
 
 def fmt_deg_min_sec(d, m, s):
 	if False:
