@@ -1,0 +1,5 @@
+Changed "radians"/"degrees" button to reflect current state, rather than next state (if pressed). This is in preparation for adding a new "gradians" mode, available now in experimental mode (see next line)!
+Adds "experimental mode" toggle (in settings) to enable new features:
+* enter values with degrees, minutes, and seconds
+* adds gradians support (in addition to radians and degrees)
+* adds ability to convert output to degrees and minutes, or degrees, minutes, and seconds
