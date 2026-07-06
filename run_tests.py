@@ -10,6 +10,6 @@ rc = os.system('build/cmd_line/build.sh -- -j4')
 if rc != 0:
     sys.exit(rc)
 
-cmd = ' '.join(['python3', CALC_TEST_PY, CALC_BIN])
+cmd = ' '.join(['python3', CALC_TEST_PY, CALC_BIN] + sys.argv[1:])
 rc = os.system(cmd)
 sys.exit(rc)
