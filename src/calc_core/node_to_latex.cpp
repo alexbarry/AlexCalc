@@ -1000,6 +1000,7 @@ std::string wip_token_to_latex(const NodeWipToken *wip_token, const InputInfo *i
 		// TODO TODO 2024-05-31 call some generic adjustment function for cases where the
 		// string is adjusted (e.g. "deg" replaced with "^\circ")
 		int cursor_adjustment = info->cursor_node->get_cursor_adjustment(info->cursor_pos);
+		std::cerr << "[debug] << " << std::format("wip_token=\"{}\" cursor_offset(before)={}, adjustment={}", wip_token->wip_token, cursor_offset, cursor_adjustment) << std::endl;
 		//std::cout << "cursor_adjustment computed to: " << cursor_adjustment << std::endl;
 		cursor_offset += cursor_adjustment;
 		output = insert_cursor(wip_token->wip_token, cursor_offset, wrap_in_text);

@@ -1168,6 +1168,7 @@ std::string NodeWipToken::to_string(void) const {
 }
 
 int NodeWipToken::get_cursor_adjustment(int cursor_pos) const {
+	std::cerr << "NodeWipToken::get_cursor_adjustment(pos=" << cursor_pos << ")" << std::endl;
 	if (orig_str_pieces.size() != new_str_pieces.size()) {
 		std::cerr << __func__ << " orig_str_pieces size != new_str_pieces size! " << orig_str_pieces.size() << ", " << new_str_pieces.size() << std::endl;
 		return 0;
@@ -1178,7 +1179,7 @@ int NodeWipToken::get_cursor_adjustment(int cursor_pos) const {
 	int prev_start = 0;
 	int prev_new_start = 0;
 	for (int i=0; i<orig_str_pieces.size(); i++) {
-		std::cout << "[debug] " << __func__ << "orig=" << orig_str_pieces[i] << ", new=" << new_str_pieces[i] << std::endl;
+		std::cerr << "[debug] " << __func__ << " orig=" << orig_str_pieces[i] << ", new=" << new_str_pieces[i] << std::endl;
 		prev_start     += orig_str_pieces[i].size();
 		prev_new_start += new_str_pieces[i].size();
 		if (cursor_pos <= prev_start) {
