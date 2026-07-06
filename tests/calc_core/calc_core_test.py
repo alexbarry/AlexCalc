@@ -508,6 +508,30 @@ latex_tests = [
 	('cos(90deg10" to d', 17, r'\cos' + L_PAREN + '90' + DEG_SYMB + "10\"" + R_PAREN_OPEN + TO_SYMB_START + r'\text{d}' + TO_SYMB_END ),
 	('cos(90deg10" to de', 18, r'\cos' + L_PAREN + '90' + DEG_SYMB + "10\"" + R_PAREN_OPEN + TO_SYMB_START + r'\text{de}' + TO_SYMB_END ),
 	('cos(90deg10" to deg', 19, r'\cos' + L_PAREN + '90' + DEG_SYMB + "10\"" + R_PAREN_OPEN + TO_SPEC_SYMB_START + DEG_SYMB + TO_SYMB_END ),
+
+	('sin(60deg', None,          r'\sin' + L_PAREN + '60' + DEG_SYMB + R_PAREN      ),
+	('sin(60deg', 0,    cursor + r'\sin' + L_PAREN + '60' + DEG_SYMB + R_PAREN_OPEN ),
+	('sin(60deg', 4,    r'\sin' + L_PAREN + cursor + '60' + DEG_SYMB + R_PAREN_OPEN ),
+	('sin(60deg', 5,    r'\sin' + L_PAREN + '6' + cursor + '0' + DEG_SYMB + R_PAREN_OPEN ),
+	('sin(60deg', 6,    r'\sin' + L_PAREN + '60' + cursor + DEG_SYMB + R_PAREN_OPEN ),
+	('sin(60deg', 9,    r'\sin' + L_PAREN + '60' + DEG_SYMB + cursor + R_PAREN_OPEN ),
+
+	('sin(60deg) + cos(30deg)', None,    r'\sin' + L_PAREN + '60' + DEG_SYMB + R_PAREN + ' + ' r'\cos' + L_PAREN + '30' + DEG_SYMB + R_PAREN),
+	('sin(60deg) + cos(30deg)', 0,    cursor + r'\sin' + L_PAREN + '60' + DEG_SYMB + R_PAREN + ' + ' r'\cos' + L_PAREN + '30' + DEG_SYMB + R_PAREN),
+	('sin(60deg) + cos(30deg)', 4,    r'\sin' + L_PAREN + cursor + '60' + DEG_SYMB + R_PAREN + ' + ' r'\cos' + L_PAREN + '30' + DEG_SYMB + R_PAREN),
+	('sin(60deg) + cos(30deg)', 5,    r'\sin' + L_PAREN + '6' + cursor + '0' + DEG_SYMB + R_PAREN + ' + ' r'\cos' + L_PAREN + '30' + DEG_SYMB + R_PAREN),
+	('sin(60deg) + cos(30deg)', 6,    r'\sin' + L_PAREN + '60' + cursor + DEG_SYMB + R_PAREN + ' + ' r'\cos' + L_PAREN + '30' + DEG_SYMB + R_PAREN),
+	('sin(60deg) + cos(30deg)', 9,    r'\sin' + L_PAREN + '60' + DEG_SYMB + cursor + R_PAREN + ' + ' + r'\cos' + L_PAREN + '30' + DEG_SYMB + R_PAREN),
+	('sin(60deg) + cos(30deg)', 10,    r'\sin' + L_PAREN + '60' + DEG_SYMB + R_PAREN + cursor + ' + ' + r'\cos' + L_PAREN + '30' + DEG_SYMB + R_PAREN),
+	('sin(60deg) + cos(30deg)', 11,    r'\sin' + L_PAREN + '60' + DEG_SYMB + R_PAREN + cursor + ' + ' + r'\cos' + L_PAREN + '30' + DEG_SYMB + R_PAREN),
+	('sin(60deg) + cos(30deg)', 12,    r'\sin' + L_PAREN + '60' + DEG_SYMB + R_PAREN + ' + ' + cursor + r'\cos' + L_PAREN + '30' + DEG_SYMB + R_PAREN),
+	('sin(60deg) + cos(30deg)', 12,    r'\sin' + L_PAREN + '60' + DEG_SYMB + R_PAREN + ' + ' + cursor + r'\cos' + L_PAREN + '30' + DEG_SYMB + R_PAREN),
+	('sin(60deg) + cos(30deg)', 13,    r'\sin' + L_PAREN + '60' + DEG_SYMB + R_PAREN + ' + ' + cursor + r'\cos' + L_PAREN + '30' + DEG_SYMB + R_PAREN),
+	('sin(60deg) + cos(30deg)', 17,    r'\sin' + L_PAREN + '60' + DEG_SYMB + R_PAREN + ' + ' + r'\cos' + L_PAREN + cursor + '30' + DEG_SYMB + R_PAREN),
+	('sin(60deg) + cos(30deg)', 18,    r'\sin' + L_PAREN + '60' + DEG_SYMB + R_PAREN + ' + ' + r'\cos' + L_PAREN + '3' + cursor + '0' + DEG_SYMB + R_PAREN),
+	('sin(60deg) + cos(30deg)', 19,    r'\sin' + L_PAREN + '60' + DEG_SYMB + R_PAREN + ' + ' + r'\cos' + L_PAREN + '30' + cursor + DEG_SYMB + R_PAREN),
+	('sin(60deg) + cos(30deg)', 22,    r'\sin' + L_PAREN + '60' + DEG_SYMB + R_PAREN + ' + ' + r'\cos' + L_PAREN + '30' + DEG_SYMB + cursor + R_PAREN),
+	('sin(60deg) + cos(30deg)', 23,    r'\sin' + L_PAREN + '60' + DEG_SYMB + R_PAREN + ' + ' + r'\cos' + L_PAREN + '30' + DEG_SYMB + R_PAREN + cursor),
 ]
 
 err_tests = [
