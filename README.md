@@ -10,8 +10,8 @@ Available on:
 <table>
 	<thead>
 		<tr>
-			<th>iOS</th>
-			<th>Android</th>
+			<th width="50%">iOS</th>
+			<th width="50%">Android</th>
 		</tr>
 	</thead>
 	<tbody>
