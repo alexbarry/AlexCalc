@@ -7,17 +7,37 @@ Available on:
 * **Android**: [Google Play](https://play.google.com/store/apps/details?id=net.alexbarry.calc_android), [F-Droid](https://f-droid.org/packages/net.alexbarry.calc_android/)
 * **iPhone/iPad (iOS)**: [App Store](https://apps.apple.com/us/app/alexcalc/id6764553315)
 
-[<img src="src/graphics/GetItOnGooglePlay_Badge_Web_color_English.png"
-     alt="Get it on Google Play"
-     height="80">](https://play.google.com/store/apps/details?id=net.alexbarry.calc_android)
-
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-     alt="Get it on F-Droid"
-     height="80">](https://f-droid.org/packages/net.alexbarry.calc_android/)
-
-[<img src="https://developer.apple.com/app-store/marketing/guidelines/images/badge-download-on-the-app-store.svg"
-     alt="Download on the App Store"
-     height="80" width="240">](https://apps.apple.com/us/app/alexcalc/id6764553315)
+<table>
+	<thead>
+		<tr>
+			<th>iOS</th>
+			<th>Android</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+				 <a href="https://apps.apple.com/us/app/alexcalc/id6764553315">
+				 <img src="https://developer.apple.com/app-store/marketing/guidelines/images/badge-download-on-the-app-store.svg"
+					  alt="Download on the App Store"
+					  height="80" width="240">
+				 </a>
+			 </td>
+			<td>
+				<a href="https://play.google.com/store/apps/details?id=net.alexbarry.calc_android">
+				<img src="src/graphics/GetItOnGooglePlay_Badge_Web_color_English.png"
+					 alt="Get it on Google Play"
+					 width="240" height="80">
+				</a>
+				<a href="https://f-droid.org/packages/net.alexbarry.calc_android/">
+				<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+					 alt="Get it on F-Droid"
+					 height="80">
+				</a>
+			</td>
+		</tr>
+	</tbody>
+</table>
 
 ## How to use
 
