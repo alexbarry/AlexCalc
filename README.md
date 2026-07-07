@@ -17,7 +17,7 @@ Available on:
 
 [<img src="https://developer.apple.com/app-store/marketing/guidelines/images/badge-download-on-the-app-store.svg"
      alt="Download on the App Store"
-     height="80">](https://apps.apple.com/us/app/alexcalc/id6764553315)
+     height="80" width="240">](https://apps.apple.com/us/app/alexcalc/id6764553315)
 
 ## How to use
 
