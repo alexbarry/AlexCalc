@@ -82,11 +82,13 @@
 
 
 	div.main {
+		position: relative;
 		height: calc(100% - 2*5px);
 		margin: 5px auto;
 		display:flex;
 		flex-direction:column;
 		padding: 5px; /* TODO  I'm not sure if this is causing the window to be slightly too big on android firefox */
+		overflow-x: hidden;
 	}
 
 	/* TODO try out aligning content to bottom of this, to be closer to the buttons?
