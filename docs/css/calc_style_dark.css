@@ -118,3 +118,7 @@ body.dark .license {
 	color:#fff;
 	overflow:auto;
 }
+
+body.dark .colour_adjuster_pane {
+	background-color:#444e;
+}
