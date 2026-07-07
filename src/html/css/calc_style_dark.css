@@ -21,11 +21,11 @@ body.dark select {
 body.dark .error_msg { color: red; }
 
 body.dark a:visited {
-	color:#80f;
+	color:#cb8fff;
 }
 
 body.dark a, body.dark a.no_visited:visited {
-	color:#00f;
+	color:#8f8fff;
 }
 
 
