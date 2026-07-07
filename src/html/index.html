@@ -463,6 +463,7 @@
 		<img class="logo" src="https://alexbarry.net/calc/favicon.png" alt="AlexCalc logo"/>
 		<h1>AlexCalc</h1>
 		<p id="wasm_loading_msg">Calc binary is loading, please wait...</p>
+		<p id="mobile_app_msg"><strong>NOTE</strong>: Now available as an iOS app on the <a href="https://apps.apple.com/us/app/alexcalc/id6764553315">App Store</a>! Also available for Android on <a href="https://play.google.com/store/apps/details?id=net.alexbarry.calc_android">Google Play</a> and <a href="https://f-droid.org/packages/net.alexbarry.calc_android/">F-Droid</a>.</p>
 		<p id="calc_terms_notice_small">By using this application you agree with its terms of use, available in the <a href="#" id="about_popup_link_terms_notice">about section</a>.</p>
 		<!--
 		<p>\[ e^{j\theta} + 1 = 0 \]</p>
@@ -728,7 +729,7 @@
 		<p>Also available on other platforms:
 			<ul>
 				<li><strong>Android app</strong>: <a href="https://play.google.com/store/apps/details?id=net.alexbarry.calc_android">Google Play</a>, <a href="https://f-droid.org/packages/net.alexbarry.calc_android/">F-Droid</a></li>
-				<li><strong>iOS</strong>: <a href="add_to_ios_home.html">How to add a shortcut to home screen on iOS</a>
+				<li><strong>iPhone/iPad (iOS)</strong>: <a href="https://apps.apple.com/us/app/alexcalc/id6764553315">App Store</a></li>
 				<li><strong>Web</strong> (desktop/mobile): <a href="https://alexbarry.github.io/AlexCalc/">https://alexbarry.github.io/AlexCalc/</a> (you should be on this page now)</li>
 			</ul>
 		</p>
@@ -1029,6 +1030,7 @@
 			 */
 			output_display_refs: [
 				{ elem: document.getElementById("wasm_loading_msg"),        stylesheets: [] },
+				{ elem: document.getElementById("mobile_app_msg"),        stylesheets: [] },
 				{ elem: document.getElementById("calc_terms_notice_small"), stylesheets: [] },
 			],
 
